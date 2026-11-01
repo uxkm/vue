@@ -1,0 +1,12 @@
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  text-align: left;
+
+  &__main {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+  }
+}

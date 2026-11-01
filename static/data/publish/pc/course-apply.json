@@ -1,0 +1,39 @@
+{
+  "id": "course-apply",
+  "name": "수강신청",
+  "filePath": "@/pages/pc/course-apply",
+  "screens": [
+    {
+      "screenName": "수강신청 메인",
+      "screenType": "Index",
+      "screenId": "PC-COURSE-000",
+      "pageUrl": "#/pc/course-apply",
+      "filePath": "@/pages/pc/course-apply/index.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "수강신청 01",
+      "screenType": "Page",
+      "screenId": "PC-COURSE-001",
+      "pageUrl": "#/pc/course-apply/01",
+      "filePath": "@/pages/pc/course-apply/01.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": ""
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+/* 스크롤 등장: CSS + IntersectionObserver (.fx-reveal / [data-fx] + .is-in) */
+
+.fx-reveal,
+[data-fx] {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.fx-reveal.is-in,
+[data-fx].is-in {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+[data-fx='up'],
+.fx-reveal--up {
+  transform: translate3d(0, 36px, 0);
+}
+
+[data-fx='down'] {
+  transform: translate3d(0, -28px, 0);
+}
+
+[data-fx='left'] {
+  transform: translate3d(36px, 0, 0);
+}
+
+[data-fx='right'] {
+  transform: translate3d(-36px, 0, 0);
+}
+
+[data-fx='scale'] {
+  transform: translate3d(0, 16px, 0) scale(0.96);
+}
+
+[data-fx='up'].is-in,
+[data-fx='down'].is-in,
+[data-fx='left'].is-in,
+[data-fx='right'].is-in,
+[data-fx='scale'].is-in,
+.fx-reveal--up.is-in {
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+/* 패럴랙스 래퍼: 자식 transform 오버플로 방지 */
+.fx-parallax-clip {
+  overflow: hidden;
+}
+
+.fx-parallax-clip [data-parallax] {
+  will-change: transform;
+  transition: none;
+}
+
+/* sticky 핀 트랙 */
+.fx-sticky-track {
+  position: relative;
+}
+
+.fx-sticky-pin {
+  position: sticky;
+  top: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-reveal,
+  [data-fx] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}

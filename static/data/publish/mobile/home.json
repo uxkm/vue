@@ -1,0 +1,39 @@
+{
+  "id": "home",
+  "name": "1. Home",
+  "filePath": "@/pages/mobile/home",
+  "screens": [
+    {
+      "screenName": "Home 메인",
+      "screenType": "Index",
+      "screenId": "MO-HOME-000",
+      "pageUrl": "#/mobile/home",
+      "filePath": "@/pages/mobile/home/index.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "Home 01",
+      "screenType": "Page",
+      "screenId": "MO-HOME-001",
+      "pageUrl": "#/mobile/home/01",
+      "filePath": "@/pages/mobile/home/01.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": ""
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "id": "course-apply",
+  "name": "수강신청",
+  "filePath": "@/pages/mobile/course-apply",
+  "screens": [
+    {
+      "screenName": "수강신청 메인",
+      "screenType": "Index",
+      "screenId": "MO-COURSE-000",
+      "pageUrl": "#/mobile/course-apply",
+      "filePath": "@/pages/mobile/course-apply/index.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "수강신청 01",
+      "screenType": "Page",
+      "screenId": "MO-COURSE-001",
+      "pageUrl": "#/mobile/course-apply/01",
+      "filePath": "@/pages/mobile/course-apply/01.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": ""
+    }
+  ]
+}

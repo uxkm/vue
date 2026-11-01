@@ -1,0 +1,55 @@
+{
+  "id": "data",
+  "name": "2. 데이터 표시",
+  "filePath": "@/pages/components",
+  "screens": [
+    {
+      "screenName": "Badge",
+      "screenType": "Guide",
+      "screenId": "MG-DAT-001",
+      "pageUrl": "#/components/badge",
+      "filePath": "@/pages/components/BadgePage.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "done",
+      "progress": 100,
+      "planning": "",
+      "design": "",
+      "remark": ""
+    },
+    {
+      "screenName": "Tag",
+      "screenType": "Guide",
+      "screenId": "MG-DAT-002",
+      "pageUrl": "#/components/tag",
+      "filePath": "@/pages/components/TagPage.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "done",
+      "progress": 100,
+      "planning": "",
+      "design": "",
+      "remark": ""
+    },
+    {
+      "screenName": "Card",
+      "screenType": "Guide",
+      "screenId": "MG-DAT-003",
+      "pageUrl": "#/components/card",
+      "filePath": "@/pages/components/CardPage.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "done",
+      "progress": 100,
+      "planning": "",
+      "design": "",
+      "remark": ""
+    }
+  ]
+}

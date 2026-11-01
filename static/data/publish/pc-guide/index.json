@@ -1,0 +1,34 @@
+{
+  "folders": [
+    {
+      "id": "layout",
+      "name": "0. 레이아웃",
+      "file": "layout.json"
+    },
+    {
+      "id": "basic",
+      "name": "1. 기본 요소",
+      "file": "basic.json"
+    },
+    {
+      "id": "data",
+      "name": "2. 데이터 표시",
+      "file": "data.json"
+    },
+    {
+      "id": "form",
+      "name": "3. 폼",
+      "file": "form.json"
+    },
+    {
+      "id": "feedback",
+      "name": "4. 피드백",
+      "file": "feedback.json"
+    },
+    {
+      "id": "navigation",
+      "name": "5. 네비게이션",
+      "file": "navigation.json"
+    }
+  ]
+}

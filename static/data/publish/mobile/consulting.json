@@ -1,0 +1,39 @@
+{
+  "id": "consulting",
+  "name": "200. 상담시스템",
+  "filePath": "@/pages/mobile/consulting",
+  "screens": [
+    {
+      "screenName": "상담시스템 메인",
+      "screenType": "Index",
+      "screenId": "MO-CONSUL-000",
+      "pageUrl": "#/mobile/consulting",
+      "filePath": "@/pages/mobile/consulting/index.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "상담시스템 01",
+      "screenType": "Page",
+      "screenId": "MO-CONSUL-001",
+      "pageUrl": "#/mobile/consulting/01",
+      "filePath": "@/pages/mobile/consulting/01.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": ""
+    }
+  ]
+}

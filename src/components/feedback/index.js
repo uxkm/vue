@@ -1,0 +1,6 @@
+export { default as Alert } from './Alert.vue'
+export { default as Progress } from './Progress.vue'
+export { default as Empty } from './Empty.vue'
+export { default as Skeleton } from './Skeleton.vue'
+export { default as PageSkeleton } from './PageSkeleton.vue'
+export { default as PageLoading } from './PageLoading.vue'

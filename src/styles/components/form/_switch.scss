@@ -1,0 +1,154 @@
+.switch {
+  $self: &;
+  --switch-track: #c5d0d8;
+  --switch-on: var(--color-accent);
+  --switch-width: 40px;
+  --switch-height: 22px;
+  --switch-thumb: 16px;
+  --switch-pad: 3px;
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  margin: 0;
+  cursor: pointer;
+  user-select: none;
+  vertical-align: middle;
+
+  &_input {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    width: var(--switch-width);
+    height: var(--switch-height);
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  &_control {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    width: var(--switch-width);
+    height: var(--switch-height);
+    pointer-events: none;
+  }
+
+  &_track {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 0 var(--switch-pad);
+    border-radius: var(--radius-pill);
+    background: var(--switch-track);
+    transition: background 0.2s ease;
+  }
+
+  &_inner {
+    width: 100%;
+    padding: 0 2px;
+    color: #fff;
+    font-size: var(--font-size-2xs);
+    font-weight: 700;
+    line-height: 1;
+    text-align: right;
+    white-space: nowrap;
+    opacity: 0.95;
+  }
+
+  &_thumb {
+    position: absolute;
+    top: 50%;
+    left: var(--switch-pad);
+    width: var(--switch-thumb);
+    height: var(--switch-thumb);
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(21, 32, 43, 0.22);
+    transform: translateY(-50%);
+    transition: left 0.2s ease;
+  }
+
+  &_label {
+    color: var(--color-ink);
+    font-size: var(--font-size-md);
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  &.is-checked {
+    #{$self}_track {
+      background: var(--switch-on);
+    }
+
+    #{$self}_inner {
+      text-align: left;
+    }
+
+    #{$self}_thumb {
+      left: calc(100% - var(--switch-thumb) - var(--switch-pad));
+    }
+  }
+
+  &.is-disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  &_input:focus-visible + #{$self}_control {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
+    border-radius: var(--radius-pill);
+  }
+
+  &_sm {
+    --switch-width: 32px;
+    --switch-height: 18px;
+    --switch-thumb: 12px;
+    --switch-pad: 3px;
+
+    #{$self}_label {
+      font-size: var(--font-size-sm);
+    }
+
+    #{$self}_inner {
+      font-size: 9px;
+    }
+  }
+
+  &_lg {
+    --switch-width: 48px;
+    --switch-height: 26px;
+    --switch-thumb: 20px;
+    --switch-pad: 3px;
+
+    #{$self}_label {
+      font-size: var(--font-size-base);
+    }
+
+    #{$self}_inner {
+      font-size: var(--font-size-xs);
+    }
+  }
+
+  &.color_success {
+    --switch-on: var(--color-done);
+  }
+
+  &.color_warning {
+    --switch-on: var(--color-warning);
+  }
+
+  &.color_danger {
+    --switch-on: var(--color-delayed);
+  }
+
+  &.color_info {
+    --switch-on: var(--color-info);
+  }
+}

@@ -1,0 +1,125 @@
+.tabs {
+  &_list {
+    display: flex;
+    gap: var(--space-xs);
+    border-bottom: 1px solid var(--color-line);
+    margin-bottom: var(--space-12);
+    align-items: center;
+  }
+
+  &_tab {
+    position: relative;
+    border: 0;
+    background: transparent;
+    padding: var(--space-10) var(--space-12);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--color-muted);
+    cursor: pointer;
+    border-bottom: var(--space-2) solid transparent;
+
+    &.is-active {
+      color: var(--color-accent);
+      border-bottom-color: var(--color-accent);
+    }
+
+    &.is-disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+  }
+
+  &_card {
+    .tabs_list {
+      border-bottom: 0;
+      gap: var(--space-sm);
+    }
+
+    .tabs_tab {
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+      border-bottom: 0;
+
+      &.is-active {
+        background: #fff;
+        border-color: var(--color-line);
+        color: var(--color-accent);
+      }
+    }
+  }
+
+  &_pill {
+    .tabs_list {
+      border-bottom: 0;
+      background: #f1f5f9;
+      padding: var(--space-4);
+      border-radius: var(--radius-pill);
+    }
+
+    .tabs_tab {
+      border-bottom: 0;
+      border-radius: var(--radius-pill);
+
+      &.is-active {
+        background: #fff;
+        color: var(--color-accent);
+        box-shadow: var(--shadow);
+      }
+    }
+  }
+
+  &_vertical {
+    display: flex;
+    gap: var(--space-lg);
+
+    .tabs_list {
+      flex-direction: column;
+      border-bottom: 0;
+      border-right: 1px solid var(--color-line);
+      margin-bottom: 0;
+      min-width: 140px;
+    }
+
+    .tabs_tab {
+      border-bottom: 0;
+      border-right: var(--space-2) solid transparent;
+      text-align: left;
+
+      &.is-active {
+        border-right-color: var(--color-accent);
+      }
+    }
+  }
+
+  &_sm .tabs_tab {
+    padding: var(--space-6) var(--space-10);
+    font-size: var(--font-size-md);
+  }
+
+  &_lg .tabs_tab {
+    padding: var(--space-12) var(--space-16);
+    font-size: var(--font-size-lg);
+  }
+
+  &_equal .tabs_tab {
+    flex: 1;
+    text-align: center;
+  }
+
+  &_scroll .tabs_list {
+    overflow-x: auto;
+  }
+
+  &_extra {
+    margin-left: auto;
+  }
+
+  &_close {
+    margin-left: var(--space-6);
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    opacity: 0.6;
+  }
+}

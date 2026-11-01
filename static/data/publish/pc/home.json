@@ -1,0 +1,133 @@
+{
+  "id": "home",
+  "name": "1. Home",
+  "filePath": "@/pages/pc/home",
+  "screens": [
+    {
+      "screenName": "Home 메인",
+      "screenType": "Index",
+      "screenId": "PC-HOME-000",
+      "pageUrl": "#/pc/home",
+      "filePath": "@/pages/pc/home/index.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "done",
+      "progress": 100,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "Home 01 · Multicampus",
+      "screenType": "Page",
+      "screenId": "PC-HOME-001",
+      "pageUrl": "#/pc/home/01",
+      "filePath": "@/pages/pc/home/01.vue",
+      "owner": "한프론트",
+      "start": "11.01",
+      "expected": "11.01",
+      "end": "11.01",
+      "status": "done",
+      "progress": 100,
+      "planning": "",
+      "design": "",
+      "remark": [
+        {
+          "date": "2026.11.01",
+          "author": "한프론트",
+          "text": "multicampus.com B2B 메인 UI·인터랙션 반영\n- 히어로 자동 슬라이더 / 01-06 페이지네이션 / 정지·재생\n- sticky 섹션 내비·스크롤스파이\n- 서비스 캐러셀 / 플로팅 퀵메뉴·TOP"
+        }
+      ]
+    },
+    {
+      "screenName": "Home 02 · HD한국조선해양",
+      "screenType": "Page",
+      "screenId": "PC-HOME-002",
+      "pageUrl": "#/pc/home/02",
+      "filePath": "@/pages/pc/home/02.vue",
+      "owner": "한프론트",
+      "start": "11.01",
+      "expected": "11.01",
+      "end": "11.01",
+      "status": "done",
+      "progress": 100,
+      "planning": "",
+      "design": "",
+      "remark": [
+        {
+          "date": "2026.11.01",
+          "author": "한프론트",
+          "text": "hd-ksoe.com 메인 UI·인터랙션 반영\n- 풀블리드 히어로 페이드 / prev·next·pause\n- BUSINESS 카드 호버 줌\n- ESG 탭 전환 / NEWS·IR 블록"
+        }
+      ]
+    },
+    {
+      "screenName": "Home 03 · 토스플레이스",
+      "screenType": "Page",
+      "screenId": "PC-HOME-003",
+      "pageUrl": "#/pc/home/03",
+      "filePath": "@/pages/pc/home/03.vue",
+      "owner": "한프론트",
+      "start": "11.01",
+      "expected": "11.01",
+      "end": "11.01",
+      "status": "done",
+      "progress": 100,
+      "planning": "",
+      "design": "",
+      "remark": [
+        {
+          "date": "2026.11.01",
+          "author": "한프론트",
+          "text": "tossplace.com 메인 UI·인터랙션 반영\n- 스크롤 헤더 전환 / 업종 칩·히어로 장면 스왑\n- 카운터 롤링 / 스티키 상담바·챗 FAB"
+        }
+      ]
+    },
+    {
+      "screenName": "Home 04 · 삼성SDS",
+      "screenType": "Page",
+      "screenId": "PC-HOME-004",
+      "pageUrl": "#/pc/home/04",
+      "filePath": "@/pages/pc/home/04.vue",
+      "owner": "한프론트",
+      "start": "11.01",
+      "expected": "11.01",
+      "end": "11.01",
+      "status": "done",
+      "progress": 100,
+      "planning": "",
+      "design": "",
+      "remark": [
+        {
+          "date": "2026.11.01",
+          "author": "한프론트",
+          "text": "samsungsds.com 메인 UI·인터랙션 반영\n- 그라데이션 타이포 + Bento 그리드\n- 한눈에 보기 카운터 롤링\n- 솔루션 필터 탭 / 인사이트 카드"
+        }
+      ]
+    },
+    {
+      "screenName": "Home 05 · 당근 about",
+      "screenType": "Page",
+      "screenId": "PC-HOME-005",
+      "pageUrl": "#/pc/home/05",
+      "filePath": "@/pages/pc/home/05.vue",
+      "owner": "한프론트",
+      "start": "11.01",
+      "expected": "11.01",
+      "end": "11.01",
+      "status": "done",
+      "progress": 100,
+      "planning": "",
+      "design": "",
+      "remark": [
+        {
+          "date": "2026.11.01",
+          "author": "한프론트",
+          "text": "about.daangn.com UI·인터랙션 반영\n- 스플릿 히어로 / 풀블리드 미션\n- 스토리 교차 레이아웃 / sticky 인터뷰\n- 가치 그리드·합류 CTA"
+        }
+      ]
+    }
+  ]
+}

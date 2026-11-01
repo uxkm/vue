@@ -1,0 +1,50 @@
+{
+  "id": "feed",
+  "name": "2. Feed",
+  "filePath": "@/pages/pc/feed",
+  "screens": [
+    {
+      "screenName": "Feed 메인",
+      "screenType": "Index",
+      "screenId": "PC-FEED-000",
+      "pageUrl": "#/pc/feed",
+      "filePath": "@/pages/pc/feed/index.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "Feed 01",
+      "screenType": "Page",
+      "screenId": "PC-FEED-001",
+      "pageUrl": "#/pc/feed/01",
+      "filePath": "@/pages/pc/feed/01.vue",
+      "owner": "한프론트",
+      "start": "03.04",
+      "expected": "03.15",
+      "end": "",
+      "status": "pending",
+      "progress": 10,
+      "planning": "",
+      "design": "",
+      "remark": [
+        {
+          "date": "2026.03.04",
+          "author": "한프론트",
+          "text": "피드 리스트 아이템 구조 잡음 (썸네일 / 타이틀 / 메타)"
+        },
+        {
+          "date": "2026.03.09",
+          "author": "한프론트",
+          "text": "무한 스크롤 트리거 영역 추가. API 연동 전 더미 데이터로 확인."
+        }
+      ]
+    }
+  ]
+}
