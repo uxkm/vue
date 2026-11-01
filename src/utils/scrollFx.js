@@ -1,7 +1,7 @@
 /**
  * 스크롤 인터랙션 유틸 (실무 기술 선택)
  * - 단순 페이드/슬라이드: IntersectionObserver + CSS
- * - 스크롤 비례 패럴랙스: requestAnimationFrame (GSAP 2.x에는 ScrollTrigger 없음)
+ * - 스크롤 비례 패럴랙스: requestAnimationFrame (필요 시 GSAP ScrollTrigger로 교체 가능)
  * - 숫자 카운트업: requestAnimationFrame
  */
 

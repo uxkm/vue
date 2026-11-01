@@ -2,7 +2,7 @@
   <DemoShell
     category="기본 요소"
     title="Icon"
-    description="Vue 2.6 · Icon — size · color · spin · circle · button 조합을 확인합니다."
+    description="Vue 3 · Icon — size · color · spin · circle · button 조합을 확인합니다."
   >
     <div class="demo-block">
       <h2 class="demo-block__title">크기</h2>

@@ -493,7 +493,8 @@ export default {
   },
   mounted: function () {
     var self = this
-    window.setTimeout(function () {
+    this._loadingTimer = window.setTimeout(function () {
+      self._loadingTimer = null
       self.loading = false
       self.$nextTick(function () {
         self.startHeroTimer()
@@ -503,7 +504,11 @@ export default {
       })
     }, 500)
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
+    if (this._loadingTimer) {
+      window.clearTimeout(this._loadingTimer)
+      this._loadingTimer = null
+    }
     this.clearHeroTimer()
     window.removeEventListener('resize', this.onResize)
     window.removeEventListener('scroll', this.onScrollSpy)

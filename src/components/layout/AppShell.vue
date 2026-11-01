@@ -56,20 +56,29 @@
 </template>
 
 <script>
+import { cloneVNode, h } from 'vue'
 import AppHeader from './AppHeader.vue'
 import AppFooter from './AppFooter.vue'
 import { LAYOUT_SLOT_HIDDEN } from './layout-slot-shared'
 
+function cloneNodes (nodes) {
+  if (!nodes || !nodes.length) return null
+  return nodes.map(function (node) {
+    return cloneVNode(node)
+  })
+}
+
 var VnodeHost = {
   name: 'VnodeHost',
-  functional: true,
   props: {
     nodes: { default: null }
   },
-  render: function (h, ctx) {
-    var nodes = ctx.props.nodes
-    if (!nodes || !nodes.length) return null
-    return nodes.length === 1 ? nodes[0] : h('div', { class: 'vnode-host' }, nodes)
+  setup: function (props) {
+    return function () {
+      var nodes = cloneNodes(props.nodes)
+      if (!nodes || !nodes.length) return null
+      return nodes.length === 1 ? nodes[0] : h('div', { class: 'vnode-host' }, nodes)
+    }
   }
 }
 
@@ -81,8 +90,12 @@ export default {
     VnodeHost: VnodeHost
   },
   provide: function () {
+    var self = this
+    // Vue 3: inject 호출 시 this 가 깨지지 않도록 래핑
     return {
-      layoutSetSlot: this.setPageSlot
+      layoutSetSlot: function (name, nodes) {
+        self.setPageSlot(name, nodes)
+      }
     }
   },
   data: function () {
@@ -107,17 +120,21 @@ export default {
      * @param {VNode[]|typeof LAYOUT_SLOT_HIDDEN|null} nodes
      */
     setPageSlot: function (name, nodes) {
+      var next = Object.assign({}, this.pageSlots)
       if (nodes === LAYOUT_SLOT_HIDDEN) {
-        this.$set(this.pageSlots, name, LAYOUT_SLOT_HIDDEN)
+        next[name] = LAYOUT_SLOT_HIDDEN
+        this.pageSlots = next
         return
       }
       if (!nodes || !nodes.length) {
-        if (Object.prototype.hasOwnProperty.call(this.pageSlots, name)) {
-          this.$delete(this.pageSlots, name)
+        if (Object.prototype.hasOwnProperty.call(next, name)) {
+          delete next[name]
+          this.pageSlots = next
         }
         return
       }
-      this.$set(this.pageSlots, name, nodes)
+      next[name] = nodes
+      this.pageSlots = next
     }
   },
   watch: {

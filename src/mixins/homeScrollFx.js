@@ -1,7 +1,7 @@
 import { bindHomeScrollFx, createStickyProgress } from '@/utils/scrollFx'
 
 /**
- * Home 랜딩 스크롤 인터랙션 믹스인
+ * Home 랜딩 스크롤 인터랙션 믹스인 (Vue 3)
  * - 등장: CSS + IntersectionObserver (data-fx)
  * - 패럴랙스: rAF (data-parallax)
  * - sticky 진행: createStickyProgress (옵션, this.$refs.scrollTrack)
@@ -30,7 +30,7 @@ export default {
       })
     }
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     this.teardownHomeScrollFx()
   },
   methods: {
@@ -40,7 +40,7 @@ export default {
 
       if (this.$refs.scrollTrack) {
         var self = this
-        this.__stickyUnbind = createStickyProgress(this.$refs.scrollTrack, function (p) {
+        this.__stickyCtrl = createStickyProgress(this.$refs.scrollTrack, function (p) {
           self.stickyProgress = p
           if (typeof self.onStickyProgress === 'function') {
             self.onStickyProgress(p)
@@ -53,9 +53,9 @@ export default {
         this.__homeScrollUnbind()
         this.__homeScrollUnbind = null
       }
-      if (typeof this.__stickyUnbind === 'function') {
-        this.__stickyUnbind()
-        this.__stickyUnbind = null
+      if (this.__stickyCtrl && typeof this.__stickyCtrl.destroy === 'function') {
+        this.__stickyCtrl.destroy()
+        this.__stickyCtrl = null
       }
     },
     onStickyProgress: function () {}

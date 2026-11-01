@@ -105,6 +105,7 @@ export default {
       background: rgba(15, 118, 110, 0.06);
     }
 
+    /* Vue Router 4: `/` 는 inclusive active 가 항상 켜지므로 exact 만 사용 */
     &.router-link-exact-active {
       color: var(--color-accent, #0f766e);
       background: rgba(15, 118, 110, 0.1);

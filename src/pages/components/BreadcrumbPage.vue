@@ -1,5 +1,5 @@
 <template>
-  <DemoShell category="네비게이션" title="Breadcrumb" description="Vue 2.6 · Breadcrumb — separator">
+  <DemoShell category="네비게이션" title="Breadcrumb" description="Vue 3 · Breadcrumb — separator">
     <Space vertical :size="16">
       <Breadcrumb :items="items" />
       <Breadcrumb :items="items" separator="slash" />

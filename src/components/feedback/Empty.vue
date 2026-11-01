@@ -46,16 +46,10 @@ export default {
       return this.description || this.title || '데이터가 없습니다'
     },
     hasIcon: function () {
-      return !!(
-        (this.$slots.icon && this.$slots.icon.length) ||
-        (this.$slots.image && this.$slots.image.length)
-      )
+      return !!(this.$slots.icon || this.$slots.image)
     },
     hasFooter: function () {
-      return !!(
-        (this.$slots.footer && this.$slots.footer.length) ||
-        (this.$slots.default && this.$slots.default.length)
-      )
+      return !!(this.$slots.footer || this.$slots.default)
     },
     emptyClass: function () {
       var classes = []

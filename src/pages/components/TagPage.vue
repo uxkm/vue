@@ -1,5 +1,5 @@
 <template>
-  <DemoShell category="데이터 표시" title="Tag" description="Vue 2.6 · Tag — variant · color · closable">
+  <DemoShell category="데이터 표시" title="Tag" description="Vue 3 · Tag — variant · color · closable">
     <div class="demo-block">
       <h2 class="demo-block__title">색상</h2>
       <div class="demo-row">

@@ -67,7 +67,7 @@ export default {
   mounted: function () {
     document.addEventListener('click', this.onDocumentClick)
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     document.removeEventListener('click', this.onDocumentClick)
   },
   methods: {

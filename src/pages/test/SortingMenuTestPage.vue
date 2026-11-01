@@ -2,7 +2,7 @@
   <DemoShell
     category="테스트"
     title="Sorting Menu"
-    description="정렬 드롭다운 열기/선택/외부 클릭 닫기 동작 확인 (v-click-outside)"
+    description="정렬 드롭다운 열기/선택/외부 클릭 닫기 동작 확인 (click-outside-vue3)"
   >
     <div class="menu-wrap newType">
       <div class="selection-wrap">
@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import vClickOutside from 'v-click-outside'
+import vClickOutside from 'click-outside-vue3'
 import DemoShell from '@/pages/DemoShell.vue'
 
 export default {

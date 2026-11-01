@@ -1,5 +1,5 @@
 <template>
-  <DemoShell category="기본 요소" title="Link" description="Vue 2.6 · Link — color · underline · nav · blank">
+  <DemoShell category="기본 요소" title="Link" description="Vue 3 · Link — color · underline · nav · blank">
     <Space :size="16" vertical>
       <div class="demo-row">
         <Link href="#/" label="WBS 홈" />

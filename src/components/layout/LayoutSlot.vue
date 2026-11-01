@@ -1,5 +1,5 @@
 <script>
-import { LAYOUT_SLOT_HIDDEN, createHiddenHostRender } from './layout-slot-shared'
+import { LAYOUT_SLOT_HIDDEN, createHiddenHostRender, resolveSlotNodes } from './layout-slot-shared'
 
 export { LAYOUT_SLOT_HIDDEN }
 
@@ -30,7 +30,7 @@ export default {
   updated: function () {
     this.sync()
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     if (this.layoutSetSlot) {
       this.layoutSetSlot(this.name, null)
     }
@@ -42,7 +42,7 @@ export default {
         this.layoutSetSlot(this.name, LAYOUT_SLOT_HIDDEN)
         return
       }
-      this.layoutSetSlot(this.name, this.$slots.default || null)
+      this.layoutSetSlot(this.name, resolveSlotNodes(this.$slots.default))
     }
   },
   render: createHiddenHostRender('layout-slot')

@@ -1,5 +1,5 @@
 <template>
-  <DemoShell category="네비게이션" title="Tabs" description="Vue 2.6 · Tabs — variant · v-model">
+  <DemoShell category="네비게이션" title="Tabs" description="Vue 3 · Tabs — variant · v-model">
     <div class="demo-block">
       <h2 class="demo-block__title">line</h2>
       <Tabs v-model="tab" :tabs="tabs">

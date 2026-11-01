@@ -31,6 +31,7 @@ var SIZE_PX = {
 
 export default {
   name: 'Icon',
+  emits: ['click'],
   props: {
     name: {
       type: String,

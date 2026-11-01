@@ -1,5 +1,5 @@
 <template>
-  <DemoShell category="기본 요소" title="Typography" description="Vue 2.6 · Typography — title · variant · color">
+  <DemoShell category="기본 요소" title="Typography" description="Vue 3 · Typography — title · variant · color">
     <div class="demo-block">
       <h2 class="demo-block__title">Title (level)</h2>
       <Typography :level="1">Heading 1</Typography>

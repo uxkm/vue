@@ -2,7 +2,7 @@
   <select
     class="input"
     :class="selectClass"
-    :value="value"
+    :value="modelValue"
     :disabled="disabled"
     :multiple="multiple"
     :size="nativeSize || null"
@@ -31,8 +31,9 @@ var SIZE_OK = ['sm', 'md', 'lg']
 
 export default {
   name: 'Select',
+  emits: ['update:modelValue', 'change', 'focus', 'blur'],
   props: {
-    value: {
+    modelValue: {
       type: [String, Number, Array],
       default: ''
     },
@@ -95,7 +96,7 @@ export default {
       } else {
         next = event.target.value
       }
-      this.$emit('input', next)
+      this.$emit('update:modelValue', next)
       this.$emit('change', next)
     }
   }

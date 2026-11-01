@@ -45,6 +45,7 @@ var SIZE_OK = ['sm', 'md', 'lg']
 
 export default {
   name: 'Alert',
+  emits: ['close'],
   props: {
     color: {
       type: String,
@@ -99,8 +100,7 @@ export default {
     },
     hasDefault: function () {
       if (this.description) return true
-      var nodes = this.$slots.default
-      return !!(nodes && nodes.length)
+      return !!this.$slots.default
     },
     alertClass: function () {
       var classes = ['color_' + this.resolvedColor]

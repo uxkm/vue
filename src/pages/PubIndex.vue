@@ -217,9 +217,8 @@
           <div class="wbs-actions">
             <label class="wbs-switch">
               <input
+                v-model="expandSwitch"
                 type="checkbox"
-                :checked="hasExpanded"
-                @change="onExpandSwitch($event.target.checked)"
               >
               <span class="wbs-switch__ui" aria-hidden="true"></span>
               <span class="wbs-switch__label">{{ hasExpanded ? '모두 접기' : '모두 펼치기' }}</span>
@@ -492,7 +491,7 @@
     <div
       v-if="filterSheetOpen"
       class="wbs-bottom-sheet"
-      @keydown.esc="closeFilterSheet"
+      @keydown.escape="closeFilterSheet"
     >
       <div
         class="wbs-bottom-sheet__backdrop"
@@ -555,7 +554,7 @@
     <div
       v-if="remarkModal.open"
       class="remark-modal"
-      @keydown.esc="closeRemarkModal"
+      @keydown.escape="closeRemarkModal"
     >
       <!-- 모달 배경(클릭 시 닫기) -->
       <div class="remark-modal__backdrop" @click="closeRemarkModal"></div>
@@ -616,21 +615,15 @@
 
 <script>
 /**
- * PubIndex
+ * PubIndex (Vue 3 Options API)
  * - JSON 기반 퍼블리시 화면 목록 (탭 / 화면명 레이블 / 검색 / 폴더 펼침)
  * - 공통 컴포넌트 의존 없이 이 페이지만으로 동작
- *
- * 함수 스타일
- * - Vue 옵션(data / computed / watch / methods / 라이프사이클): function
- *   → Vue가 this 를 인스턴스로 바인딩해야 하므로 화살표 함수 사용 금지
- * - 콜백(map / filter / forEach / XHR / $nextTick): 화살표 함수
- *   → 바깥 this 를 그대로 쓰므로 var self = this 불필요
  */
 
 // 프로젝트 메타·탭 목록
-var INDEX_URL = '/static/data/publish/index.json'
-// 탭별 폴더·화면 JSON 루트
-var DATA_BASE = '/static/data/publish/'
+var INDEX_URL = '/data/publish/index.json'
+// 탭별 폴더·화면 JSON 루트 (Vite publicDir: static → /data/...)
+var DATA_BASE = '/data/publish/'
 
 // 상태 코드 → 한글 라벨
 var STATUS_MAP = {
@@ -649,34 +642,29 @@ var STATUS_COLOR = {
   delayed: 'warning'
 }
 
-/** JSON 로드 (XHR). done(err, data) 콜백 */
-var fetchJson = function (url, done) {
-  var xhr = new XMLHttpRequest()
-  xhr.open('GET', url, true)
-  xhr.onreadystatechange = function () {
-    // 4 = 응답 완료
-    if (xhr.readyState !== 4) return
-    if (xhr.status >= 200 && xhr.status < 300) {
-      try {
-        // 본문을 JSON 으로 파싱해 성공 콜백
-        done(null, JSON.parse(xhr.responseText))
-      } catch (e) {
-        done(new Error('JSON 형식 오류: ' + url))
+/** JSON 로드 (fetch). done(err, data) 콜백 */
+function fetchJson (url, done) {
+  fetch(url, { credentials: 'same-origin' })
+    .then(function (res) {
+      if (!res.ok) {
+        throw new Error('요청 실패 (' + res.status + '): ' + url)
       }
-    } else {
-      done(new Error('요청 실패 (' + xhr.status + '): ' + url))
-    }
-  }
-  // 네트워크 단절 등
-  xhr.onerror = () => {
-    done(new Error('네트워크 오류: ' + url))
-  }
-  xhr.send()
+      return res.json()
+    })
+    .then(function (data) {
+      done(null, data)
+    })
+    .catch(function (err) {
+      if (err && err.name === 'SyntaxError') {
+        done(new Error('JSON 형식 오류: ' + url))
+        return
+      }
+      done(err instanceof Error ? err : new Error('네트워크 오류: ' + url))
+    })
 }
 
 export default {
   name: 'PubIndex',
-  // Vue 옵션: function 유지 (this = 컴포넌트)
   data: function () {
     return {
       loading: true, // 최초·탭 전환 로딩
@@ -734,8 +722,9 @@ export default {
     /** 현재 탭 메타 (id, label, base 경로) */
     activeTabMeta: function () {
       var id = this.activeTab
-      // tabs 배열에서 현재 id 와 일치하는 항목 1개 (없으면 PC 기본값)
-      return this.tabs.filter((tab) => tab.id === id)[0] || { id: 'pc', label: 'PC', base: 'pc/' }
+      return this.tabs.find(function (tab) {
+        return tab.id === id
+      }) || { id: 'pc', label: 'PC', base: 'pc/' }
     },
     /** 요약 영역에 표시할 탭 이름 */
     activeTabLabel: function () {
@@ -745,23 +734,20 @@ export default {
     filterSelectedLabel: function () {
       var id = this.activeFolderId
       if (!id) return ''
-      var folders = this.folders || []
-      for (var i = 0; i < folders.length; i++) {
-        if (folders[i].id === id) {
-          return String(folders[i].name || '').replace(/^\d+\.\s*/, '')
-        }
-      }
-      return ''
+      var folder = (this.folders || []).find(function (item) {
+        return item.id === id
+      })
+      if (!folder) return ''
+      return String(folder.name || '').replace(/^\d+\.\s*/, '')
     },
     /** 필터로 고른 폴더의 하위 화면(2뎁스) 목록 */
     activeFolderScreens: function () {
       var id = this.activeFolderId
       if (!id) return []
-      var folders = this.folders || []
-      for (var i = 0; i < folders.length; i++) {
-        if (folders[i].id === id) return folders[i].screens || []
-      }
-      return []
+      var folder = (this.folders || []).find(function (item) {
+        return item.id === id
+      })
+      return (folder && folder.screens) || []
     },
     /**
      * 목록에 실제로 그릴 폴더
@@ -771,16 +757,27 @@ export default {
     displayFolders: function () {
       var list = this.visibleFolders || []
       var folderId = this.activeFolderId
-      // 전체 선택(null)이면 필터 없이 검색 결과 전부
       if (!folderId) return list
-      // 화면명 레이블로 고른 폴더만
-      return list.filter((folder) => folder.id === folderId)
+      return list.filter(function (folder) {
+        return folder.id === folderId
+      })
     },
     /** 하나라도 펼쳐져 있으면 true (모두 접기/펼치기 스위치) */
     hasExpanded: function () {
       var expanded = this.expanded || {}
-      // expanded 객체에 true 인 키가 하나라도 있는지
-      return Object.keys(expanded).some((id) => !!expanded[id])
+      return Object.keys(expanded).some(function (id) {
+        return !!expanded[id]
+      })
+    },
+    /** 모두 펼치기/접기 스위치 (Vue 3 v-model) */
+    expandSwitch: {
+      get: function () {
+        return this.hasExpanded
+      },
+      set: function (checked) {
+        if (checked) this.expandAll()
+        else this.collapseAll()
+      }
     },
     /** 현재 탭 전체 화면(2뎁스) flat 목록 — 진행률·통계용 */
     allScreens: function () {
@@ -919,7 +916,7 @@ export default {
     this.updateTableMaxHeight()
     window.addEventListener('resize', this.updateTableMaxHeight)
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     // 리스너 정리 (메모리 누수 방지)
     window.removeEventListener('resize', this.updateTableMaxHeight)
   },
@@ -989,15 +986,12 @@ export default {
     selectFolder: function (folderId) {
       this.activeFolderId = folderId || null
       if (folderId) {
-        // 선택한 폴더 펼침
-        this.$set(this.expanded, folderId, true)
+        this.expanded = Object.assign({}, this.expanded, { [folderId]: true })
       } else {
-        // 전체: 2뎁스 모두 접기
         this.expanded = {}
       }
       this.$nextTick(() => {
         this.updateTableMaxHeight()
-        // 특정 폴더면 해당 행으로 스크롤
         if (!folderId) return
         var el = document.getElementById('wbs-folder-' + folderId)
         if (el && el.scrollIntoView) {
@@ -1133,7 +1127,7 @@ export default {
       this.loading = true
       this.error = ''
 
-      // /static/data/publish/index.json
+      // /data/publish/index.json
       fetchJson(INDEX_URL, (err, data) => {
         if (err) {
           this.loading = false
@@ -1174,7 +1168,7 @@ export default {
      * slots 로 원본 순서 유지
      */
     loadTabData: function () {
-      // 예: pc/ → /static/data/publish/pc/index.json
+      // 예: pc/ → /data/publish/pc/index.json
       var base = this.activeTabMeta.base || (this.activeTab + '/')
       var indexUrl = DATA_BASE + base + 'index.json'
 
@@ -1260,20 +1254,19 @@ export default {
     /** 검색 결과 폴더는 자동 펼침 */
     expandMatchedFolders: function () {
       if (!this.query) return
-      this.visibleFolders.forEach((folder) => {
-        this.$set(this.expanded, folder.id, true)
+      var next = Object.assign({}, this.expanded)
+      this.visibleFolders.forEach(function (folder) {
+        next[folder.id] = true
       })
-    },
-    /** 모두 펼치기/접기 스위치 */
-    onExpandSwitch: function (checked) {
-      if (checked) this.expandAll()
-      else this.collapseAll()
+      this.expanded = next
     },
     /** 모든 1뎁스 폴더 펼침 */
     expandAll: function () {
-      this.folders.forEach((folder) => {
-        this.$set(this.expanded, folder.id, true)
+      var next = {}
+      this.folders.forEach(function (folder) {
+        next[folder.id] = true
       })
+      this.expanded = next
     },
     /** 모든 폴더 접기 */
     collapseAll: function () {
@@ -1285,8 +1278,9 @@ export default {
     },
     /** 1뎁스 폴더 +/- 토글 */
     toggleFolder: function (folderId) {
-      // Vue 2: 새 키 반응성을 위해 $set 사용
-      this.$set(this.expanded, folderId, !this.expanded[folderId])
+      this.expanded = Object.assign({}, this.expanded, {
+        [folderId]: !this.expanded[folderId]
+      })
     }
   }
 }

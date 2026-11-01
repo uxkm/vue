@@ -38,6 +38,7 @@ var SIZE_OK = ['sm', 'md', 'lg']
 
 export default {
   name: 'Tag',
+  emits: ['click', 'close'],
   props: {
     color: {
       type: String,

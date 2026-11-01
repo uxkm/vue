@@ -1,5 +1,5 @@
 <template>
-  <DemoShell category="레이아웃" title="Divider" description="Vue 2.6 · Divider — vertical · dashed · label">
+  <DemoShell category="레이아웃" title="Divider" description="Vue 3 · Divider — vertical · dashed · label">
     <div class="demo-block">
       <h2 class="demo-block__title">가로</h2>
       <p>위 영역</p>

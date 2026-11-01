@@ -266,9 +266,16 @@ function stubScreenPageContent (device, menu, screen, fileName) {
     '  mounted: function () {\n' +
     '    var self = this\n' +
     '    // 페이지 진입 로딩 예시 (실제 API 연동 시 교체)\n' +
-    '    window.setTimeout(function () {\n' +
+    '    this._loadingTimer = window.setTimeout(function () {\n' +
+    '      self._loadingTimer = null\n' +
     '      self.loading = false\n' +
     '    }, 700)\n' +
+    '  },\n' +
+    '  beforeUnmount: function () {\n' +
+    '    if (this._loadingTimer) {\n' +
+    '      window.clearTimeout(this._loadingTimer)\n' +
+    '      this._loadingTimer = null\n' +
+    '    }\n' +
     '  }\n' +
     '}\n' +
     '</script>\n'
@@ -366,9 +373,16 @@ function stubIndexPageContent (device, menu, screens) {
     '  mounted: function () {\n' +
     '    var self = this\n' +
     '    // 페이지 진입 로딩 예시 (실제 API 연동 시 교체)\n' +
-    '    window.setTimeout(function () {\n' +
+    '    this._loadingTimer = window.setTimeout(function () {\n' +
+    '      self._loadingTimer = null\n' +
     '      self.loading = false\n' +
     '    }, 700)\n' +
+    '  },\n' +
+    '  beforeUnmount: function () {\n' +
+    '    if (this._loadingTimer) {\n' +
+    '      window.clearTimeout(this._loadingTimer)\n' +
+    '      this._loadingTimer = null\n' +
+    '    }\n' +
     '  }\n' +
     '}\n' +
     '</script>\n'

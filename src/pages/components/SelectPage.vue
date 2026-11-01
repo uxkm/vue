@@ -1,5 +1,5 @@
 <template>
-  <DemoShell category="폼" title="Select" description="Vue 2.6 · Select — size · error · v-model">
+  <DemoShell category="폼" title="Select" description="Vue 3 · Select — size · error · v-model">
     <Space vertical :size="12">
       <Select
         v-model="selected"

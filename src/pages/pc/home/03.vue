@@ -245,7 +245,8 @@ export default {
   },
   mounted: function () {
     var self = this
-    window.setTimeout(function () {
+    this._loadingTimer = window.setTimeout(function () {
+      self._loadingTimer = null
       self.loading = false
       self.$nextTick(function () {
         self.animateCount()
@@ -255,7 +256,11 @@ export default {
       })
     }, 450)
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
+    if (this._loadingTimer) {
+      window.clearTimeout(this._loadingTimer)
+      this._loadingTimer = null
+    }
     if (this.countTimer) window.cancelAnimationFrame(this.countTimer)
     if (this.industryTimer) window.clearInterval(this.industryTimer)
     window.removeEventListener('scroll', this.onScroll)

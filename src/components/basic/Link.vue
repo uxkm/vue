@@ -30,6 +30,7 @@ var SIZE_OK = ['sm', 'lg', 'xl']
 
 export default {
   name: 'Link',
+  emits: ['click'],
   props: {
     as: {
       type: String,

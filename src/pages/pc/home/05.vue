@@ -240,12 +240,17 @@ export default {
   },
   mounted: function () {
     var self = this
-    window.setTimeout(function () {
+    this._loadingTimer = window.setTimeout(function () {
+      self._loadingTimer = null
       self.loading = false
       window.addEventListener('scroll', self.onScroll, { passive: true })
     }, 400)
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
+    if (this._loadingTimer) {
+      window.clearTimeout(this._loadingTimer)
+      this._loadingTimer = null
+    }
     window.removeEventListener('scroll', this.onScroll)
   },
   methods: {

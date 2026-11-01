@@ -1,5 +1,5 @@
 <template>
-  <DemoShell category="피드백" title="Alert" description="Vue 2.6 · Alert — color · closable · icon">
+  <DemoShell category="피드백" title="Alert" description="Vue 3 · Alert — color · closable · icon">
     <Space vertical :size="10">
       <Alert color="info" title="정보">정보 알림입니다.</Alert>
       <Alert color="success">성공 알림입니다.</Alert>

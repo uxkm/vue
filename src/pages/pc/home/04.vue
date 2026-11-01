@@ -261,13 +261,18 @@ export default {
   },
   mounted: function () {
     var self = this
-    window.setTimeout(function () {
+    this._loadingTimer = window.setTimeout(function () {
+      self._loadingTimer = null
       self.loading = false
       window.addEventListener('scroll', self.onScroll, { passive: true })
       self.onScroll()
     }, 450)
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
+    if (this._loadingTimer) {
+      window.clearTimeout(this._loadingTimer)
+      this._loadingTimer = null
+    }
     window.removeEventListener('scroll', this.onScroll)
   },
   methods: {
@@ -282,7 +287,7 @@ export default {
           if (!start) start = ts
           var p = Math.min(1, (ts - start) / duration)
           var eased = 1 - Math.pow(1 - p, 3)
-          self.$set(self.stats[index], 'display', Math.round(stat.target * eased))
+          self.stats[index].display = Math.round(stat.target * eased)
           if (p < 1) window.requestAnimationFrame(step)
         }
         window.requestAnimationFrame(step)

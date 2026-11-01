@@ -81,7 +81,7 @@ export default {
     this.measure()
     window.addEventListener('resize', this.measure)
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     window.removeEventListener('resize', this.measure)
   },
   methods: {

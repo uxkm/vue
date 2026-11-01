@@ -52,6 +52,7 @@ var VARIANT_CLASS = {
 
 export default {
   name: 'Button',
+  emits: ['click', 'keydown'],
   props: {
     variant: {
       type: String,

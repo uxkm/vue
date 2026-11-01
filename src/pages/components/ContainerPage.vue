@@ -1,5 +1,5 @@
 <template>
-  <DemoShell category="레이아웃" title="Container" description="Vue 2.6 · Container — size · fluid">
+  <DemoShell category="레이아웃" title="Container" description="Vue 3 · Container — size · fluid">
     <div class="demo-block">
       <h2 class="demo-block__title">기본</h2>
       <Container>

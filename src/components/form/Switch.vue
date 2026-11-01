@@ -34,8 +34,9 @@ var COLOR_OK = ['primary', 'success', 'warning', 'danger', 'info']
 export default {
   // SVG 예약 태그 <switch>와 충돌하므로 태그명은 FormSwitch 사용
   name: 'FormSwitch',
+  emits: ['update:modelValue', 'change', 'focus', 'blur'],
   props: {
-    value: {
+    modelValue: {
       type: Boolean,
       default: false
     },
@@ -73,10 +74,10 @@ export default {
   },
   computed: {
     isOn: function () {
-      return !!this.value
+      return !!this.modelValue
     },
     showLabel: function () {
-      return !!(this.label || (this.$slots.default && this.$slots.default.length))
+      return !!(this.label || this.$slots.default)
     },
     showInnerLabel: function () {
       return !!(this.checkedLabel || this.uncheckedLabel)
@@ -102,7 +103,7 @@ export default {
     onChange: function (event) {
       if (this.disabled) return
       var next = !!event.target.checked
-      this.$emit('input', next)
+      this.$emit('update:modelValue', next)
       this.$emit('change', next)
     }
   }

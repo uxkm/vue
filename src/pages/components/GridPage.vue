@@ -1,5 +1,5 @@
 <template>
-  <DemoShell category="레이아웃" title="Grid" description="Vue 2.6 · Grid — cols · gap">
+  <DemoShell category="레이아웃" title="Grid" description="Vue 3 · Grid — cols · gap">
     <div class="demo-block">
       <h2 class="demo-block__title">3열</h2>
       <Grid :cols="3" :gap="12">

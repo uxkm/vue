@@ -63,8 +63,7 @@ export default {
   computed: {
     hasLabel: function () {
       if (this.label) return true
-      var nodes = this.$slots.default
-      return !!(nodes && nodes.length)
+      return !!this.$slots.default
     },
     rootTag: function () {
       if (this.as) return this.as

@@ -6,11 +6,11 @@
         :key="String(tab.value)"
         type="button"
         class="tabs_tab"
-        :class="{ 'is-active': tab.value === value, 'is-disabled': tab.disabled }"
+        :class="{ 'is-active': tab.value === modelValue, 'is-disabled': tab.disabled }"
         role="tab"
-        :aria-selected="tab.value === value ? 'true' : 'false'"
+        :aria-selected="tab.value === modelValue ? 'true' : 'false'"
         :aria-disabled="tab.disabled ? 'true' : null"
-        :tabindex="tab.value === value ? 0 : -1"
+        :tabindex="tab.value === modelValue ? 0 : -1"
         :disabled="tab.disabled"
         @click="onSelect(tab.value)"
       >
@@ -40,8 +40,9 @@ var LAYOUT_OK = ['auto', 'equal', 'scroll']
 
 export default {
   name: 'Tabs',
+  emits: ['update:modelValue', 'change', 'close'],
   props: {
-    value: {
+    modelValue: {
       type: [String, Number],
       default: ''
     },
@@ -105,8 +106,8 @@ export default {
   },
   methods: {
     onSelect: function (next) {
-      if (next === this.value) return
-      this.$emit('input', next)
+      if (next === this.modelValue) return
+      this.$emit('update:modelValue', next)
       this.$emit('change', next)
     },
     onClose: function (key) {

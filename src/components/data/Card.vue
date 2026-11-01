@@ -45,6 +45,7 @@ var SIZE_OK = ['sm', 'md', 'lg', 'compact']
 
 export default {
   name: 'Card',
+  emits: ['click'],
   props: {
     variant: {
       type: String,
@@ -97,10 +98,10 @@ export default {
     },
     hasHeader: function () {
       if (this.title || this.subtitle) return true
-      if (this.$slots.header && this.$slots.header.length) return true
-      if (this.$slots.extra && this.$slots.extra.length) return true
+      if (this.$slots.header) return true
+      if (this.$slots.extra) return true
       // legacy title slot
-      if (this.$slots.title && this.$slots.title.length) return true
+      if (this.$slots.title) return true
       return false
     },
     cardClass: function () {

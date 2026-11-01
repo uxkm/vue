@@ -1,5 +1,5 @@
 <template>
-  <DemoShell category="레이아웃" title="Flex" description="Vue 2.6 · Flex — direction · justify · gap">
+  <DemoShell category="레이아웃" title="Flex" description="Vue 3 · Flex — direction · justify · gap">
     <div class="demo-block">
       <h2 class="demo-block__title">space-between</h2>
       <Flex justify="between" align="center" :gap="12">

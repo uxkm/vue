@@ -2,7 +2,7 @@
   <DemoShell
     category="기본 요소"
     title="Button"
-    description="Vue 2.6 · Button — variant · color · size · slot · 상태 조합을 확인합니다."
+    description="Vue 3 · Button — variant · color · size · slot · 상태 조합을 확인합니다."
   >
     <div class="demo-block">
       <h2 class="demo-block__title">기본 유형</h2>
@@ -41,14 +41,20 @@
       <h2 class="demo-block__title">슬롯 · 아이콘</h2>
       <div class="demo-row">
         <Button label="Before">
-          <span slot="icon-before" aria-hidden="true">★</span>
+          <template #icon-before>
+            <span aria-hidden="true">★</span>
+          </template>
         </Button>
         <Button label="After">
-          <span slot="icon-after" aria-hidden="true">→</span>
+          <template #icon-after>
+            <span aria-hidden="true">→</span>
+          </template>
         </Button>
         <Button icon-only aria-label="즐겨찾기">★</Button>
         <Button vertical label="홈">
-          <span slot="icon-before" aria-hidden="true">⌂</span>
+          <template #icon-before>
+            <span aria-hidden="true">⌂</span>
+          </template>
         </Button>
       </div>
     </div>

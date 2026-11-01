@@ -1,5 +1,5 @@
 <template>
-  <DemoShell category="피드백" title="Progress" description="Vue 2.6 · Progress — percent · status · show-info">
+  <DemoShell category="피드백" title="Progress" description="Vue 3 · Progress — percent · status · show-info">
     <Space vertical :size="14">
       <Progress :percent="25" show-info />
       <Progress :percent="62" show-info color="success" />

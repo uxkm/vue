@@ -1,5 +1,5 @@
 <template>
-  <DemoShell category="폼" title="Input" description="Vue 2.6 · Input — size · clearable · error">
+  <DemoShell category="폼" title="Input" description="Vue 3 · Input — size · clearable · error">
     <Space vertical :size="12">
       <Input v-model="text" placeholder="내용을 입력하세요" clearable />
       <Input size="sm" v-model="text" placeholder="Small" />

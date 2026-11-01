@@ -1,5 +1,5 @@
 <script>
-import { LAYOUT_SLOT_HIDDEN, createHiddenHostRender } from './layout-slot-shared'
+import { LAYOUT_SLOT_HIDDEN, createHiddenHostRender, resolveSlotNodes } from './layout-slot-shared'
 
 /**
  * 페이지에서 AppShell 푸터를 한곳에서 제어
@@ -35,7 +35,7 @@ export default {
   updated: function () {
     this.sync()
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     this.clear()
   },
   methods: {
@@ -56,16 +56,16 @@ export default {
         return
       }
 
-      var content = this.$slots.content
-      var def = this.$slots.default
+      var content = resolveSlotNodes(this.$slots.content)
+      var def = resolveSlotNodes(this.$slots.default)
 
-      if (content && content.length) {
+      if (content) {
         this.setSlot('footer', null)
         this.setSlot('footer-content', content)
         return
       }
 
-      if (def && def.length) {
+      if (def) {
         this.setSlot('footer-content', null)
         this.setSlot('footer', def)
         return

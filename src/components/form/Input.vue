@@ -10,7 +10,7 @@
       class="input"
       :class="inputClass"
       :type="type"
-      :value="value"
+      :value="modelValue"
       :placeholder="placeholder"
       :disabled="disabled"
       :readonly="readonly"
@@ -38,8 +38,9 @@ var SIZE_OK = ['sm', 'md', 'lg']
 
 export default {
   name: 'Input',
+  emits: ['update:modelValue', 'change', 'clear', 'focus', 'blur'],
   props: {
-    value: {
+    modelValue: {
       type: [String, Number],
       default: ''
     },
@@ -66,7 +67,7 @@ export default {
   },
   computed: {
     hasValue: function () {
-      return this.value !== '' && this.value != null
+      return this.modelValue !== '' && this.modelValue != null
     },
     inputClass: function () {
       var classes = []
@@ -79,13 +80,13 @@ export default {
   },
   methods: {
     onInput: function (event) {
-      this.$emit('input', event.target.value)
+      this.$emit('update:modelValue', event.target.value)
     },
     onChange: function (event) {
       this.$emit('change', event.target.value)
     },
     onClear: function () {
-      this.$emit('input', '')
+      this.$emit('update:modelValue', '')
       this.$emit('clear')
     }
   }

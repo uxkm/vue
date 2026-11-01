@@ -1,5 +1,5 @@
 <script>
-import { LAYOUT_SLOT_HIDDEN, createHiddenHostRender } from './layout-slot-shared'
+import { LAYOUT_SLOT_HIDDEN, createHiddenHostRender, resolveSlotNodes } from './layout-slot-shared'
 
 var PART_SLOTS = ['brand', 'nav', 'actions']
 var PART_NAMES = {
@@ -44,7 +44,7 @@ export default {
   updated: function () {
     this.sync()
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     this.clear()
   },
   methods: {
@@ -69,12 +69,12 @@ export default {
         return
       }
 
-      var def = this.$slots.default
+      var def = resolveSlotNodes(this.$slots.default)
       var hasParts = PART_SLOTS.some(function (key) {
-        return !!(this.$slots[key] && this.$slots[key].length)
+        return !!resolveSlotNodes(this.$slots[key])
       }.bind(this))
 
-      if (def && def.length && !hasParts) {
+      if (def && !hasParts) {
         PART_SLOTS.forEach(function (key) {
           this.setSlot(PART_NAMES[key], null)
         }.bind(this))
@@ -84,8 +84,7 @@ export default {
 
       this.setSlot('header', null)
       PART_SLOTS.forEach(function (key) {
-        var nodes = this.$slots[key]
-        this.setSlot(PART_NAMES[key], nodes && nodes.length ? nodes : null)
+        this.setSlot(PART_NAMES[key], resolveSlotNodes(this.$slots[key]))
       }.bind(this))
     }
   },

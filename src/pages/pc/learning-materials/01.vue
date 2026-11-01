@@ -47,9 +47,16 @@ export default {
   mounted: function () {
     var self = this
     // 페이지 진입 로딩 예시 (실제 API 연동 시 교체)
-    window.setTimeout(function () {
+    this._loadingTimer = window.setTimeout(function () {
+      self._loadingTimer = null
       self.loading = false
     }, 700)
+  },
+  beforeUnmount: function () {
+    if (this._loadingTimer) {
+      window.clearTimeout(this._loadingTimer)
+      this._loadingTimer = null
+    }
   }
 }
 </script>

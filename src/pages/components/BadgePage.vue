@@ -1,5 +1,5 @@
 <template>
-  <DemoShell category="데이터 표시" title="Badge" description="Vue 2.6 · Badge — color · size · count · dot">
+  <DemoShell category="데이터 표시" title="Badge" description="Vue 3 · Badge — color · size · count · dot">
     <div class="demo-block">
       <h2 class="demo-block__title">색상</h2>
       <div class="demo-row">

@@ -1,5 +1,5 @@
 <template>
-  <DemoShell category="레이아웃" title="Space" description="Vue 2.6 · Space — gap · align · justify">
+  <DemoShell category="레이아웃" title="Space" description="Vue 3 · Space — gap · align · justify">
     <div class="demo-block">
       <h2 class="demo-block__title">가로 gap</h2>
       <Space gap="sm">
