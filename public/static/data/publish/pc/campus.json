@@ -1,0 +1,39 @@
+{
+  "id": "campus",
+  "name": "4. Campus",
+  "filePath": "@/pages/pc/campus",
+  "screens": [
+    {
+      "screenName": "Campus 메인",
+      "screenType": "Index",
+      "screenId": "PC-CAMPUS-000",
+      "pageUrl": "#/pc/campus",
+      "filePath": "@/pages/pc/campus/index.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "Campus 01",
+      "screenType": "Page",
+      "screenId": "PC-CAMPUS-001",
+      "pageUrl": "#/pc/campus/01",
+      "filePath": "@/pages/pc/campus/01.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": ""
+    }
+  ]
+}

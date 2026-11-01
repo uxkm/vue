@@ -1,0 +1,39 @@
+{
+  "id": "dream-fund",
+  "name": "200. 꿈금고",
+  "filePath": "@/pages/mobile/dream-fund",
+  "screens": [
+    {
+      "screenName": "꿈금고 메인",
+      "screenType": "Index",
+      "screenId": "MO-DREAMF-000",
+      "pageUrl": "#/mobile/dream-fund",
+      "filePath": "@/pages/mobile/dream-fund/index.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "꿈금고 01",
+      "screenType": "Page",
+      "screenId": "MO-DREAMF-001",
+      "pageUrl": "#/mobile/dream-fund/01",
+      "filePath": "@/pages/mobile/dream-fund/01.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": ""
+    }
+  ]
+}

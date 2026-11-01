@@ -1,0 +1,39 @@
+{
+  "id": "crowd-class",
+  "name": "16. Crowd Class",
+  "filePath": "@/pages/pc/crowd-class",
+  "screens": [
+    {
+      "screenName": "Crowd Class 메인",
+      "screenType": "Index",
+      "screenId": "PC-CROWDC-000",
+      "pageUrl": "#/pc/crowd-class",
+      "filePath": "@/pages/pc/crowd-class/index.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "Crowd Class 01",
+      "screenType": "Page",
+      "screenId": "PC-CROWDC-001",
+      "pageUrl": "#/pc/crowd-class/01",
+      "filePath": "@/pages/pc/crowd-class/01.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": ""
+    }
+  ]
+}

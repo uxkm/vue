@@ -8,8 +8,9 @@
  *   static/data/publish/mobile/...
  *
  * - count 필드 없음 (목록에서 screens.length)
- * - 화면 파일: src/pages/{pc|mobile}/{menuId}/숫자.vue
- * - 메뉴 메인: src/pages/{pc|mobile}/{menuId}/index.vue → #/{pc|mobile}/{menuId}
+ * - 화면 파일: src/pages/{pc|mobile}/{menuId}/숫자.jsx (React)
+ * - 메뉴 메인: src/pages/{pc|mobile}/{menuId}/index.jsx → #/{pc|mobile}/{menuId}
+ * - 데이터 출력: public/static/data/publish/
  *
  * 사용: node scripts/generate-publish-menus.js
  */
@@ -50,55 +51,55 @@ var guideFolders = [
     id: 'layout',
     name: '0. 레이아웃',
     screens: [
-      { screenName: 'Container', screenId: 'G-LAY-001', pageUrl: '#/components/container', filePath: '@/pages/components/ContainerPage.vue' },
-      { screenName: 'Space', screenId: 'G-LAY-002', pageUrl: '#/components/space', filePath: '@/pages/components/SpacePage.vue' },
-      { screenName: 'Divider', screenId: 'G-LAY-003', pageUrl: '#/components/divider', filePath: '@/pages/components/DividerPage.vue' },
-      { screenName: 'Flex', screenId: 'G-LAY-004', pageUrl: '#/components/flex', filePath: '@/pages/components/FlexPage.vue' },
-      { screenName: 'Grid', screenId: 'G-LAY-005', pageUrl: '#/components/grid', filePath: '@/pages/components/GridPage.vue' }
+      { screenName: 'Container', screenId: 'G-LAY-001', pageUrl: '#/components/container', filePath: '@/pages/components/ContainerPage.jsx' },
+      { screenName: 'Space', screenId: 'G-LAY-002', pageUrl: '#/components/space', filePath: '@/pages/components/SpacePage.jsx' },
+      { screenName: 'Divider', screenId: 'G-LAY-003', pageUrl: '#/components/divider', filePath: '@/pages/components/DividerPage.jsx' },
+      { screenName: 'Flex', screenId: 'G-LAY-004', pageUrl: '#/components/flex', filePath: '@/pages/components/FlexPage.jsx' },
+      { screenName: 'Grid', screenId: 'G-LAY-005', pageUrl: '#/components/grid', filePath: '@/pages/components/GridPage.jsx' }
     ]
   },
   {
     id: 'basic',
     name: '1. 기본 요소',
     screens: [
-      { screenName: 'Button', screenId: 'G-BAS-001', pageUrl: '#/components/button', filePath: '@/pages/components/ButtonPage.vue' },
-      { screenName: 'Typography', screenId: 'G-BAS-002', pageUrl: '#/components/typography', filePath: '@/pages/components/TypographyPage.vue' },
-      { screenName: 'Link', screenId: 'G-BAS-003', pageUrl: '#/components/link', filePath: '@/pages/components/LinkPage.vue' },
-      { screenName: 'Icon', screenId: 'G-BAS-004', pageUrl: '#/components/icon', filePath: '@/pages/components/IconPage.vue' }
+      { screenName: 'Button', screenId: 'G-BAS-001', pageUrl: '#/components/button', filePath: '@/pages/components/ButtonPage.jsx' },
+      { screenName: 'Typography', screenId: 'G-BAS-002', pageUrl: '#/components/typography', filePath: '@/pages/components/TypographyPage.jsx' },
+      { screenName: 'Link', screenId: 'G-BAS-003', pageUrl: '#/components/link', filePath: '@/pages/components/LinkPage.jsx' },
+      { screenName: 'Icon', screenId: 'G-BAS-004', pageUrl: '#/components/icon', filePath: '@/pages/components/IconPage.jsx' }
     ]
   },
   {
     id: 'data',
     name: '2. 데이터 표시',
     screens: [
-      { screenName: 'Badge', screenId: 'G-DAT-001', pageUrl: '#/components/badge', filePath: '@/pages/components/BadgePage.vue' },
-      { screenName: 'Tag', screenId: 'G-DAT-002', pageUrl: '#/components/tag', filePath: '@/pages/components/TagPage.vue' },
-      { screenName: 'Card', screenId: 'G-DAT-003', pageUrl: '#/components/card', filePath: '@/pages/components/CardPage.vue' }
+      { screenName: 'Badge', screenId: 'G-DAT-001', pageUrl: '#/components/badge', filePath: '@/pages/components/BadgePage.jsx' },
+      { screenName: 'Tag', screenId: 'G-DAT-002', pageUrl: '#/components/tag', filePath: '@/pages/components/TagPage.jsx' },
+      { screenName: 'Card', screenId: 'G-DAT-003', pageUrl: '#/components/card', filePath: '@/pages/components/CardPage.jsx' }
     ]
   },
   {
     id: 'form',
     name: '3. 폼',
     screens: [
-      { screenName: 'Input', screenId: 'G-FRM-001', pageUrl: '#/components/input', filePath: '@/pages/components/InputPage.vue' },
-      { screenName: 'Select', screenId: 'G-FRM-002', pageUrl: '#/components/select', filePath: '@/pages/components/SelectPage.vue' }
+      { screenName: 'Input', screenId: 'G-FRM-001', pageUrl: '#/components/input', filePath: '@/pages/components/InputPage.jsx' },
+      { screenName: 'Select', screenId: 'G-FRM-002', pageUrl: '#/components/select', filePath: '@/pages/components/SelectPage.jsx' }
     ]
   },
   {
     id: 'feedback',
     name: '4. 피드백',
     screens: [
-      { screenName: 'Alert', screenId: 'G-FBK-001', pageUrl: '#/components/alert', filePath: '@/pages/components/AlertPage.vue' },
-      { screenName: 'Progress', screenId: 'G-FBK-002', pageUrl: '#/components/progress', filePath: '@/pages/components/ProgressPage.vue' },
-      { screenName: 'Empty', screenId: 'G-FBK-003', pageUrl: '#/components/empty', filePath: '@/pages/components/EmptyPage.vue' }
+      { screenName: 'Alert', screenId: 'G-FBK-001', pageUrl: '#/components/alert', filePath: '@/pages/components/AlertPage.jsx' },
+      { screenName: 'Progress', screenId: 'G-FBK-002', pageUrl: '#/components/progress', filePath: '@/pages/components/ProgressPage.jsx' },
+      { screenName: 'Empty', screenId: 'G-FBK-003', pageUrl: '#/components/empty', filePath: '@/pages/components/EmptyPage.jsx' }
     ]
   },
   {
     id: 'navigation',
     name: '5. 네비게이션',
     screens: [
-      { screenName: 'Breadcrumb', screenId: 'G-NAV-001', pageUrl: '#/components/breadcrumb', filePath: '@/pages/components/BreadcrumbPage.vue' },
-      { screenName: 'Tabs', screenId: 'G-NAV-002', pageUrl: '#/components/tabs', filePath: '@/pages/components/TabsPage.vue' }
+      { screenName: 'Breadcrumb', screenId: 'G-NAV-001', pageUrl: '#/components/breadcrumb', filePath: '@/pages/components/BreadcrumbPage.jsx' },
+      { screenName: 'Tabs', screenId: 'G-NAV-002', pageUrl: '#/components/tabs', filePath: '@/pages/components/TabsPage.jsx' }
     ]
   }
 ]
@@ -138,7 +139,7 @@ function listScreenFiles (device, menuId) {
   if (!fs.existsSync(dir)) return []
   return fs.readdirSync(dir)
     .filter(function (name) {
-      return /^\d+\.vue$/.test(name)
+      return /^\d+\.jsx$/.test(name)
     })
     .sort(function (a, b) {
       return parseInt(a, 10) - parseInt(b, 10)
@@ -157,55 +158,47 @@ function menuShortName (folderName) {
   return String(folderName || '').replace(/^\d+\.\s*/, '')
 }
 
-/** skeleton/01Skeleton.vue 등 — 화면별 스켈레톤 (태그명은 Skeleton01) */
+/** skeleton/01Skeleton.jsx 등 — 화면별 스켈레톤 (태그명은 Skeleton01) */
 function stubScreenSkeletonContent (device, menu, fileName) {
   var devicePrefix = device === 'pc' ? 'Pc' : 'Mobile'
   var name = devicePrefix + toPascal(menu.id) + 'Skeleton' + fileName
   return (
-    '<template>\n' +
-    '  <div class="page-skeleton">\n' +
-    '    <Skeleton variant="eyebrow" />\n' +
-    '    <Skeleton variant="title" />\n' +
-    '    <Skeleton variant="meta" />\n' +
-    '    <Skeleton variant="text" />\n' +
-    '    <Skeleton variant="text-sm" />\n' +
-    '  </div>\n' +
-    '</template>\n\n' +
-    '<script>\n' +
     "import { Skeleton } from '@/components'\n\n" +
-    'export default {\n' +
-    "  name: '" + name + "',\n" +
-    '  components: { Skeleton: Skeleton }\n' +
-    '}\n' +
-    '</script>\n'
+    'export default function ' + name + ' () {\n' +
+    '  return (\n' +
+    '    <div className="page-skeleton">\n' +
+    '      <Skeleton variant="eyebrow" />\n' +
+    '      <Skeleton variant="title" />\n' +
+    '      <Skeleton variant="meta" />\n' +
+    '      <Skeleton variant="text" />\n' +
+    '      <Skeleton variant="text-sm" />\n' +
+    '    </div>\n' +
+    '  )\n' +
+    '}\n'
   )
 }
 
-/** skeleton/indexSkeleton.vue */
+/** skeleton/indexSkeleton.jsx */
 function stubIndexSkeletonContent (device, menu) {
   var devicePrefix = device === 'pc' ? 'Pc' : 'Mobile'
   var name = devicePrefix + toPascal(menu.id) + 'IndexSkeleton'
   return (
-    '<template>\n' +
-    '  <div class="page-skeleton">\n' +
-    '    <Skeleton variant="eyebrow" />\n' +
-    '    <Skeleton variant="title" />\n' +
-    '    <Skeleton variant="text" />\n' +
-    '    <Skeleton variant="chip" :width="96" />\n' +
-    '    <Skeleton variant="chip" :width="88" />\n' +
-    '  </div>\n' +
-    '</template>\n\n' +
-    '<script>\n' +
     "import { Skeleton } from '@/components'\n\n" +
-    'export default {\n' +
-    "  name: '" + name + "',\n" +
-    '  components: { Skeleton: Skeleton }\n' +
-    '}\n' +
-    '</script>\n'
+    'export default function ' + name + ' () {\n' +
+    '  return (\n' +
+    '    <div className="page-skeleton">\n' +
+    '      <Skeleton variant="eyebrow" />\n' +
+    '      <Skeleton variant="title" />\n' +
+    '      <Skeleton variant="text" />\n' +
+    '      <Skeleton variant="chip" width={96} />\n' +
+    '      <Skeleton variant="chip" width={88} />\n' +
+    '    </div>\n' +
+    '  )\n' +
+    '}\n'
   )
 }
 
-/** 화면(숫자.vue) 골격 — 메뉴/스크린 메타를 파일에 맞게 채움 */
+/** 화면(숫자.jsx) 골격 — 메뉴/스크린 메타를 파일에 맞게 채움 */
 function stubScreenPageContent (device, menu, screen, fileName) {
   var devicePrefix = device === 'pc' ? 'Pc' : 'Mobile'
   var base = devicePrefix + toPascal(menu.id)
@@ -219,59 +212,43 @@ function stubScreenPageContent (device, menu, screen, fileName) {
   var pageUrl = (screen && screen.pageUrl) || ('#/' + device + '/' + menu.id + '/' + fileName)
 
   return (
-    '<template>\n' +
-    '  <div class="' + menu.id + '">\n' +
-    '    <PageLoading :loading="loading">\n' +
-    '      <template #skeleton>\n' +
-    '        <' + skelComp + ' />\n' +
-    '      </template>\n' +
-    '      <div class="page">\n' +
-    '        <p>' + escHtml(menuLabel) + '</p>\n' +
-    '        <h1>' + escHtml(screenName) + '</h1>\n' +
-    '        <dl>\n' +
-    '          <div>\n' +
-    '            <dt>Screen Type</dt>\n' +
-    '            <dd>' + escHtml(screenType) + '</dd>\n' +
-    '          </div>\n' +
-    '          <div>\n' +
-    '            <dt>Screen ID</dt>\n' +
-    '            <dd>' + escHtml(screenId) + '</dd>\n' +
-    '          </div>\n' +
-    '          <div>\n' +
-    '            <dt>PageUrl</dt>\n' +
-    '            <dd>' + escHtml(pageUrl) + '</dd>\n' +
-    '          </div>\n' +
-    '        </dl>\n' +
-    '        <p>\n' +
-    '          ' + escHtml(short) + ' 메뉴 퍼블리시 화면입니다. 시안·마크업을 이 페이지에 연결해 작업하세요.\n' +
-    '        </p>\n' +
-    '      </div>\n' +
-    '    </PageLoading>\n' +
-    '  </div>\n' +
-    '</template>\n\n' +
-    '<script>\n' +
+    "import { useEffect, useState } from 'react'\n" +
     "import { PageLoading } from '@/components'\n" +
-    'import ' + skelComp + " from './skeleton/" + fileName + "Skeleton'\n\n" +
-    'export default {\n' +
-    "  name: '" + compName + "',\n" +
-    '  components: {\n' +
-    '    PageLoading: PageLoading,\n' +
-    '    ' + skelComp + ': ' + skelComp + '\n' +
-    '  },\n' +
-    '  data: function () {\n' +
-    '    return {\n' +
-    '      loading: true\n' +
-    '    }\n' +
-    '  },\n' +
-    '  mounted: function () {\n' +
-    '    var self = this\n' +
-    '    // 페이지 진입 로딩 예시 (실제 API 연동 시 교체)\n' +
-    '    window.setTimeout(function () {\n' +
-    '      self.loading = false\n' +
-    '    }, 700)\n' +
-    '  }\n' +
-    '}\n' +
-    '</script>\n'
+    'import ' + skelComp + " from './skeleton/" + fileName + "Skeleton.jsx'\n\n" +
+    'export default function ' + compName + ' () {\n' +
+    '  const [loading, setLoading] = useState(true)\n' +
+    '  useEffect(() => {\n' +
+    '    const t = window.setTimeout(() => setLoading(false), 700)\n' +
+    '    return () => window.clearTimeout(t)\n' +
+    '  }, [])\n\n' +
+    '  return (\n' +
+    '    <div className="' + menu.id + '">\n' +
+    '      <PageLoading loading={loading} skeleton={<' + skelComp + ' />}>\n' +
+    '        <div className="page">\n' +
+    '          <p>' + escHtml(menuLabel) + '</p>\n' +
+    '          <h1>' + escHtml(screenName) + '</h1>\n' +
+    '          <dl>\n' +
+    '            <div>\n' +
+    '              <dt>Screen Type</dt>\n' +
+    '              <dd>' + escHtml(screenType) + '</dd>\n' +
+    '            </div>\n' +
+    '            <div>\n' +
+    '              <dt>Screen ID</dt>\n' +
+    '              <dd>' + escHtml(screenId) + '</dd>\n' +
+    '            </div>\n' +
+    '            <div>\n' +
+    '              <dt>PageUrl</dt>\n' +
+    '              <dd>' + escHtml(pageUrl) + '</dd>\n' +
+    '            </div>\n' +
+    '          </dl>\n' +
+    '          <p>\n' +
+    '            ' + escHtml(short) + ' 메뉴 퍼블리시 화면입니다. 시안·마크업을 이 페이지에 연결해 작업하세요.\n' +
+    '          </p>\n' +
+    '        </div>\n' +
+    '      </PageLoading>\n' +
+    '    </div>\n' +
+    '  )\n' +
+    '}\n'
   )
 }
 
@@ -286,7 +263,7 @@ function buildIndexScreen (device, menu) {
     screenType: 'Index',
     screenId: prefix + '-' + idKey + '-000',
     pageUrl: base + '/' + menu.id,
-    filePath: '@/pages/' + device + '/' + menu.id + '/index.vue',
+    filePath: '@/pages/' + device + '/' + menu.id + '/index.jsx',
     owner: '',
     start: '',
     expected: '',
@@ -299,7 +276,7 @@ function buildIndexScreen (device, menu) {
   }
 }
 
-/** 메뉴 index.vue 골격 — 서브페이지 목록 메인 */
+/** 메뉴 index.jsx 골격 — 서브페이지 목록 메인 */
 function stubIndexPageContent (device, menu, screens) {
   var devicePrefix = device === 'pc' ? 'Pc' : 'Mobile'
   var deviceLabel = device === 'pc' ? 'PC' : 'MOBILE'
@@ -320,58 +297,40 @@ function stubIndexPageContent (device, menu, screens) {
     var no = String((s.pageUrl || '').split('/').pop() || '01')
     var toPath = '/' + device + '/' + menu.id + '/' + no
     return (
-      '        <li>\n' +
-      '          <router-link :to="\'' + toPath + '\'">' + escHtml(s.screenName || (short + ' ' + no)) + '</router-link>\n' +
-      '        </li>'
+      '            <li>\n' +
+      '              <Link to="' + toPath + '">' + escHtml(s.screenName || (short + ' ' + no)) + '</Link>\n' +
+      '            </li>'
     )
   }).join('\n')
 
-  // index 링크 들여쓰기 (PageLoading 안)
-  var nestedLinks = links.replace(/^        /gm, '          ')
-
   return (
-    '<template>\n' +
-    '  <div class="' + menu.id + '">\n' +
-    '    <PageLoading :loading="loading">\n' +
-    '      <template #skeleton>\n' +
-    '        <IndexSkeleton />\n' +
-    '      </template>\n' +
-    '      <div class="page">\n' +
-    '        <p>' + deviceLabel + ' 메뉴</p>\n' +
-    '        <h1>' + escHtml(menuLabel) + '</h1>\n' +
-    '        <p>\n' +
-    '          ' + escHtml(short) + ' 메뉴 메인입니다. 하위 화면을 선택하세요.\n' +
-    '        </p>\n' +
-    '        <ul>\n' +
-    nestedLinks + '\n' +
-    '        </ul>\n' +
-    '      </div>\n' +
-    '    </PageLoading>\n' +
-    '  </div>\n' +
-    '</template>\n\n' +
-    '<script>\n' +
+    "import { useEffect, useState } from 'react'\n" +
+    "import { Link } from 'react-router-dom'\n" +
     "import { PageLoading } from '@/components'\n" +
-    "import IndexSkeleton from './skeleton/indexSkeleton'\n\n" +
-    'export default {\n' +
-    "  name: '" + compName + "',\n" +
-    '  components: {\n' +
-    '    PageLoading: PageLoading,\n' +
-    '    IndexSkeleton: IndexSkeleton\n' +
-    '  },\n' +
-    '  data: function () {\n' +
-    '    return {\n' +
-    '      loading: true\n' +
-    '    }\n' +
-    '  },\n' +
-    '  mounted: function () {\n' +
-    '    var self = this\n' +
-    '    // 페이지 진입 로딩 예시 (실제 API 연동 시 교체)\n' +
-    '    window.setTimeout(function () {\n' +
-    '      self.loading = false\n' +
-    '    }, 700)\n' +
-    '  }\n' +
-    '}\n' +
-    '</script>\n'
+    "import IndexSkeleton from './skeleton/indexSkeleton.jsx'\n\n" +
+    'export default function ' + compName + ' () {\n' +
+    '  const [loading, setLoading] = useState(true)\n' +
+    '  useEffect(() => {\n' +
+    '    const t = window.setTimeout(() => setLoading(false), 700)\n' +
+    '    return () => window.clearTimeout(t)\n' +
+    '  }, [])\n\n' +
+    '  return (\n' +
+    '    <div className="' + menu.id + '">\n' +
+    '      <PageLoading loading={loading} skeleton={<IndexSkeleton />}>\n' +
+    '        <div className="page">\n' +
+    '          <p>' + deviceLabel + ' 메뉴</p>\n' +
+    '          <h1>' + escHtml(menuLabel) + '</h1>\n' +
+    '          <p>\n' +
+    '            ' + escHtml(short) + ' 메뉴 메인입니다. 하위 화면을 선택하세요.\n' +
+    '          </p>\n' +
+    '          <ul>\n' +
+    links + '\n' +
+    '          </ul>\n' +
+    '        </div>\n' +
+    '      </PageLoading>\n' +
+    '    </div>\n' +
+    '  )\n' +
+    '}\n'
   )
 }
 
@@ -392,7 +351,7 @@ function ensureStubPage (device, menu) {
   var skelDir = path.join(dir, 'skeleton')
   mkdirp(skelDir)
 
-  var firstPath = path.join(dir, '01.vue')
+  var firstPath = path.join(dir, '01.jsx')
   if (!fs.existsSync(firstPath)) {
     fs.writeFileSync(firstPath, stubScreenPageContent(device, menu, defaultScreen, '01'))
   }
@@ -400,20 +359,20 @@ function ensureStubPage (device, menu) {
   // 화면별 스켈레톤 파일 보장
   var files = listScreenFiles(device, menu.id)
   files.forEach(function (file) {
-    var no = file.replace(/\.vue$/, '')
-    var skelPath = path.join(skelDir, no + 'Skeleton.vue')
+    var no = file.replace(/\.jsx$/, '')
+    var skelPath = path.join(skelDir, no + 'Skeleton.jsx')
     if (!fs.existsSync(skelPath)) {
       fs.writeFileSync(skelPath, stubScreenSkeletonContent(device, menu, no))
     }
   })
   fs.writeFileSync(
-    path.join(skelDir, 'indexSkeleton.vue'),
+    path.join(skelDir, 'indexSkeleton.jsx'),
     stubIndexSkeletonContent(device, menu)
   )
 
-  // index.vue 는 서브페이지 메인 — 항상 현재 화면 목록으로 갱신
+  // index.jsx 는 서브페이지 메인 — 항상 현재 화면 목록으로 갱신
   var childScreens = files.map(function (file) {
-    var no = file.replace(/\.vue$/, '')
+    var no = file.replace(/\.jsx$/, '')
     return {
       screenName: menu.name + ' ' + no,
       pageUrl: baseUrl + '/' + menu.id + '/' + no
@@ -421,7 +380,7 @@ function ensureStubPage (device, menu) {
   })
   if (!childScreens.length) childScreens = [defaultScreen]
   fs.writeFileSync(
-    path.join(dir, 'index.vue'),
+    path.join(dir, 'index.jsx'),
     stubIndexPageContent(device, menu, childScreens)
   )
 }
@@ -433,7 +392,7 @@ function buildScreens (device, menu) {
   var idKey = menu.id.toUpperCase().replace(/-/g, '').slice(0, 6)
 
   var children = files.map(function (file) {
-    var no = file.replace(/\.vue$/, '')
+    var no = file.replace(/\.jsx$/, '')
     var num = parseInt(no, 10) || 1
     return {
       screenName: menu.name + ' ' + no,
@@ -457,7 +416,7 @@ function buildScreens (device, menu) {
 }
 
 function buildDeviceBundle (device) {
-  var outDir = path.join(process.cwd(), 'static/data/publish', device)
+  var outDir = path.join(process.cwd(), 'public/static/data/publish', device)
   mkdirp(outDir)
 
   var indexFolders = []
@@ -512,7 +471,7 @@ function mapGuideScreens (screens, prefix) {
 }
 
 function buildGuideBundle (dirName, idPrefix) {
-  var outDir = path.join(process.cwd(), 'static/data/publish', dirName)
+  var outDir = path.join(process.cwd(), 'public/static/data/publish', dirName)
   mkdirp(outDir)
 
   var indexFolders = []
@@ -545,14 +504,14 @@ function buildGuideBundle (dirName, idPrefix) {
 }
 
 function removeLegacyFiles () {
-  var root = path.join(process.cwd(), 'static/data/publish')
+  var root = path.join(process.cwd(), 'public/static/data/publish')
   ;['pc.json', 'mobile.json', 'pc-guide.json', 'mobile-guide.json', 'menus.json'].forEach(function (name) {
     var full = path.join(root, name)
     if (fs.existsSync(full)) fs.unlinkSync(full)
   })
 }
 
-var root = path.join(process.cwd(), 'static/data/publish')
+var root = path.join(process.cwd(), 'public/static/data/publish')
 mkdirp(root)
 
 writeJson(path.join(root, 'index.json'), {

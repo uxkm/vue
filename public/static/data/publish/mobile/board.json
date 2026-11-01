@@ -1,0 +1,39 @@
+{
+  "id": "board",
+  "name": "99. 게시판",
+  "filePath": "@/pages/mobile/board",
+  "screens": [
+    {
+      "screenName": "게시판 메인",
+      "screenType": "Index",
+      "screenId": "MO-BOARD-000",
+      "pageUrl": "#/mobile/board",
+      "filePath": "@/pages/mobile/board/index.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "게시판 01",
+      "screenType": "Page",
+      "screenId": "MO-BOARD-001",
+      "pageUrl": "#/mobile/board/01",
+      "filePath": "@/pages/mobile/board/01.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": ""
+    }
+  ]
+}

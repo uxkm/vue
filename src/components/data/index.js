@@ -1,3 +1,3 @@
-export { default as Badge } from './Badge.vue'
-export { default as Tag } from './Tag.vue'
-export { default as Card } from './Card.vue'
+export { Badge } from './Badge.tsx'
+export { Tag } from './Tag.tsx'
+export { Card } from './Card.tsx'

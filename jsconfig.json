@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
-    "module": "esnext",
-    "target": "es2015",
-    "jsx": "preserve",
+    "module": "ESNext",
+    "target": "ES2020",
+    "jsx": "react-jsx",
+    "checkJs": false,
     "paths": {
       "*": ["./*"],
       "@/*": ["./src/*"],

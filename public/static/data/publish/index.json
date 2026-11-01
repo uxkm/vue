@@ -1,0 +1,28 @@
+{
+  "project": {
+    "name": "Publish List",
+    "description": "PC / MOBILE 화면 퍼블리시 목록과 컴포넌트 가이드를 확인합니다."
+  },
+  "tabs": [
+    {
+      "id": "pc",
+      "label": "PC",
+      "base": "pc/"
+    },
+    {
+      "id": "mobile",
+      "label": "MOBILE",
+      "base": "mobile/"
+    },
+    {
+      "id": "pc-guide",
+      "label": "PC 컴포넌트 가이드",
+      "base": "pc-guide/"
+    },
+    {
+      "id": "mobile-guide",
+      "label": "Mobile 컴포넌트 가이드",
+      "base": "mobile-guide/"
+    }
+  ]
+}

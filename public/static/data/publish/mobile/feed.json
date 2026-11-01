@@ -1,0 +1,39 @@
+{
+  "id": "feed",
+  "name": "2. Feed",
+  "filePath": "@/pages/mobile/feed",
+  "screens": [
+    {
+      "screenName": "Feed 메인",
+      "screenType": "Index",
+      "screenId": "MO-FEED-000",
+      "pageUrl": "#/mobile/feed",
+      "filePath": "@/pages/mobile/feed/index.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "Feed 01",
+      "screenType": "Page",
+      "screenId": "MO-FEED-001",
+      "pageUrl": "#/mobile/feed/01",
+      "filePath": "@/pages/mobile/feed/01.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": ""
+    }
+  ]
+}
