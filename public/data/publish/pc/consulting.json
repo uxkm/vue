@@ -1,0 +1,39 @@
+{
+  "id": "consulting",
+  "name": "200. 상담시스템",
+  "filePath": "@/pages/pc/consulting",
+  "screens": [
+    {
+      "screenName": "상담시스템 메인",
+      "screenType": "Index",
+      "screenId": "PC-CONSUL-000",
+      "pageUrl": "#/pc/consulting",
+      "filePath": "@/pages/pc/consulting/index.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "상담시스템 01",
+      "screenType": "Page",
+      "screenId": "PC-CONSUL-001",
+      "pageUrl": "#/pc/consulting/01",
+      "filePath": "@/pages/pc/consulting/01.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    }
+  ]
+}

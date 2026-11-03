@@ -3,9 +3,9 @@
     :is="rootTag"
     class="btn"
     :class="btnClass"
-    :type="rootTag === 'button' ? resolvedType : null"
-    :href="rootTag === 'a' ? (href || null) : null"
-    :disabled="rootTag === 'button' ? isDisabled : null"
+    :type="tag === 'button' ? resolvedType : null"
+    :href="tag === 'a' ? (href || null) : null"
+    :disabled="tag === 'button' ? isDisabled : null"
     :role="computedRole"
     :tabindex="computedTabIndex"
     :aria-busy="loading ? 'true' : null"
@@ -146,7 +146,8 @@ export default {
   },
   computed: {
     rootTag: function () {
-      return this.tag
+      // Vue 3.4+: 컴포넌트명 Button 과 네이티브 button 충돌 방지
+      return 'vue:' + this.tag
     },
     resolvedType: function () {
       return this.nativeType || this.type

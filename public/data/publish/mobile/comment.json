@@ -1,0 +1,39 @@
+{
+  "id": "comment",
+  "name": "20. 댓글",
+  "filePath": "@/pages/mobile/comment",
+  "screens": [
+    {
+      "screenName": "댓글 메인",
+      "screenType": "Index",
+      "screenId": "MO-COMMEN-000",
+      "pageUrl": "#/mobile/comment",
+      "filePath": "@/pages/mobile/comment/index.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "댓글 01",
+      "screenType": "Page",
+      "screenId": "MO-COMMEN-001",
+      "pageUrl": "#/mobile/comment/01",
+      "filePath": "@/pages/mobile/comment/01.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    }
+  ]
+}

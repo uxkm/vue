@@ -2,10 +2,10 @@
  * PC/MOBILE(및 가이드) 하위를 화면명(메뉴)별 JSON으로 분리 생성
  *
  * 구조:
- *   static/data/publish/index.json
- *   static/data/publish/pc/index.json
- *   static/data/publish/pc/login.json
- *   static/data/publish/mobile/...
+ *   public/data/publish/index.json
+ *   public/data/publish/pc/index.json
+ *   public/data/publish/pc/login.json
+ *   public/data/publish/mobile/...
  *
  * - count 필드 없음 (목록에서 screens.length)
  * - 화면 파일: src/pages/{pc|mobile}/{menuId}/숫자.vue
@@ -50,55 +50,55 @@ var guideFolders = [
     id: 'layout',
     name: '0. 레이아웃',
     screens: [
-      { screenName: 'Container', screenId: 'G-LAY-001', pageUrl: '#/components/container', filePath: '@/pages/components/ContainerPage.vue' },
-      { screenName: 'Space', screenId: 'G-LAY-002', pageUrl: '#/components/space', filePath: '@/pages/components/SpacePage.vue' },
-      { screenName: 'Divider', screenId: 'G-LAY-003', pageUrl: '#/components/divider', filePath: '@/pages/components/DividerPage.vue' },
-      { screenName: 'Flex', screenId: 'G-LAY-004', pageUrl: '#/components/flex', filePath: '@/pages/components/FlexPage.vue' },
-      { screenName: 'Grid', screenId: 'G-LAY-005', pageUrl: '#/components/grid', filePath: '@/pages/components/GridPage.vue' }
+      { screenName: 'Container', screenId: 'G-LAY-001', pageUrl: '#/components/container', filePath: '@/pages/components/container.vue' },
+      { screenName: 'Space', screenId: 'G-LAY-002', pageUrl: '#/components/space', filePath: '@/pages/components/space.vue' },
+      { screenName: 'Divider', screenId: 'G-LAY-003', pageUrl: '#/components/divider', filePath: '@/pages/components/divider.vue' },
+      { screenName: 'Flex', screenId: 'G-LAY-004', pageUrl: '#/components/flex', filePath: '@/pages/components/flex.vue' },
+      { screenName: 'Grid', screenId: 'G-LAY-005', pageUrl: '#/components/grid', filePath: '@/pages/components/grid.vue' }
     ]
   },
   {
     id: 'basic',
     name: '1. 기본 요소',
     screens: [
-      { screenName: 'Button', screenId: 'G-BAS-001', pageUrl: '#/components/button', filePath: '@/pages/components/ButtonPage.vue' },
-      { screenName: 'Typography', screenId: 'G-BAS-002', pageUrl: '#/components/typography', filePath: '@/pages/components/TypographyPage.vue' },
-      { screenName: 'Link', screenId: 'G-BAS-003', pageUrl: '#/components/link', filePath: '@/pages/components/LinkPage.vue' },
-      { screenName: 'Icon', screenId: 'G-BAS-004', pageUrl: '#/components/icon', filePath: '@/pages/components/IconPage.vue' }
+      { screenName: 'Button', screenId: 'G-BAS-001', pageUrl: '#/components/button', filePath: '@/pages/components/button.vue' },
+      { screenName: 'Typography', screenId: 'G-BAS-002', pageUrl: '#/components/typography', filePath: '@/pages/components/typography.vue' },
+      { screenName: 'Link', screenId: 'G-BAS-003', pageUrl: '#/components/link', filePath: '@/pages/components/link.vue' },
+      { screenName: 'Icon', screenId: 'G-BAS-004', pageUrl: '#/components/icon', filePath: '@/pages/components/icon.vue' }
     ]
   },
   {
     id: 'data',
     name: '2. 데이터 표시',
     screens: [
-      { screenName: 'Badge', screenId: 'G-DAT-001', pageUrl: '#/components/badge', filePath: '@/pages/components/BadgePage.vue' },
-      { screenName: 'Tag', screenId: 'G-DAT-002', pageUrl: '#/components/tag', filePath: '@/pages/components/TagPage.vue' },
-      { screenName: 'Card', screenId: 'G-DAT-003', pageUrl: '#/components/card', filePath: '@/pages/components/CardPage.vue' }
+      { screenName: 'Badge', screenId: 'G-DAT-001', pageUrl: '#/components/badge', filePath: '@/pages/components/badge.vue' },
+      { screenName: 'Tag', screenId: 'G-DAT-002', pageUrl: '#/components/tag', filePath: '@/pages/components/tag.vue' },
+      { screenName: 'Card', screenId: 'G-DAT-003', pageUrl: '#/components/card', filePath: '@/pages/components/card.vue' }
     ]
   },
   {
     id: 'form',
     name: '3. 폼',
     screens: [
-      { screenName: 'Input', screenId: 'G-FRM-001', pageUrl: '#/components/input', filePath: '@/pages/components/InputPage.vue' },
-      { screenName: 'Select', screenId: 'G-FRM-002', pageUrl: '#/components/select', filePath: '@/pages/components/SelectPage.vue' }
+      { screenName: 'Input', screenId: 'G-FRM-001', pageUrl: '#/components/input', filePath: '@/pages/components/input.vue' },
+      { screenName: 'Select', screenId: 'G-FRM-002', pageUrl: '#/components/select', filePath: '@/pages/components/select.vue' }
     ]
   },
   {
     id: 'feedback',
     name: '4. 피드백',
     screens: [
-      { screenName: 'Alert', screenId: 'G-FBK-001', pageUrl: '#/components/alert', filePath: '@/pages/components/AlertPage.vue' },
-      { screenName: 'Progress', screenId: 'G-FBK-002', pageUrl: '#/components/progress', filePath: '@/pages/components/ProgressPage.vue' },
-      { screenName: 'Empty', screenId: 'G-FBK-003', pageUrl: '#/components/empty', filePath: '@/pages/components/EmptyPage.vue' }
+      { screenName: 'Alert', screenId: 'G-FBK-001', pageUrl: '#/components/alert', filePath: '@/pages/components/alert.vue' },
+      { screenName: 'Progress', screenId: 'G-FBK-002', pageUrl: '#/components/progress', filePath: '@/pages/components/progress.vue' },
+      { screenName: 'Empty', screenId: 'G-FBK-003', pageUrl: '#/components/empty', filePath: '@/pages/components/empty.vue' }
     ]
   },
   {
     id: 'navigation',
     name: '5. 네비게이션',
     screens: [
-      { screenName: 'Breadcrumb', screenId: 'G-NAV-001', pageUrl: '#/components/breadcrumb', filePath: '@/pages/components/BreadcrumbPage.vue' },
-      { screenName: 'Tabs', screenId: 'G-NAV-002', pageUrl: '#/components/tabs', filePath: '@/pages/components/TabsPage.vue' }
+      { screenName: 'Breadcrumb', screenId: 'G-NAV-001', pageUrl: '#/components/breadcrumb', filePath: '@/pages/components/breadcrumb.vue' },
+      { screenName: 'Tabs', screenId: 'G-NAV-002', pageUrl: '#/components/tabs', filePath: '@/pages/components/tabs.vue' }
     ]
   }
 ]
@@ -471,7 +471,7 @@ function buildScreens (device, menu) {
 }
 
 function buildDeviceBundle (device) {
-  var outDir = path.join(process.cwd(), 'static/data/publish', device)
+  var outDir = path.join(process.cwd(), 'public/data/publish', device)
   mkdirp(outDir)
 
   var indexFolders = []
@@ -526,7 +526,7 @@ function mapGuideScreens (screens, prefix) {
 }
 
 function buildGuideBundle (dirName, idPrefix) {
-  var outDir = path.join(process.cwd(), 'static/data/publish', dirName)
+  var outDir = path.join(process.cwd(), 'public/data/publish', dirName)
   mkdirp(outDir)
 
   var indexFolders = []
@@ -559,14 +559,14 @@ function buildGuideBundle (dirName, idPrefix) {
 }
 
 function removeLegacyFiles () {
-  var root = path.join(process.cwd(), 'static/data/publish')
+  var root = path.join(process.cwd(), 'public/data/publish')
   ;['pc.json', 'mobile.json', 'pc-guide.json', 'mobile-guide.json', 'menus.json'].forEach(function (name) {
     var full = path.join(root, name)
     if (fs.existsSync(full)) fs.unlinkSync(full)
   })
 }
 
-var root = path.join(process.cwd(), 'static/data/publish')
+var root = path.join(process.cwd(), 'public/data/publish')
 mkdirp(root)
 
 writeJson(path.join(root, 'index.json'), {

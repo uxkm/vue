@@ -1,0 +1,39 @@
+{
+  "id": "login",
+  "name": "0. 로그인",
+  "filePath": "@/pages/pc/login",
+  "screens": [
+    {
+      "screenName": "로그인 메인",
+      "screenType": "Index",
+      "screenId": "PC-LOGIN-000",
+      "pageUrl": "#/pc/login",
+      "filePath": "@/pages/pc/login/index.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "로그인 01",
+      "screenType": "Page",
+      "screenId": "PC-LOGIN-001",
+      "pageUrl": "#/pc/login/01",
+      "filePath": "@/pages/pc/login/01.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    }
+  ]
+}

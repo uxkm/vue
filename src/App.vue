@@ -1,14 +1,10 @@
 <template>
-  <AppShell>
-    <router-view />
-  </AppShell>
+  <NuxtLayout>
+    <NuxtPage :page-key="routeKey" />
+  </NuxtLayout>
 </template>
 
-<script>
-import { AppShell } from '@/components'
-
-export default {
-  name: 'App',
-  components: { AppShell }
-}
+<script setup>
+const route = useRoute()
+const routeKey = computed(() => route.fullPath)
 </script>

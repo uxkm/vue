@@ -1,0 +1,55 @@
+{
+  "id": "feedback",
+  "name": "4. 피드백",
+  "filePath": "@/pages/components",
+  "screens": [
+    {
+      "screenName": "Alert",
+      "screenType": "Guide",
+      "screenId": "G-FBK-001",
+      "pageUrl": "#/components/alert",
+      "filePath": "@/pages/components/alert.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "done",
+      "progress": 100,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "Progress",
+      "screenType": "Guide",
+      "screenId": "G-FBK-002",
+      "pageUrl": "#/components/progress",
+      "filePath": "@/pages/components/progress.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "done",
+      "progress": 100,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "Empty",
+      "screenType": "Guide",
+      "screenId": "G-FBK-003",
+      "pageUrl": "#/components/empty",
+      "filePath": "@/pages/components/empty.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "done",
+      "progress": 100,
+      "planning": "",
+      "design": "",
+      "remark": []
+    }
+  ]
+}

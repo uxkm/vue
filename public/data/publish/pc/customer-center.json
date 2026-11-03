@@ -1,0 +1,39 @@
+{
+  "id": "customer-center",
+  "name": "99. 고객센터",
+  "filePath": "@/pages/pc/customer-center",
+  "screens": [
+    {
+      "screenName": "고객센터 메인",
+      "screenType": "Index",
+      "screenId": "PC-CUSTOM-000",
+      "pageUrl": "#/pc/customer-center",
+      "filePath": "@/pages/pc/customer-center/index.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "고객센터 01",
+      "screenType": "Page",
+      "screenId": "PC-CUSTOM-001",
+      "pageUrl": "#/pc/customer-center/01",
+      "filePath": "@/pages/pc/customer-center/01.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    }
+  ]
+}

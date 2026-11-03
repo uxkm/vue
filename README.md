@@ -1,6 +1,6 @@
 # vue
 
-Vue 3 + Vite 기반 퍼블리시 목록 프로젝트입니다.
+Nuxt 3 기반 퍼블리시 목록 프로젝트입니다.
 
 ## 환경
 
@@ -9,8 +9,8 @@ Vue 3 + Vite 기반 퍼블리시 목록 프로젝트입니다.
 | Node.js | `>= 20` (권장 `24.11.1`) |
 | npm | `>= 10` |
 | Vue | `^3.5` |
-| Vite | `^6` |
-| 정적 폴더 | `static/` → URL `/...` |
+| Nuxt | `^3.15` |
+| 정적 폴더 | `public/` → URL `/...` |
 
 ```bash
 nvm install
@@ -22,11 +22,14 @@ npm install
 
 ## 폴더 구조
 
-- `static/` — Vite `publicDir` (예: `/fonts/...`, `/data/...`)
+- `public/` — 정적 자산 (예: `/fonts/...`, `/data/...`)
 - `src/assets/` — 번들 처리 에셋
 - `src/components/` → 알리아스 `@/components`, `@components`
-- `src/pages/` → 알리아스 `@/pages`, `@pages`
-- `index.html` — 프로젝트 루트 (Vite 엔트리)
+- `src/pages/` → 파일 기반 라우팅 (`#/pc/...`, `#/mobile/...`)
+- `src/layouts/` — 기본 레이아웃 (`AppShell`)
+- `nuxt.config.ts` — Nuxt / Vite 설정
+
+화면 파일(`index.vue`, `01.vue` 등)을 `src/pages`에 추가하면 해시 라우트가 자동 연결됩니다. `*Skeleton.vue`는 라우트에서 제외됩니다.
 
 ## 설치 / 실행
 

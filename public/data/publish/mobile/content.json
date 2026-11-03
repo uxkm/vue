@@ -1,0 +1,39 @@
+{
+  "id": "content",
+  "name": "3. Content",
+  "filePath": "@/pages/mobile/content",
+  "screens": [
+    {
+      "screenName": "Content 메인",
+      "screenType": "Index",
+      "screenId": "MO-CONTEN-000",
+      "pageUrl": "#/mobile/content",
+      "filePath": "@/pages/mobile/content/index.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "Content 01",
+      "screenType": "Page",
+      "screenId": "MO-CONTEN-001",
+      "pageUrl": "#/mobile/content/01",
+      "filePath": "@/pages/mobile/content/01.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    }
+  ]
+}

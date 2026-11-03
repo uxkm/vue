@@ -1,0 +1,39 @@
+{
+  "id": "payment",
+  "name": "13. 온라인결제",
+  "filePath": "@/pages/mobile/payment",
+  "screens": [
+    {
+      "screenName": "온라인결제 메인",
+      "screenType": "Index",
+      "screenId": "MO-PAYMEN-000",
+      "pageUrl": "#/mobile/payment",
+      "filePath": "@/pages/mobile/payment/index.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "온라인결제 01",
+      "screenType": "Page",
+      "screenId": "MO-PAYMEN-001",
+      "pageUrl": "#/mobile/payment/01",
+      "filePath": "@/pages/mobile/payment/01.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    }
+  ]
+}

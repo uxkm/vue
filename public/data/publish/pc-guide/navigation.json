@@ -1,0 +1,39 @@
+{
+  "id": "navigation",
+  "name": "5. 네비게이션",
+  "filePath": "@/pages/components",
+  "screens": [
+    {
+      "screenName": "Breadcrumb",
+      "screenType": "Guide",
+      "screenId": "G-NAV-001",
+      "pageUrl": "#/components/breadcrumb",
+      "filePath": "@/pages/components/breadcrumb.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "done",
+      "progress": 100,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "Tabs",
+      "screenType": "Guide",
+      "screenId": "G-NAV-002",
+      "pageUrl": "#/components/tabs",
+      "filePath": "@/pages/components/tabs.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "done",
+      "progress": 100,
+      "planning": "",
+      "design": "",
+      "remark": []
+    }
+  ]
+}

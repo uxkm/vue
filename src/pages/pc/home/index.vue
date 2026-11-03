@@ -8,23 +8,23 @@
         <p>PC 메뉴</p>
         <h1>1. Home</h1>
         <p>
-          참고 사이트 UI·인터랙션을 반영한 Home 퍼블리시 목록입니다.
+          Home 메뉴 메인입니다. 하위 화면을 선택하세요.
         </p>
         <ul>
           <li>
-            <router-link :to="'/pc/home/01'">Home 01 · Multicampus</router-link>
+            <router-link :to="'/pc/home/01'">Home 01</router-link>
           </li>
           <li>
-            <router-link :to="'/pc/home/02'">Home 02 · HD한국조선해양</router-link>
+            <router-link :to="'/pc/home/02'">Home 02</router-link>
           </li>
           <li>
-            <router-link :to="'/pc/home/03'">Home 03 · 토스플레이스</router-link>
+            <router-link :to="'/pc/home/03'">Home 03</router-link>
           </li>
           <li>
-            <router-link :to="'/pc/home/04'">Home 04 · 삼성SDS</router-link>
+            <router-link :to="'/pc/home/04'">Home 04</router-link>
           </li>
           <li>
-            <router-link :to="'/pc/home/05'">Home 05 · 당근 about</router-link>
+            <router-link :to="'/pc/home/05'">Home 05</router-link>
           </li>
         </ul>
       </div>
@@ -53,7 +53,7 @@ export default {
     this._loadingTimer = window.setTimeout(function () {
       self._loadingTimer = null
       self.loading = false
-    }, 500)
+    }, 700)
   },
   beforeUnmount: function () {
     if (this._loadingTimer) {

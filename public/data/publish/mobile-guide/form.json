@@ -1,0 +1,39 @@
+{
+  "id": "form",
+  "name": "3. 폼",
+  "filePath": "@/pages/components",
+  "screens": [
+    {
+      "screenName": "Input",
+      "screenType": "Guide",
+      "screenId": "MG-FRM-001",
+      "pageUrl": "#/components/input",
+      "filePath": "@/pages/components/input.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "done",
+      "progress": 100,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "Select",
+      "screenType": "Guide",
+      "screenId": "MG-FRM-002",
+      "pageUrl": "#/components/select",
+      "filePath": "@/pages/components/select.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "done",
+      "progress": 100,
+      "planning": "",
+      "design": "",
+      "remark": []
+    }
+  ]
+}

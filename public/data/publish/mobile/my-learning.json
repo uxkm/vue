@@ -1,0 +1,39 @@
+{
+  "id": "my-learning",
+  "name": "5. My Learning",
+  "filePath": "@/pages/mobile/my-learning",
+  "screens": [
+    {
+      "screenName": "My Learning 메인",
+      "screenType": "Index",
+      "screenId": "MO-MYLEAR-000",
+      "pageUrl": "#/mobile/my-learning",
+      "filePath": "@/pages/mobile/my-learning/index.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "My Learning 01",
+      "screenType": "Page",
+      "screenId": "MO-MYLEAR-001",
+      "pageUrl": "#/mobile/my-learning/01",
+      "filePath": "@/pages/mobile/my-learning/01.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    }
+  ]
+}

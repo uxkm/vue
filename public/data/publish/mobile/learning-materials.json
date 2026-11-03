@@ -1,0 +1,39 @@
+{
+  "id": "learning-materials",
+  "name": "19. 학습자료 전체보기",
+  "filePath": "@/pages/mobile/learning-materials",
+  "screens": [
+    {
+      "screenName": "학습자료 전체보기 메인",
+      "screenType": "Index",
+      "screenId": "MO-LEARNI-000",
+      "pageUrl": "#/mobile/learning-materials",
+      "filePath": "@/pages/mobile/learning-materials/index.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "학습자료 전체보기 01",
+      "screenType": "Page",
+      "screenId": "MO-LEARNI-001",
+      "pageUrl": "#/mobile/learning-materials/01",
+      "filePath": "@/pages/mobile/learning-materials/01.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    }
+  ]
+}

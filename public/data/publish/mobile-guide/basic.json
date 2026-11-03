@@ -1,0 +1,71 @@
+{
+  "id": "basic",
+  "name": "1. 기본 요소",
+  "filePath": "@/pages/components",
+  "screens": [
+    {
+      "screenName": "Button",
+      "screenType": "Guide",
+      "screenId": "MG-BAS-001",
+      "pageUrl": "#/components/button",
+      "filePath": "@/pages/components/button.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "done",
+      "progress": 100,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "Typography",
+      "screenType": "Guide",
+      "screenId": "MG-BAS-002",
+      "pageUrl": "#/components/typography",
+      "filePath": "@/pages/components/typography.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "done",
+      "progress": 100,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "Link",
+      "screenType": "Guide",
+      "screenId": "MG-BAS-003",
+      "pageUrl": "#/components/link",
+      "filePath": "@/pages/components/link.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "done",
+      "progress": 100,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "Icon",
+      "screenType": "Guide",
+      "screenId": "MG-BAS-004",
+      "pageUrl": "#/components/icon",
+      "filePath": "@/pages/components/icon.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "done",
+      "progress": 100,
+      "planning": "",
+      "design": "",
+      "remark": []
+    }
+  ]
+}

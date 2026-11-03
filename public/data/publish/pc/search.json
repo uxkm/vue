@@ -1,0 +1,39 @@
+{
+  "id": "search",
+  "name": "8. 통합검색",
+  "filePath": "@/pages/pc/search",
+  "screens": [
+    {
+      "screenName": "통합검색 메인",
+      "screenType": "Index",
+      "screenId": "PC-SEARCH-000",
+      "pageUrl": "#/pc/search",
+      "filePath": "@/pages/pc/search/index.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "통합검색 01",
+      "screenType": "Page",
+      "screenId": "PC-SEARCH-001",
+      "pageUrl": "#/pc/search/01",
+      "filePath": "@/pages/pc/search/01.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    }
+  ]
+}

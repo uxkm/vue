@@ -1,0 +1,39 @@
+{
+  "id": "campus",
+  "name": "4. Campus",
+  "filePath": "@/pages/mobile/campus",
+  "screens": [
+    {
+      "screenName": "Campus 메인",
+      "screenType": "Index",
+      "screenId": "MO-CAMPUS-000",
+      "pageUrl": "#/mobile/campus",
+      "filePath": "@/pages/mobile/campus/index.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "Campus 01",
+      "screenType": "Page",
+      "screenId": "MO-CAMPUS-001",
+      "pageUrl": "#/mobile/campus/01",
+      "filePath": "@/pages/mobile/campus/01.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    }
+  ]
+}

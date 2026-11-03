@@ -1,9 +1,9 @@
 <template>
   <div class="login">
-    <Header hidden />
-    <Footer hidden />
-
-    <PageLoading :loading="loading" skeleton="card">
+    <PageLoading :loading="loading">
+      <template #skeleton>
+        <IndexSkeleton />
+      </template>
       <div class="page">
         <p>PC 메뉴</p>
         <h1>0. 로그인</h1>
@@ -21,14 +21,14 @@
 </template>
 
 <script>
-import { Header, Footer, PageLoading } from '@/components'
+import { PageLoading } from '@/components'
+import IndexSkeleton from './skeleton/indexSkeleton'
 
 export default {
   name: 'PcLoginPage',
   components: {
-    Header: Header,
-    Footer: Footer,
-    PageLoading: PageLoading
+    PageLoading: PageLoading,
+    IndexSkeleton: IndexSkeleton
   },
   data: function () {
     return {

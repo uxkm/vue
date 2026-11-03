@@ -1,0 +1,39 @@
+{
+  "id": "certification",
+  "name": "18. 자격인증",
+  "filePath": "@/pages/pc/certification",
+  "screens": [
+    {
+      "screenName": "자격인증 메인",
+      "screenType": "Index",
+      "screenId": "PC-CERTIF-000",
+      "pageUrl": "#/pc/certification",
+      "filePath": "@/pages/pc/certification/index.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "자격인증 01",
+      "screenType": "Page",
+      "screenId": "PC-CERTIF-001",
+      "pageUrl": "#/pc/certification/01",
+      "filePath": "@/pages/pc/certification/01.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    }
+  ]
+}

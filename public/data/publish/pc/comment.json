@@ -1,0 +1,39 @@
+{
+  "id": "comment",
+  "name": "20. 댓글",
+  "filePath": "@/pages/pc/comment",
+  "screens": [
+    {
+      "screenName": "댓글 메인",
+      "screenType": "Index",
+      "screenId": "PC-COMMEN-000",
+      "pageUrl": "#/pc/comment",
+      "filePath": "@/pages/pc/comment/index.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "screenName": "댓글 01",
+      "screenType": "Page",
+      "screenId": "PC-COMMEN-001",
+      "pageUrl": "#/pc/comment/01",
+      "filePath": "@/pages/pc/comment/01.vue",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    }
+  ]
+}

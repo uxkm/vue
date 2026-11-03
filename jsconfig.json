@@ -7,10 +7,11 @@
     "paths": {
       "*": ["./*"],
       "@/*": ["./src/*"],
+      "~/*": ["./src/*"],
       "@components/*": ["./src/components/*"],
       "@pages/*": ["./src/pages/*"]
     }
   },
-  "include": ["src/**/*", "vite.config.js"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*", "nuxt.config.ts"],
+  "exclude": ["node_modules", "dist", ".nuxt", ".output"]
 }
