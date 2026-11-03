@@ -12,7 +12,7 @@
     "lint": "eslint --ext .js,.vue src",
     "build": "node build/build.js",
     "build_ui": "cross-env UI=true node --max_old_space_size=8192 build/build.js",
-    "clean": "rimraf .next next-env.d.ts dist node_modules/.cache .cache",
+    "clean": "rimraf .next next-env.d.ts out dist .vite node_modules/.vite node_modules/.cache .cache",
     "reinstall": "npm run clean && rimraf node_modules && npm install"
   },
   "dependencies": {

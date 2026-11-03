@@ -11,6 +11,8 @@ next-env.d.ts
 out/
 
 # Webpack / build cache
+.vite/
+node_modules/.vite/
 .cache/
 node_modules/.cache/
 
