@@ -10,7 +10,9 @@
     "start": "next start -p 8090",
     "lint": "next lint",
     "generate:menus": "node scripts/generate-publish-menus.js",
-    "generate:registry": "node scripts/generate-page-registry.js"
+    "generate:registry": "node scripts/generate-page-registry.js",
+    "clean": "rm -rf .next out next-env.d.ts dist .vite node_modules/.vite node_modules/.cache .cache",
+    "reinstall": "npm run clean && rm -rf node_modules && npm install"
   },
   "dependencies": {
     "@amcharts/amcharts5": "^5.11.0",

@@ -20,3 +20,11 @@ yarn-error.log*
 # local env files
 .env.local
 .env.*.local
+
+# Cross-branch / framework caches
+.next/
+out/
+.vite/
+node_modules/.vite/
+.cache/
+node_modules/.cache/
