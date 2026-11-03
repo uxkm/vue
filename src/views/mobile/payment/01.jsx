@@ -1,0 +1,43 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { PageLoading } from '@/components'
+import Skeleton01 from './skeleton/01Skeleton.jsx'
+
+export default function MobilePaymentScreen01 () {
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    // 페이지 진입 로딩 예시 (실제 API 연동 시 교체)
+    const timer = window.setTimeout(() => setLoading(false), 700)
+    return () => window.clearTimeout(timer)
+  }, [])
+
+  return (
+    <div className="payment">
+      <PageLoading loading={loading} skeleton={<Skeleton01 />}>
+        <div className="page">
+          <p>13. 온라인결제</p>
+          <h1>온라인결제 01</h1>
+          <dl>
+            <div>
+              <dt>Screen Type</dt>
+              <dd>Page</dd>
+            </div>
+            <div>
+              <dt>Screen ID</dt>
+              <dd>MO-PAYMEN-001</dd>
+            </div>
+            <div>
+              <dt>PageUrl</dt>
+              <dd>#/mobile/payment/01</dd>
+            </div>
+          </dl>
+          <p>
+            온라인결제 메뉴 퍼블리시 화면입니다. 시안·마크업을 이 페이지에 연결해 작업하세요.
+          </p>
+        </div>
+      </PageLoading>
+    </div>
+  )
+}

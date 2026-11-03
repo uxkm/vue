@@ -35,6 +35,35 @@
     box-sizing: border-box;
   }
 
+  &__start {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  &__back {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  &__back-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 0 8px 0 2px;
+    color: var(--color-accent, #0f766e);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:hover {
+      opacity: 0.85;
+    }
+  }
+
   &__brand-wrap {
     min-width: 0;
   }

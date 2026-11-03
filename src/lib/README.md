@@ -2,7 +2,7 @@
 
 | 이전 (Vue) | 현재 |
 |------------|------|
-| `vue` / `vue-router` | `react` / `react-router-dom` |
+| `vue` / `vue-router` / `react-router-dom` | `next` + `@/lib/router` (`Link`/`to` 호환) |
 | `vuex` / `vuex-map-fields` | `zustand` (`@/lib/store`) |
 | `vue-i18n` | `i18next` + `react-i18next` (`@/lib/i18n`) |
 | `@fullcalendar/vue` | `@fullcalendar/react` (`@/lib/calendar`) |

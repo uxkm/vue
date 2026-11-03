@@ -1,9 +1,12 @@
+'use client'
+
 import type { ReactNode } from 'react'
 import { hasNodes } from '@/utils/react'
 import { LAYOUT_SLOT_HIDDEN } from './layout-slot-shared'
 import { LayoutHiddenHost, useLayoutSlotSync } from './LayoutContext'
 
 const PART_NAMES = {
+  back: 'header-back',
   brand: 'header-brand',
   nav: 'header-nav',
   actions: 'header-actions'
@@ -14,10 +17,12 @@ const ALL_SLOTS = ['header', ...Object.values(PART_NAMES)]
 export interface HeaderProps {
   /** true면 AppHeader 전체를 숨김 */
   hidden?: boolean
+  /** 브랜드 왼쪽 뒤로가기 */
+  back?: ReactNode
   brand?: ReactNode
   nav?: ReactNode
   actions?: ReactNode
-  /** brand / nav / actions 없이 children 만 주면 헤더 전체 교체 */
+  /** back / brand / nav / actions 없이 children 만 주면 헤더 전체 교체 */
   children?: ReactNode
 }
 
@@ -28,14 +33,14 @@ export interface HeaderProps {
  * <Header hidden />
  *
  * @example 상단 영역만 교체
- * <Header brand={...} nav={...} actions={...} />
+ * <Header back={...} brand={...} nav={...} actions={...} />
  *
  * @example 헤더 전체 교체
  * <Header><header>...</header></Header>
  */
-export function Header ({ hidden = false, brand, nav, actions, children }: HeaderProps) {
+export function Header ({ hidden = false, back, brand, nav, actions, children }: HeaderProps) {
   useLayoutSlotSync((setSlot) => {
-    const parts = { brand, nav, actions }
+    const parts = { back, brand, nav, actions }
     const keys = Object.keys(PART_NAMES) as Array<keyof typeof PART_NAMES>
 
     if (hidden) {

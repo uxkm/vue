@@ -1,7 +1,7 @@
-@import 'common/base';
-@import 'common/utility';
-@import 'common/scroll-effects';
-@import 'components/index';
-@import 'pages/demo-shell';
-@import 'pages/sorting-menu-test';
-@import 'pages/filter-scroll-test';
+@use 'common/base';
+@use 'common/utility';
+@use 'common/scroll-effects';
+@use 'components/index';
+@use 'pages/demo-shell';
+@use 'pages/sorting-menu-test';
+@use 'pages/filter-scroll-test';

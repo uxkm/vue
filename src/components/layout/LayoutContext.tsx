@@ -1,3 +1,5 @@
+'use client'
+
 import {
   createContext,
   useCallback,
@@ -7,7 +9,7 @@ import {
   useState,
   type ReactNode
 } from 'react'
-import { useLocation } from 'react-router-dom'
+import { usePathname, useSearchParams } from 'next/navigation'
 import { hasNodes } from '@/utils/react'
 import {
   LAYOUT_SLOT_HIDDEN,
@@ -17,7 +19,7 @@ import {
 
 /**
  * pageSlots 값: 렌더할 노드 | 숨김 마커
- * 지원 name: header, header-brand, header-nav, header-actions, footer, footer-content
+ * 지원 name: header, header-back, header-brand, header-nav, header-actions, footer, footer-content
  */
 export type LayoutSlotValue = ReactNode | LayoutSlotHidden
 export type PageSlots = Record<string, LayoutSlotValue>
@@ -29,13 +31,15 @@ const LayoutSetSlotContext = createContext<SetPageSlot | null>(null)
 const LayoutSlotsContext = createContext<PageSlots>({})
 
 export function LayoutProvider ({ children }: { children?: ReactNode }) {
-  const location = useLocation()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const search = searchParams?.toString() || ''
   const [pageSlots, setPageSlots] = useState<PageSlots>({})
-  const [prevKey, setPrevKey] = useState(location.pathname + location.search + location.hash)
+  const [prevKey, setPrevKey] = useState(pathname + '?' + search)
 
-  // 라우트 변경 시 슬롯 초기화 (Vue: watch $route.fullPath)
+  // 라우트 변경 시 슬롯 초기화
   // 렌더 단계에서 처리해야 새 페이지의 Header 등록(layout effect)이 지워지지 않음
-  const key = location.pathname + location.search + location.hash
+  const key = pathname + '?' + search
   if (key !== prevKey) {
     setPrevKey(key)
     setPageSlots({})

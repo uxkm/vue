@@ -1,3 +1,5 @@
+'use client'
+
 import type { ReactNode } from 'react'
 import { hasNodes } from '@/utils/react'
 import { LAYOUT_SLOT_HIDDEN } from './layout-slot-shared'

@@ -1,3 +1,5 @@
+'use client'
+
 import type { ReactNode } from 'react'
 import { LAYOUT_SLOT_HIDDEN } from './layout-slot-shared'
 import { LayoutHiddenHost, useLayoutSlotSync } from './LayoutContext'

@@ -1,4 +1,6 @@
-import type { HTMLAttributes, ReactNode } from 'react'
+'use client'
+
+import { useLayoutEffect, useRef, type HTMLAttributes, type ReactNode } from 'react'
 import { cx } from '@/utils/cx'
 import { hasNodes } from '@/utils/react'
 import { AppFooter } from './AppFooter'
@@ -9,6 +11,7 @@ import { isLayoutSlotHidden } from './layout-slot-shared'
 export interface AppShellProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
   /** 헤더 전체 교체 (Vue #header 슬롯) */
   header?: ReactNode
+  headerBack?: ReactNode
   headerBrand?: ReactNode
   headerNav?: ReactNode
   headerActions?: ReactNode
@@ -21,6 +24,7 @@ export interface AppShellProps extends Omit<HTMLAttributes<HTMLDivElement>, 'chi
 
 function AppShellInner ({
   header,
+  headerBack,
   headerBrand,
   headerNav,
   headerActions,
@@ -31,6 +35,7 @@ function AppShellInner ({
   ...rest
 }: AppShellProps) {
   const pageSlots = useLayoutSlots()
+  const shellRef = useRef<HTMLDivElement>(null)
 
   const isSlotHidden = (name: string) => isLayoutSlotHidden(pageSlots[name])
   const slotNodes = (name: string): ReactNode =>
@@ -48,6 +53,7 @@ function AppShellInner ({
       ? slotNodes('header')
       : (
         <AppHeader
+          back={pick('header-back', headerBack)}
           brand={pick('header-brand', headerBrand)}
           nav={pick('header-nav', headerNav)}
           actions={pick('header-actions', headerActions)}
@@ -66,8 +72,43 @@ function AppShellInner ({
     else footerNode = <AppFooter />
   }
 
+  const hasHeader = headerNode != null
+
+  // 헤더 높이를 --app-header-height 로 노출 → 페이지 sticky 가 헤더 아래에 붙도록
+  useLayoutEffect(() => {
+    const shell = shellRef.current
+    if (!shell) return
+
+    const setHeight = (px: number) => {
+      shell.style.setProperty('--app-header-height', `${Math.max(0, px)}px`)
+    }
+
+    if (!hasHeader) {
+      setHeight(0)
+      return
+    }
+
+    const main = shell.querySelector('.app-shell__main')
+    const headerEl = main?.previousElementSibling as HTMLElement | null
+    if (!headerEl) {
+      setHeight(0)
+      return
+    }
+
+    const update = () => setHeight(headerEl.offsetHeight)
+    update()
+
+    const ro = new ResizeObserver(update)
+    ro.observe(headerEl)
+    return () => ro.disconnect()
+  }, [hasHeader])
+
   return (
-    <div {...rest} className={cx('app-shell', className)}>
+    <div
+      {...rest}
+      ref={shellRef}
+      className={cx('app-shell', hasHeader && 'app-shell--has-header', className)}
+    >
       {headerNode}
       <main className="app-shell__main">{children}</main>
       {footerNode}

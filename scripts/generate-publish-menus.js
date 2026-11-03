@@ -8,8 +8,8 @@
  *   static/data/publish/mobile/...
  *
  * - count 필드 없음 (목록에서 screens.length)
- * - 화면 파일: src/pages/{pc|mobile}/{menuId}/숫자.jsx (React)
- * - 메뉴 메인: src/pages/{pc|mobile}/{menuId}/index.jsx → #/{pc|mobile}/{menuId}
+ * - 화면 파일: src/views/{pc|mobile}/{menuId}/숫자.jsx (React)
+ * - 메뉴 메인: src/views/{pc|mobile}/{menuId}/index.jsx → #/{pc|mobile}/{menuId}
  * - 데이터 출력: public/static/data/publish/
  *
  * 사용: node scripts/generate-publish-menus.js
@@ -51,55 +51,55 @@ var guideFolders = [
     id: 'layout',
     name: '0. 레이아웃',
     screens: [
-      { screenName: 'Container', screenId: 'G-LAY-001', pageUrl: '#/components/container', filePath: '@/pages/components/ContainerPage.jsx' },
-      { screenName: 'Space', screenId: 'G-LAY-002', pageUrl: '#/components/space', filePath: '@/pages/components/SpacePage.jsx' },
-      { screenName: 'Divider', screenId: 'G-LAY-003', pageUrl: '#/components/divider', filePath: '@/pages/components/DividerPage.jsx' },
-      { screenName: 'Flex', screenId: 'G-LAY-004', pageUrl: '#/components/flex', filePath: '@/pages/components/FlexPage.jsx' },
-      { screenName: 'Grid', screenId: 'G-LAY-005', pageUrl: '#/components/grid', filePath: '@/pages/components/GridPage.jsx' }
+      { screenName: 'Container', screenId: 'G-LAY-001', pageUrl: '/components/container', filePath: '@/views/components/ContainerPage.jsx' },
+      { screenName: 'Space', screenId: 'G-LAY-002', pageUrl: '/components/space', filePath: '@/views/components/SpacePage.jsx' },
+      { screenName: 'Divider', screenId: 'G-LAY-003', pageUrl: '/components/divider', filePath: '@/views/components/DividerPage.jsx' },
+      { screenName: 'Flex', screenId: 'G-LAY-004', pageUrl: '/components/flex', filePath: '@/views/components/FlexPage.jsx' },
+      { screenName: 'Grid', screenId: 'G-LAY-005', pageUrl: '/components/grid', filePath: '@/views/components/GridPage.jsx' }
     ]
   },
   {
     id: 'basic',
     name: '1. 기본 요소',
     screens: [
-      { screenName: 'Button', screenId: 'G-BAS-001', pageUrl: '#/components/button', filePath: '@/pages/components/ButtonPage.jsx' },
-      { screenName: 'Typography', screenId: 'G-BAS-002', pageUrl: '#/components/typography', filePath: '@/pages/components/TypographyPage.jsx' },
-      { screenName: 'Link', screenId: 'G-BAS-003', pageUrl: '#/components/link', filePath: '@/pages/components/LinkPage.jsx' },
-      { screenName: 'Icon', screenId: 'G-BAS-004', pageUrl: '#/components/icon', filePath: '@/pages/components/IconPage.jsx' }
+      { screenName: 'Button', screenId: 'G-BAS-001', pageUrl: '/components/button', filePath: '@/views/components/ButtonPage.jsx' },
+      { screenName: 'Typography', screenId: 'G-BAS-002', pageUrl: '/components/typography', filePath: '@/views/components/TypographyPage.jsx' },
+      { screenName: 'Link', screenId: 'G-BAS-003', pageUrl: '/components/link', filePath: '@/views/components/LinkPage.jsx' },
+      { screenName: 'Icon', screenId: 'G-BAS-004', pageUrl: '/components/icon', filePath: '@/views/components/IconPage.jsx' }
     ]
   },
   {
     id: 'data',
     name: '2. 데이터 표시',
     screens: [
-      { screenName: 'Badge', screenId: 'G-DAT-001', pageUrl: '#/components/badge', filePath: '@/pages/components/BadgePage.jsx' },
-      { screenName: 'Tag', screenId: 'G-DAT-002', pageUrl: '#/components/tag', filePath: '@/pages/components/TagPage.jsx' },
-      { screenName: 'Card', screenId: 'G-DAT-003', pageUrl: '#/components/card', filePath: '@/pages/components/CardPage.jsx' }
+      { screenName: 'Badge', screenId: 'G-DAT-001', pageUrl: '/components/badge', filePath: '@/views/components/BadgePage.jsx' },
+      { screenName: 'Tag', screenId: 'G-DAT-002', pageUrl: '/components/tag', filePath: '@/views/components/TagPage.jsx' },
+      { screenName: 'Card', screenId: 'G-DAT-003', pageUrl: '/components/card', filePath: '@/views/components/CardPage.jsx' }
     ]
   },
   {
     id: 'form',
     name: '3. 폼',
     screens: [
-      { screenName: 'Input', screenId: 'G-FRM-001', pageUrl: '#/components/input', filePath: '@/pages/components/InputPage.jsx' },
-      { screenName: 'Select', screenId: 'G-FRM-002', pageUrl: '#/components/select', filePath: '@/pages/components/SelectPage.jsx' }
+      { screenName: 'Input', screenId: 'G-FRM-001', pageUrl: '/components/input', filePath: '@/views/components/InputPage.jsx' },
+      { screenName: 'Select', screenId: 'G-FRM-002', pageUrl: '/components/select', filePath: '@/views/components/SelectPage.jsx' }
     ]
   },
   {
     id: 'feedback',
     name: '4. 피드백',
     screens: [
-      { screenName: 'Alert', screenId: 'G-FBK-001', pageUrl: '#/components/alert', filePath: '@/pages/components/AlertPage.jsx' },
-      { screenName: 'Progress', screenId: 'G-FBK-002', pageUrl: '#/components/progress', filePath: '@/pages/components/ProgressPage.jsx' },
-      { screenName: 'Empty', screenId: 'G-FBK-003', pageUrl: '#/components/empty', filePath: '@/pages/components/EmptyPage.jsx' }
+      { screenName: 'Alert', screenId: 'G-FBK-001', pageUrl: '/components/alert', filePath: '@/views/components/AlertPage.jsx' },
+      { screenName: 'Progress', screenId: 'G-FBK-002', pageUrl: '/components/progress', filePath: '@/views/components/ProgressPage.jsx' },
+      { screenName: 'Empty', screenId: 'G-FBK-003', pageUrl: '/components/empty', filePath: '@/views/components/EmptyPage.jsx' }
     ]
   },
   {
     id: 'navigation',
     name: '5. 네비게이션',
     screens: [
-      { screenName: 'Breadcrumb', screenId: 'G-NAV-001', pageUrl: '#/components/breadcrumb', filePath: '@/pages/components/BreadcrumbPage.jsx' },
-      { screenName: 'Tabs', screenId: 'G-NAV-002', pageUrl: '#/components/tabs', filePath: '@/pages/components/TabsPage.jsx' }
+      { screenName: 'Breadcrumb', screenId: 'G-NAV-001', pageUrl: '/components/breadcrumb', filePath: '@/views/components/BreadcrumbPage.jsx' },
+      { screenName: 'Tabs', screenId: 'G-NAV-002', pageUrl: '/components/tabs', filePath: '@/views/components/TabsPage.jsx' }
     ]
   }
 ]
@@ -135,7 +135,7 @@ function pad (n, size) {
 }
 
 function listScreenFiles (device, menuId) {
-  var dir = path.join(process.cwd(), 'src/pages', device, menuId)
+  var dir = path.join(process.cwd(), 'src/views', device, menuId)
   if (!fs.existsSync(dir)) return []
   return fs.readdirSync(dir)
     .filter(function (name) {
@@ -255,7 +255,7 @@ function stubScreenPageContent (device, menu, screen, fileName) {
 /** 메뉴 index(메인) 화면 메타 */
 function buildIndexScreen (device, menu) {
   var prefix = device === 'pc' ? 'PC' : 'MO'
-  var base = device === 'pc' ? '#/pc' : '#/mobile'
+  var base = device === 'pc' ? '/pc' : '/mobile'
   var idKey = menu.id.toUpperCase().replace(/-/g, '').slice(0, 6)
   var menuLabel = folderLabel(menu)
   return {
@@ -263,7 +263,7 @@ function buildIndexScreen (device, menu) {
     screenType: 'Index',
     screenId: prefix + '-' + idKey + '-000',
     pageUrl: base + '/' + menu.id,
-    filePath: '@/pages/' + device + '/' + menu.id + '/index.jsx',
+    filePath: '@/views/' + device + '/' + menu.id + '/index.jsx',
     owner: '',
     start: '',
     expected: '',
@@ -290,7 +290,7 @@ function stubIndexPageContent (device, menu, screens) {
   if (!list.length) {
     list = [{
       screenName: short + ' 01',
-      pageUrl: '#/' + device + '/' + menu.id + '/01'
+      pageUrl: '/' + device + '/' + menu.id + '/01'
     }]
   }
   var links = list.map(function (s) {
@@ -335,11 +335,11 @@ function stubIndexPageContent (device, menu, screens) {
 }
 
 function ensureStubPage (device, menu) {
-  var dir = path.join(process.cwd(), 'src/pages', device, menu.id)
+  var dir = path.join(process.cwd(), 'src/views', device, menu.id)
   mkdirp(dir)
 
   var prefix = device === 'pc' ? 'PC' : 'MO'
-  var baseUrl = device === 'pc' ? '#/pc' : '#/mobile'
+  var baseUrl = device === 'pc' ? '/pc' : '/mobile'
   var idKey = menu.id.toUpperCase().replace(/-/g, '').slice(0, 6)
   var defaultScreen = {
     screenName: menu.name + ' 01',
@@ -387,7 +387,7 @@ function ensureStubPage (device, menu) {
 
 function buildScreens (device, menu) {
   var prefix = device === 'pc' ? 'PC' : 'MO'
-  var base = device === 'pc' ? '#/pc' : '#/mobile'
+  var base = device === 'pc' ? '/pc' : '/mobile'
   var files = listScreenFiles(device, menu.id)
   var idKey = menu.id.toUpperCase().replace(/-/g, '').slice(0, 6)
 
@@ -399,7 +399,7 @@ function buildScreens (device, menu) {
       screenType: 'Page',
       screenId: prefix + '-' + idKey + '-' + pad(num, 3),
       pageUrl: base + '/' + menu.id + '/' + no,
-      filePath: '@/pages/' + device + '/' + menu.id + '/' + file,
+      filePath: '@/views/' + device + '/' + menu.id + '/' + file,
       owner: '',
       start: '',
       expected: '',
@@ -431,7 +431,7 @@ function buildDeviceBundle (device) {
     writeJson(path.join(outDir, fileName), {
       id: menu.id,
       name: folderLabel(menu),
-      filePath: '@/pages/' + device + '/' + menu.id,
+      filePath: '@/views/' + device + '/' + menu.id,
       screens: screens
     })
 
@@ -485,7 +485,7 @@ function buildGuideBundle (dirName, idPrefix) {
     writeJson(path.join(outDir, fileName), {
       id: folder.id,
       name: folder.name,
-      filePath: '@/pages/components',
+      filePath: '@/views/components',
       screens: screens
     })
 

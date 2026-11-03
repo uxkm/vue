@@ -267,9 +267,10 @@
   }
 
   // 탭 + 검색 고정 (화면명 레이블은 스크롤)
+  // AppShell 헤더가 있으면 그 아래(--app-header-height)에 붙음
   &-sticky {
     position: sticky;
-    top: 0;
+    top: var(--app-header-height, 0px);
     z-index: 20;
     width: 100%;
     margin: 0 0 12px;

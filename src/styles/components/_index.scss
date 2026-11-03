@@ -1,32 +1,32 @@
 // basic
-@import 'basic/button';
-@import 'basic/icon';
-@import 'basic/link';
-@import 'basic/typography';
+@use 'basic/button';
+@use 'basic/icon';
+@use 'basic/link';
+@use 'basic/typography';
 
 // layout
-@import 'layout/container';
-@import 'layout/space';
-@import 'layout/divider';
-@import 'layout/flex';
-@import 'layout/grid';
-@import 'layout/app-shell';
+@use 'layout/container';
+@use 'layout/space';
+@use 'layout/divider';
+@use 'layout/flex';
+@use 'layout/grid';
+@use 'layout/app-shell';
 
 // form
-@import 'form/input';
-@import 'form/switch';
+@use 'form/input';
+@use 'form/switch';
 
 // data
-@import 'data/badge';
-@import 'data/tag';
-@import 'data/card';
+@use 'data/badge';
+@use 'data/tag';
+@use 'data/card';
 
 // feedback
-@import 'feedback/alert';
-@import 'feedback/empty';
-@import 'feedback/progress';
-@import 'feedback/skeleton';
+@use 'feedback/alert';
+@use 'feedback/empty';
+@use 'feedback/progress';
+@use 'feedback/skeleton';
 
 // navigation
-@import 'navigation/tabs';
-@import 'navigation/breadcrumb';
+@use 'navigation/tabs';
+@use 'navigation/breadcrumb';
