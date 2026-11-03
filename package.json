@@ -11,7 +11,9 @@
     "start": "npm run dev",
     "build": "vite build",
     "build_ui": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "clean": "rm -rf dist .vite node_modules/.vite node_modules/.cache .cache .next out next-env.d.ts",
+    "reinstall": "npm run clean && rm -rf node_modules && npm install"
   },
   "dependencies": {
     "@amcharts/amcharts4": "^4.10.40",
