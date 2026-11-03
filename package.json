@@ -10,7 +10,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx src",
-    "generate:menus": "node scripts/generate-publish-menus.js"
+    "generate:menus": "node scripts/generate-publish-menus.js",
+    "clean": "rm -rf dist .vite node_modules/.vite node_modules/.cache .cache .next out next-env.d.ts",
+    "reinstall": "npm run clean && rm -rf node_modules && npm install"
   },
   "dependencies": {
     "@amcharts/amcharts5": "^5.11.0",
