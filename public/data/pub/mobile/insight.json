@@ -1,0 +1,55 @@
+{
+  "id": "insight",
+  "name": "문의하기",
+  "filePath": "@/mobile/insight",
+  "depth2": [
+    {
+      "name": "문의하기 메인",
+      "type": "Index",
+      "id": "MO-INSIGH-000",
+      "pageUrl": "/mobile/insight",
+      "filePath": "@/mobile/insight/index.jsx",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "name": "문의하기 > 기업교육문의",
+      "type": "Page",
+      "id": "MO-INSIGH-001",
+      "pageUrl": "/mobile/insight/corporate-inquiry",
+      "filePath": "@/mobile/insight/CorporateInquiryPage.jsx",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "name": "문의하기 > 간편 진단 & 맞춤교육 추천",
+      "type": "Page",
+      "id": "MO-INSIGH-002",
+      "pageUrl": "/mobile/insight/easy-diagnosis",
+      "filePath": "@/mobile/insight/EasyDiagnosisPage.jsx",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    }
+  ]
+}

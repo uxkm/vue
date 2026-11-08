@@ -1,0 +1,128 @@
+{
+  "id": "sample",
+  "name": "3뎁스 샘플",
+  "filePath": "@/mobile/sample",
+  "excludeFromStats": true,
+  "depth2": [
+    {
+      "id": "auth",
+      "name": "인증",
+      "depth3": [
+        {
+          "name": "로그인",
+          "type": "Page",
+          "id": "MO-SAMPLE-001",
+          "pageUrl": "/mobile/sample/login",
+          "filePath": "@/mobile/sample/auth/Login.jsx",
+          "owner": "",
+          "start": "",
+          "expected": "",
+          "end": "",
+          "status": "pending",
+          "progress": 0,
+          "planning": "",
+          "design": "",
+          "remark": [
+            {
+              "date": "2026-11-08",
+              "author": "pub",
+              "text": "Depth1(폴더) > Depth2(그룹) > Depth3(화면) 샘플"
+            }
+          ]
+        },
+        {
+          "name": "회원가입",
+          "type": "Page",
+          "id": "MO-SAMPLE-002",
+          "pageUrl": "/mobile/sample/signup",
+          "filePath": "@/mobile/sample/auth/Signup.jsx",
+          "owner": "",
+          "start": "",
+          "expected": "",
+          "end": "",
+          "status": "active",
+          "progress": 40,
+          "planning": "",
+          "design": "",
+          "remark": []
+        },
+        {
+          "name": "비밀번호 찾기",
+          "type": "Page",
+          "id": "MO-SAMPLE-003",
+          "pageUrl": "/mobile/sample/find-password",
+          "filePath": "@/mobile/sample/auth/FindPassword.jsx",
+          "owner": "",
+          "start": "",
+          "expected": "",
+          "end": "",
+          "status": "pending",
+          "progress": 0,
+          "planning": "",
+          "design": "",
+          "remark": []
+        }
+      ]
+    },
+    {
+      "id": "mypage",
+      "name": "마이페이지",
+      "depth3": [
+        {
+          "name": "내 정보",
+          "type": "Page",
+          "id": "MO-SAMPLE-101",
+          "pageUrl": "/mobile/sample/mypage",
+          "filePath": "@/mobile/sample/mypage/Profile.jsx",
+          "owner": "",
+          "start": "",
+          "expected": "",
+          "end": "",
+          "status": "done",
+          "progress": 100,
+          "planning": "",
+          "design": "",
+          "remark": []
+        },
+        {
+          "name": "알림 설정",
+          "type": "Page",
+          "id": "MO-SAMPLE-102",
+          "pageUrl": "/mobile/sample/mypage/notification",
+          "filePath": "@/mobile/sample/mypage/Notification.jsx",
+          "owner": "",
+          "start": "",
+          "expected": "",
+          "end": "",
+          "status": "pending",
+          "progress": 0,
+          "planning": "",
+          "design": "",
+          "remark": []
+        }
+      ]
+    },
+    {
+      "name": "샘플 안내 (2뎁스 리프)",
+      "type": "Guide",
+      "id": "MO-SAMPLE-000",
+      "pageUrl": "/mobile/sample",
+      "filePath": "@/mobile/sample/index.jsx",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": [
+        {
+          "date": "2026-11-08",
+          "author": "pub",
+          "text": "그룹 없이 Depth1 바로 아래 두는 기존 2뎁스 형태도 동일 JSON에 혼용 가능"
+        }
+      ]
+    }
+  ]
+}

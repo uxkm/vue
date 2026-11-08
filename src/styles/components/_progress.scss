@@ -1,0 +1,359 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Progress
+  --progress-height: 8px;
+  --progress-height-sm: 4px;
+  --progress-height-lg: 12px;
+  --progress-radius: var(--radius-pill);
+  --progress-max-width: var(--input-max-width);
+  --progress-gap: var(--space-sm);
+  --progress-label-size: var(--text-size-sm);
+  --progress-value-size: var(--text-size-sm);
+  --progress-value-weight: 600;
+  --progress-inside-size: var(--text-size-xs);
+  --progress-circle-size: 7.5rem;
+  --progress-circle-size-sm: 5rem;
+  --progress-circle-size-lg: 9rem;
+  --progress-circle-stroke: 6;
+  --progress-circle-stroke-sm: 4;
+  --progress-circle-stroke-lg: 8;
+  --progress-circle-value-size: var(--text-size-lg);
+  --progress-circle-value-size-sm: var(--text-size-sm);
+  --progress-circle-value-size-lg: var(--text-size-xl);
+
+}
+
+// Progress — OOCSS: 구조(.progress) + 크기(.progress_sm) + 변형(.progress_striped · .progress_circle · .is-indeterminate) + 공통 색상(.color_*)
+//
+//   <div class="progress progress_fit">
+//     <div class="progress_header">
+//       <span class="progress_label">업로드 중</span>
+//       <span class="progress_value">60%</span>
+//     </div>
+//     <div class="progress_track" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" aria-label="업로드 진행률">
+//       <span class="progress_bar" style="width: 60%"></span>
+//     </div>
+//   </div>
+
+@mixin progress-fill-color($color) {
+  --progress-fill: #{$color};
+
+  .progress_bar {
+    background-color: $color;
+  }
+
+  &.progress_circle .progress_circle-bar {
+    stroke: $color;
+  }
+}
+
+@mixin progress-color-variant($name) {
+  @if $name == primary {
+    @include progress-fill-color(var(--color-accent));
+  } @else if $name == success {
+    @include progress-fill-color(var(--color-success));
+  } @else if $name == danger {
+    @include progress-fill-color(var(--color-danger));
+  } @else if $name == warning {
+    @include progress-fill-color(var(--color-warning));
+  }
+}
+
+@keyframes progress-stripes {
+  0% {
+    background-position: 1rem 0;
+  }
+
+  100% {
+    background-position: 0 0;
+  }
+}
+
+@keyframes progress-indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(250%);
+  }
+}
+
+.progress {
+  --progress-fill: var(--color-accent);
+  --progress-percent: 0;
+
+  display: block;
+  // inline-flex Space 등 shrink-to-fit 부모에서 width:100% 는 0으로 붕괴함 → 기본은 max 토큰 너비
+  width: var(--progress-max-width);
+  max-width: 100%;
+  font-size: var(--progress-label-size);
+  line-height: 1.4;
+  color: var(--color-text);
+
+  @each $name in primary, success, danger, warning {
+    &.color_#{$name} {
+      @include progress-color-variant($name);
+    }
+  }
+
+  // 막대 옆 퍼센트 · 상태 텍스트 (React Progress showInfo) — 트랙 바로 뒤에 오면 한 줄로 배치
+  // flex: 1 1 auto + width:auto 는 트랙이 콘텐츠 최소폭(~0)으로 줄어 막대가 점으로 보이는 원인이 됨
+  &:has(> .progress_track + .progress_info) {
+    display: flex;
+    align-items: center;
+    gap: var(--progress-gap);
+
+    .progress_track {
+      flex: 1 1 0%;
+      min-width: 0;
+      width: auto;
+    }
+  }
+
+  &_info {
+    flex-shrink: 0;
+    font-size: var(--progress-value-size);
+    font-weight: var(--progress-value-weight);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-muted);
+  }
+
+  // React Progress — 막대(.progress_bar)에 color_* · 루트에 is-success / is-exception
+  .progress_bar {
+    &.color_primary {
+      --progress-fill: var(--color-accent);
+      background-color: var(--progress-fill);
+    }
+
+    &.color_success {
+      --progress-fill: var(--color-success);
+      background-color: var(--progress-fill);
+    }
+
+    &.color_danger {
+      --progress-fill: var(--color-danger);
+      background-color: var(--progress-fill);
+    }
+
+    &.color_warning {
+      --progress-fill: var(--color-warning);
+      background-color: var(--progress-fill);
+    }
+
+    &.color_muted {
+      --progress-fill: var(--color-text-muted);
+      background-color: var(--progress-fill);
+    }
+
+    &.color_info {
+      --progress-fill: var(--color-info, var(--color-accent));
+      background-color: var(--progress-fill);
+    }
+  }
+
+  &.is-success .progress_bar {
+    --progress-fill: var(--color-success);
+    background-color: var(--progress-fill);
+  }
+
+  &.is-exception .progress_bar {
+    --progress-fill: var(--color-danger);
+    background-color: var(--progress-fill);
+  }
+
+  &_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--progress-gap);
+    margin-bottom: var(--space-xs);
+  }
+
+  &_label {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: var(--color-text);
+  }
+
+  &_value {
+    flex-shrink: 0;
+    font-size: var(--progress-value-size);
+    font-weight: var(--progress-value-weight);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-muted);
+  }
+
+  &_track {
+    position: relative;
+    width: 100%;
+    height: var(--progress-height);
+    border-radius: var(--progress-radius);
+    background: var(--color-border-subtle);
+    overflow: hidden;
+  }
+
+  &_bar {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background-color: var(--progress-fill);
+    transition: width $transition-base;
+  }
+
+  // ----- 너비
+
+  &_fit {
+    width: var(--progress-max-width);
+    max-width: 100%;
+  }
+
+  &_block {
+    width: 100%;
+    max-width: none;
+  }
+
+  // ----- 크기
+
+  &_sm {
+    --progress-height: var(--progress-height-sm);
+    --progress-label-size: var(--text-size-xs);
+    --progress-value-size: var(--text-size-xs);
+  }
+
+  &_lg {
+    --progress-height: var(--progress-height-lg);
+    --progress-label-size: var(--text-size-base);
+    --progress-value-size: var(--text-size-base);
+  }
+
+  // ----- 줄무늬 · 애니메이션 (루트 .progress_striped / .progress_animated)
+
+  &_striped .progress_bar,
+  & .progress_bar.progress_striped {
+    background-image: linear-gradient(
+      45deg,
+      rgb(255 255 255 / 0.15) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgb(255 255 255 / 0.15) 50%,
+      rgb(255 255 255 / 0.15) 75%,
+      transparent 75%,
+      transparent
+    );
+    background-size: 1rem 1rem;
+  }
+
+  &_animated#{&}_striped .progress_bar,
+  & .progress_bar.progress_striped.progress_animated {
+    animation: progress-stripes 1s linear infinite;
+  }
+
+  // ----- 불확정
+
+  &.is-indeterminate .progress_bar {
+    width: 40% !important;
+    animation: progress-indeterminate 1.5s ease-in-out infinite;
+  }
+
+  // ----- 바 안 텍스트
+
+  &_inside {
+    .progress_track {
+      height: auto;
+      min-height: var(--progress-height);
+      background: transparent;
+    }
+
+    .progress_bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 2.5rem;
+      min-height: var(--progress-height);
+      padding: 0 var(--space-sm);
+      font-size: var(--progress-inside-size);
+      font-weight: var(--progress-value-weight);
+      color: var(--color-on-accent);
+      white-space: nowrap;
+    }
+
+    .progress_info {
+      font-size: inherit;
+      color: inherit;
+    }
+
+    &.progress_sm .progress_bar {
+      min-height: var(--progress-height-sm);
+      font-size: var(--text-size-xs);
+    }
+
+    &.progress_lg .progress_bar {
+      min-height: var(--progress-height-lg);
+      font-size: var(--text-size-sm);
+    }
+  }
+
+  // ----- 원형
+
+  &_circle {
+    --progress-circle-circumference: calc(2 * 3.14159265 * 45);
+
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--progress-circle-size);
+    height: var(--progress-circle-size);
+    max-width: none;
+
+    .progress_circle-svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .progress_circle-track {
+      fill: none;
+      stroke: var(--color-border-subtle);
+      stroke-width: var(--progress-circle-stroke);
+    }
+
+    .progress_circle-bar {
+      fill: none;
+      stroke: var(--progress-fill);
+      stroke-width: var(--progress-circle-stroke);
+      stroke-linecap: round;
+      stroke-dasharray: var(--progress-circle-circumference);
+      stroke-dashoffset: calc(var(--progress-circle-circumference) * (1 - var(--progress-percent) / 100));
+      transition: stroke-dashoffset $transition-base;
+    }
+
+    .progress_circle-value {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--progress-circle-value-size);
+      font-weight: var(--progress-value-weight);
+      font-variant-numeric: tabular-nums;
+      color: var(--color-text);
+      pointer-events: none;
+    }
+
+    &.progress_sm {
+      --progress-circle-size: var(--progress-circle-size-sm);
+      --progress-circle-stroke: var(--progress-circle-stroke-sm);
+      --progress-circle-value-size: var(--progress-circle-value-size-sm);
+    }
+
+    &.progress_lg {
+      --progress-circle-size: var(--progress-circle-size-lg);
+      --progress-circle-stroke: var(--progress-circle-stroke-lg);
+      --progress-circle-value-size: var(--progress-circle-value-size-lg);
+    }
+  }
+}

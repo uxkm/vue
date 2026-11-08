@@ -1,0 +1,80 @@
+.filter-scroll-demo {
+  &__head {
+    margin: 0 0 24px;
+  }
+
+  &__back {
+    display: inline-block;
+    margin-bottom: 12px;
+    color: var(--color-accent);
+    font-size: 13px;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__title {
+    margin: 0 0 8px;
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  &__desc {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 14px;
+    line-height: 1.5;
+
+    code {
+      font-size: 12px;
+    }
+  }
+
+  &__meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin: 20px 0 0;
+    padding: 16px;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    background: var(--color-surface);
+
+    div {
+      margin: 0;
+    }
+
+    dt {
+      margin: 0 0 4px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    dd {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+      &.is-ok {
+        color: #067647;
+      }
+
+      &.is-fail {
+        color: #b42318;
+      }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+}

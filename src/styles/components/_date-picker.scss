@@ -1,0 +1,277 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Date Picker — trigger · panel
+  --date-picker-input-padding-y: 0.5rem;
+  --date-picker-input-padding-x: 0.75rem;
+  --date-picker-input-font-size: var(--text-size-base);
+  --date-picker-btn-size: 2.25rem;
+  --date-picker-icon-size: 1rem;
+
+}
+
+// Date Picker — OOCSS: 구조(.date_picker) + 스킨(.date_picker_*) + 파트(.date_picker_trigger · .date_picker_panel)
+//
+//   <div class="date_picker">
+//     <div class="date_picker_trigger">
+//       <input class="date_picker_input" readonly>
+//       <button class="date_picker_btn" type="button">…</button>
+//     </div>
+//     <div class="date_picker_panel" role="dialog">…calendar…</div>
+//   </div>
+//
+//   <div class="date_picker_range">…</div>   <!-- 기간 선택 -->
+//   <div class="date_picker date_picker_inline">…</div>  <!-- 인라인 -->
+
+.date_picker {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  max-width: var(--input-max-width);
+
+  &.date_picker_fit {
+    width: 100%;
+    max-width: var(--input-max-width);
+  }
+
+  &.date_picker_block {
+    display: block;
+    max-width: none;
+  }
+
+  &.date_picker_sm {
+    --date-picker-input-padding-y: 0.3rem;
+    --date-picker-input-padding-x: 0.6rem;
+    --date-picker-input-font-size: #{size-token(sm)};
+    --date-picker-btn-size: 1.75rem;
+    --date-picker-icon-size: 0.875rem;
+  }
+
+  &.date_picker_lg {
+    --date-picker-input-padding-y: 0.65rem;
+    --date-picker-input-padding-x: 0.9rem;
+    --date-picker-input-font-size: #{size-token(lg)};
+    --date-picker-btn-size: 2.5rem;
+    --date-picker-icon-size: 1.125rem;
+  }
+
+  &.is-open {
+    .date_picker_trigger {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px var(--color-accent-muted);
+    }
+
+    .date_picker_panel {
+      display: block;
+    }
+  }
+
+  &.is-disabled {
+    @include disabled-surface;
+
+    .date_picker_trigger {
+      background-color: var(--color-surface-disabled);
+      border-color: var(--color-border-disabled);
+    }
+
+    .date_picker_input {
+      color: var(--color-text-disabled);
+    }
+  }
+
+  &.is-error {
+    .date_picker_trigger {
+      border-color: var(--color-danger);
+    }
+
+    &.is-open .date_picker_trigger {
+      box-shadow: 0 0 0 3px var(--color-input-error-ring);
+    }
+  }
+
+  &.is-success {
+    .date_picker_trigger {
+      border-color: var(--color-success);
+    }
+
+    &.is-open .date_picker_trigger {
+      box-shadow: 0 0 0 3px var(--color-input-success-ring);
+    }
+  }
+
+  &.date_picker_inline {
+    max-width: none;
+
+    .date_picker_trigger {
+      display: none;
+    }
+
+    .date_picker_panel {
+      position: static;
+      display: block;
+      margin-top: 0;
+      border: none;
+      box-shadow: none;
+    }
+  }
+
+  &_trigger {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    border: 1px solid var(--color-border);
+    border-radius: $radius-sm;
+    background: var(--color-bg);
+    overflow: hidden;
+    transition:
+      border-color $transition-fast,
+      box-shadow $transition-fast,
+      background-color $transition-fast;
+
+    &:hover:not(:has(:disabled)) {
+      border-color: var(--color-accent);
+    }
+
+    &:has(.date_picker_clear) .date_picker_input {
+      padding-right: calc(var(--date-picker-input-padding-x) + 1.25rem);
+    }
+
+    .date_picker_clear {
+      position: absolute;
+      top: 50%;
+      right: calc(var(--date-picker-btn-size) + #{$space-xs});
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border: none;
+      background: transparent;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transform: translateY(-50%);
+      @include focus-ring;
+      @include square-size(1.25rem);
+
+      .icon {
+        width: 0.875rem;
+        height: 0.875rem;
+      }
+
+      &:hover {
+        color: var(--color-text);
+      }
+    }
+  }
+
+  &_input {
+    flex: 1;
+    min-width: 0;
+    padding: var(--date-picker-input-padding-y) var(--date-picker-input-padding-x);
+    border: none;
+    background: transparent;
+    font-family: $font-family;
+    font-size: var(--date-picker-input-font-size);
+    line-height: 1.5;
+    color: var(--color-text);
+    cursor: pointer;
+
+    &::placeholder {
+      color: var(--color-text-muted);
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+
+    &.date_picker_placeholder,
+    &:placeholder-shown:not(:focus) {
+      color: var(--color-text-muted);
+    }
+  }
+
+  &_btn {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: var(--date-picker-btn-size);
+    border: none;
+    border-left: 1px solid var(--color-border);
+    background: var(--color-surface-raised);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    @include focus-ring;
+
+    .icon {
+      width: var(--date-picker-icon-size);
+      height: var(--date-picker-icon-size);
+    }
+
+    &:hover:not(:disabled) {
+      color: color-token(primary);
+      background: var(--color-surface);
+    }
+
+    &:disabled {
+      color: var(--color-text-disabled);
+      cursor: not-allowed;
+    }
+  }
+
+  &_panel {
+    position: absolute;
+    top: calc(100% + #{$space-xs});
+    left: 0;
+    z-index: var(--z-dropdown, 100);
+    display: none;
+    min-width: 100%;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: $radius-lg;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+
+    .calendar {
+      max-width: none;
+      border: none;
+      border-radius: $radius-lg;
+      box-shadow: none;
+    }
+
+    &.date_picker_panel-end {
+      left: auto;
+      right: 0;
+    }
+
+    &.date_picker_panel-wide {
+      min-width: auto;
+      width: max-content;
+    }
+  }
+
+  &_range {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $space-sm;
+    width: 100%;
+    max-width: 36rem;
+
+    .date_picker {
+      flex: 1;
+      min-width: 8rem;
+      max-width: none;
+    }
+  }
+
+  &_sep {
+    flex-shrink: 0;
+    font-size: size-token(sm);
+    color: var(--color-text-muted);
+    user-select: none;
+  }
+}

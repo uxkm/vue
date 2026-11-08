@@ -1,6 +1,0 @@
-export { Alert } from './Alert.tsx'
-export { Progress } from './Progress.tsx'
-export { Empty } from './Empty.tsx'
-export { Skeleton } from './Skeleton.tsx'
-export { PageSkeleton } from './PageSkeleton.tsx'
-export { PageLoading } from './PageLoading.tsx'

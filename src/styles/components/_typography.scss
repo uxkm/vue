@@ -1,0 +1,277 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Typography — title
+  --typo-title-1-size: 2.375rem;
+  --typo-title-1-weight: 700;
+  --typo-title-1-line-height: 1.2;
+  --typo-title-1-letter-spacing: -0.02em;
+
+  --typo-title-2-size: 1.875rem;
+  --typo-title-2-weight: 700;
+  --typo-title-2-line-height: 1.25;
+  --typo-title-2-letter-spacing: -0.015em;
+
+  --typo-title-3-size: 1.5rem;
+  --typo-title-3-weight: 600;
+  --typo-title-3-line-height: 1.3;
+  --typo-title-3-letter-spacing: -0.01em;
+
+  --typo-title-4-size: 1.25rem;
+  --typo-title-4-weight: 600;
+  --typo-title-4-line-height: 1.35;
+
+  --typo-title-5-size: 1rem;
+  --typo-title-5-weight: 600;
+  --typo-title-5-line-height: 1.4;
+
+
+  // ----- Typography — text
+  --typo-text-size: var(--text-size-base);
+  --typo-text-line-height: 1.6;
+  --typo-text-size-xs: var(--text-size-xs);
+  --typo-text-size-sm: var(--text-size-sm);
+  --typo-text-size-lg: var(--text-size-lg);
+  --typo-text-size-xl: var(--text-size-xl);
+
+  --typo-paragraph-gap: var(--space-md);
+  --typo-list-gap: var(--space-xs);
+  --typo-mark-bg: rgba(250, 219, 20, 0.35);
+  --typo-sub-sup-size: 0.75em;
+  --typo-sub-offset: -0.25em;
+  --typo-sup-offset: -0.5em;
+  --typo-small-size: var(--text-size-sm);
+  --typo-code-padding-y: 0.1em;
+  --typo-code-padding-x: 0.35em;
+  --typo-code-radius: 4px;
+  --typo-blockquote-border-width: 3px;
+
+  --typo-lead-size: var(--text-size-lg);
+  --typo-lead-line-height: 1.6;
+  --typo-caption-size: var(--text-size-xs);
+  --typo-label-size: var(--text-size-sm);
+  --typo-label-weight: 600;
+  --typo-overline-size: var(--text-size-xs);
+  --typo-overline-weight: 600;
+  --typo-overline-spacing: 0.06em;
+  --typo-kbd-padding-y: 0.15em;
+  --typo-kbd-padding-x: 0.4em;
+  --typo-pre-padding: var(--space-md);
+  --typo-pre-radius: var(--radius-md);
+
+}
+
+// Typography — OOCSS: 구조(.typo_*) + 공통 색상(.color_*)
+
+.typo {
+  // ----- Title
+
+  @for $i from 1 through 5 {
+    &_title-#{$i} {
+      margin: 0;
+      @include typo-title($i);
+    }
+  }
+
+  // ----- Paragraph (단락 간격)
+
+  &_paragraph {
+    line-height: var(--typo-text-line-height);
+    margin: 0 0 var(--typo-paragraph-gap);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  // ----- Size (공통 .size_* 사용)
+
+  // ----- Inline style
+
+  &_strong {
+    font-weight: 600;
+  }
+
+  &_italic {
+    font-style: italic;
+  }
+
+  &_underline {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  &_delete {
+    text-decoration: line-through;
+    opacity: 0.75;
+  }
+
+  &_mark {
+    padding: var(--typo-code-padding-y) 0.25em;
+    background: var(--typo-mark-bg);
+    border-radius: var(--typo-code-radius);
+  }
+
+  &_sub,
+  &_sup {
+    font-size: var(--typo-sub-sup-size);
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+  }
+
+  &_sub {
+    bottom: var(--typo-sub-offset);
+  }
+
+  &_sup {
+    top: var(--typo-sup-offset);
+  }
+
+  &_small {
+    font-size: var(--typo-small-size);
+    line-height: inherit;
+    color: var(--color-text-muted);
+  }
+
+  &_code {
+    display: inline;
+    font-family: $font-family-mono;
+    font-size: 0.875em;
+    padding: var(--typo-code-padding-y) var(--typo-code-padding-x);
+    background: var(--color-surface-raised);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--typo-code-radius);
+    vertical-align: baseline;
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  // ----- Ellipsis — 공통 .text_ellipsis* 사용 (utilities)
+
+  // ----- Blockquote
+
+  &_blockquote {
+    margin: 0;
+    padding: $space-sm 0 $space-sm $space-lg;
+    line-height: var(--typo-text-line-height);
+    border-left: var(--typo-blockquote-border-width) solid var(--color-border);
+  }
+
+  // ----- List
+
+  &_list,
+  &_list-ordered {
+    line-height: var(--typo-text-line-height);
+    padding-left: $space-lg;
+    margin: 0;
+
+    li + li {
+      margin-top: var(--typo-list-gap);
+    }
+  }
+
+  &_list {
+    list-style: disc;
+  }
+
+  &_list-ordered {
+    list-style: decimal;
+  }
+
+  // ----- Link
+
+  &_link {
+    color: var(--color-accent-text);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color var(--transition-fast);
+
+    &:hover {
+      color: var(--color-accent-text-hover);
+    }
+
+    &:focus-visible {
+      outline: var(--focus-outline-width) solid var(--color-accent);
+      outline-offset: var(--focus-outline-offset);
+      border-radius: 2px;
+    }
+  }
+
+  // ----- Stack (제목·본문 간격)
+
+  &_stack {
+    @include flex-stack(var(--space-sm));
+  }
+
+  &_stack-lg {
+    @include flex-stack(var(--space-md));
+  }
+
+  // ----- Lead · Caption · Label · Overline
+
+  &_lead {
+    font-size: var(--typo-lead-size);
+    line-height: var(--typo-lead-line-height);
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  &_caption {
+    font-size: var(--typo-caption-size);
+    line-height: 1.5;
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  &_label {
+    font-size: var(--typo-label-size);
+    font-weight: var(--typo-label-weight);
+    line-height: 1.4;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  &_overline {
+    font-size: var(--typo-overline-size);
+    font-weight: var(--typo-overline-weight);
+    letter-spacing: var(--typo-overline-spacing);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  // ----- Keyboard · Pre
+
+  &_kbd {
+    display: inline-block;
+    font-family: $font-family-mono;
+    font-size: 0.8125em;
+    padding: var(--typo-kbd-padding-y) var(--typo-kbd-padding-x);
+    border: 1px solid var(--color-border);
+    border-bottom-width: 2px;
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-raised);
+    color: var(--color-text);
+    line-height: 1.3;
+  }
+
+  &_pre {
+    margin: 0;
+    padding: var(--typo-pre-padding);
+    overflow-x: auto;
+    white-space: pre;
+    tab-size: 2;
+    font-family: $font-family-mono;
+    font-size: size-token(sm);
+    line-height: 1.6;
+    color: var(--color-text);
+    background: var(--color-surface-raised);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--typo-pre-radius);
+
+    code {
+      white-space: inherit;
+    }
+  }
+}

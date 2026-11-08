@@ -5,6 +5,7 @@
  * - 숫자 카운트업: requestAnimationFrame
  */
 
+/** 동작 줄이기를 켠 사용자. 스크롤 애니메이션을 생략한다 */
 var REDUCE_MOTION = false
 try {
   REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -73,9 +74,12 @@ export function createScrollParallax (root) {
     return { destroy: function () {} }
   }
 
+  /** 다음 프레임에 패럴랙스를 다시 그릴지 */
   var ticking = false
+  /** false 가 되면 해제된 뒤의 갱신을 무시 */
   var alive = true
 
+  /** 보이는 요소의 translateY 를 스크롤 진행에 맞춰 다시 계산 */
   function update () {
     ticking = false
     if (!alive) return
@@ -83,12 +87,15 @@ export function createScrollParallax (root) {
     nodes.forEach(function (el) {
       var speed = parseFloat(el.getAttribute('data-parallax') || '0.2')
       var rect = el.getBoundingClientRect()
+      /** 요소가 화면을 통과한 정도. 0.5 가 가운데 */
       var progress = (vh - rect.top) / (vh + rect.height)
+      /** 가운데에서 벗어난 만큼의 이동 픽셀 */
       var offset = (progress - 0.5) * speed * 120
       el.style.transform = 'translate3d(0, ' + offset.toFixed(2) + 'px, 0)'
     })
   }
 
+  /** 스크롤·리사이즈 때 한 프레임에 한 번만 update */
   function onScroll () {
     if (ticking) return
     ticking = true
@@ -123,9 +130,12 @@ export function createStickyProgress (trackEl, onProgress) {
     return { destroy: function () {} }
   }
 
+  /** 다음 프레임에 진행률을 다시 계산할지 */
   var ticking = false
+  /** false 가 되면 해제된 뒤의 갱신을 무시 */
   var alive = true
 
+  /** 트랙을 얼마나 지나왔는지 0~1 로 알려 준다 */
   function update () {
     ticking = false
     if (!alive) return
@@ -135,6 +145,7 @@ export function createStickyProgress (trackEl, onProgress) {
     onProgress(scrolled / total)
   }
 
+  /** 스크롤·리사이즈 때 한 프레임에 한 번만 update */
   function onScroll () {
     if (ticking) return
     ticking = true

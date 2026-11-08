@@ -1,14 +1,14 @@
 {
   "id": "common",
-  "name": "99. Common",
-  "filePath": "@/pages/mobile/common",
-  "screens": [
+  "name": "공통 페이지",
+  "filePath": "@/mobile/common",
+  "depth2": [
     {
-      "screenName": "Common 메인",
-      "screenType": "Index",
-      "screenId": "MO-COMMON-000",
+      "name": "공통 페이지 메인",
+      "type": "Index",
+      "id": "MO-COMMON-000",
       "pageUrl": "/mobile/common",
-      "filePath": "@/pages/mobile/common/index.vue",
+      "filePath": "@/mobile/common/index.jsx",
       "owner": "",
       "start": "",
       "expected": "",
@@ -20,11 +20,11 @@
       "remark": []
     },
     {
-      "screenName": "Common 01",
-      "screenType": "Page",
-      "screenId": "MO-COMMON-001",
-      "pageUrl": "/mobile/common/01",
-      "filePath": "@/pages/mobile/common/01.vue",
+      "name": "GNB",
+      "type": "Page",
+      "id": "MO-COMMON-001",
+      "pageUrl": "/mobile/common/gnb",
+      "filePath": "@/mobile/common/GNB.jsx",
       "owner": "",
       "start": "",
       "expected": "",
@@ -33,7 +33,71 @@
       "progress": 0,
       "planning": "",
       "design": "",
-      "remark": ""
+      "remark": []
+    },
+    {
+      "name": "전체메뉴",
+      "type": "Page",
+      "id": "MO-COMMON-002",
+      "pageUrl": "/mobile/common/full-menu",
+      "filePath": "@/mobile/common/FullMenu.jsx",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "name": "통합검색",
+      "type": "Page",
+      "id": "MO-COMMON-003",
+      "pageUrl": "/mobile/common/integrated-search",
+      "filePath": "@/mobile/common/IntegratedSearch.jsx",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "name": "사이트맵",
+      "type": "Page",
+      "id": "MO-COMMON-004",
+      "pageUrl": "/mobile/common/sitemap",
+      "filePath": "@/mobile/common/Sitemap.jsx",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
+    },
+    {
+      "name": "Footer",
+      "type": "Page",
+      "id": "MO-COMMON-005",
+      "pageUrl": "/mobile/common/footer",
+      "filePath": "@/mobile/common/Footer.jsx",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": "",
+      "design": "",
+      "remark": []
     }
   ]
 }

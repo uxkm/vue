@@ -1,3 +1,4 @@
+/** 날짜·시간 라이브러리. 한국어, UTC, 상대 시간, 형식 파싱을 켠다 */
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'

@@ -1,0 +1,248 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Stat
+  --stat-gap: var(--space-xs);
+  --stat-label-size: var(--text-size-sm);
+  --stat-value-size: 1.75rem;
+  --stat-value-weight: 700;
+  --stat-desc-size: var(--text-size-sm);
+  --stat-group-gap: var(--space-lg);
+  --stat-value-size-sm: 1.25rem;
+  --stat-value-size-lg: 2.25rem;
+  --stat-card-padding: var(--space-lg);
+  --stat-icon-wrap-size: 2.5rem;
+  --stat-horizontal-gap: var(--space-md);
+
+}
+
+// Stat — OOCSS: 구조(.stat) + 스킨(.stat_card · .stat_horizontal) + 파트(.stat_label · .stat_value · .stat_trend)
+//
+//   <div class="stat">
+//     <span class="stat_label">총 사용자</span>
+//     <span class="stat_value">1,234</span>
+//     <span class="stat_desc color_success">+12%</span>
+//   </div>
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--stat-gap);
+  width: 100%;
+
+  &_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-sm;
+  }
+
+  &_label {
+    font-size: var(--stat-label-size);
+    color: var(--color-text-muted);
+  }
+
+  &_value-row {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+    flex-wrap: wrap;
+  }
+
+  &_value {
+    font-size: var(--stat-value-size);
+    font-weight: var(--stat-value-weight);
+    color: var(--color-text);
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &_prefix,
+  &_suffix {
+    font-size: var(--stat-label-size);
+    font-weight: 600;
+    color: var(--color-text-muted);
+    line-height: 1.2;
+  }
+
+  &_suffix {
+    font-weight: 500;
+  }
+
+  &_desc {
+    font-size: var(--stat-desc-size);
+    color: var(--color-text-muted);
+  }
+
+  &_trend {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-size: var(--stat-desc-size);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+
+    .icon,
+    svg {
+      @include square-size(0.875em);
+      flex-shrink: 0;
+    }
+  }
+
+  &_icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+
+    .icon,
+    svg {
+      @include square-size(1.25rem);
+    }
+  }
+
+  &_icon-wrap {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: $radius-md;
+    color: color-token(primary);
+    background: var(--color-accent-muted);
+    @include square-size(var(--stat-icon-wrap-size));
+
+    .icon,
+    svg {
+      width: 50%;
+      height: 50%;
+    }
+
+    @include surface-soft-colors(success warning danger);
+  }
+
+  // 크기
+  &_sm {
+    --stat-value-size: var(--stat-value-size-sm);
+
+    .stat_icon-wrap {
+      @include square-size(2rem);
+    }
+  }
+
+  &_lg {
+    --stat-value-size: var(--stat-value-size-lg);
+  }
+
+  // 가로 · 인라인
+  &_horizontal {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--stat-horizontal-gap);
+  }
+
+  &_inline {
+    flex-direction: row;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: $space-sm;
+
+    .stat_label {
+      margin-right: auto;
+    }
+  }
+
+  &_row {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: $space-md;
+
+    .stat_body {
+      display: flex;
+      flex-direction: column;
+      gap: var(--stat-gap);
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  // 카드 스킨
+  &_card {
+    padding: var(--stat-card-padding);
+    border: 1px solid var(--color-border);
+    border-radius: $radius-lg;
+    background: var(--color-surface);
+  }
+
+  &_shadow {
+    border-color: var(--color-border-subtle);
+    box-shadow: var(--shadow-sm);
+  }
+
+  &_borderless {
+    border-color: transparent;
+    background: var(--color-surface-raised);
+  }
+
+  &_accent {
+    border-left-width: 3px;
+    @include accent-edge-colors();
+  }
+
+  // 그룹
+  &_group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: var(--stat-group-gap);
+    width: 100%;
+  }
+
+  &_group-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  &_group-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  &_group-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  &_group-divider {
+    .stat {
+      padding-inline: var(--stat-group-gap);
+
+      &:not(:first-child) {
+        border-left: 1px solid var(--color-border-subtle);
+      }
+    }
+
+    @media (max-width: $breakpoint-md) {
+      grid-template-columns: 1fr;
+
+      .stat {
+        padding-inline: 0;
+        padding-block: $space-md;
+
+        &:not(:first-child) {
+          border-left: none;
+          border-top: 1px solid var(--color-border-subtle);
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .stat_group-3,
+  .stat_group-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .stat_group-2 {
+    grid-template-columns: 1fr;
+  }
+}

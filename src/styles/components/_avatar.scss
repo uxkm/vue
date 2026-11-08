@@ -1,0 +1,151 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Avatar — size
+  --avatar-size-sm: 1.5rem;
+  --avatar-size: 2rem;
+  --avatar-size-lg: 2.5rem;
+  --avatar-size-xl: 3.5rem;
+  --avatar-font-size-sm: var(--text-size-xs);
+  --avatar-font-size: var(--text-size-sm);
+  --avatar-font-size-lg: var(--text-size-base);
+  --avatar-font-size-xl: var(--text-size-lg);
+  --avatar-icon-size-sm: 0.75rem;
+  --avatar-icon-size: 1rem;
+  --avatar-icon-size-lg: 1.25rem;
+  --avatar-icon-size-xl: 1.75rem;
+  --avatar-group-overlap: -0.5rem;
+  --avatar-badge-size-sm: 6px;
+  --avatar-badge-size: 8px;
+  --avatar-badge-size-lg: 10px;
+
+}
+
+// Avatar — OOCSS: 구조(.avatar) + 크기(.avatar_*) + 형태(.avatar_square) + 공통 색상(.color_*)
+//
+//   <span class="avatar"><img class="avatar_image" src="…" alt="홍길동"></span>
+//   <span class="avatar color_primary" aria-hidden="true">홍</span>
+//   <span class="avatar"><svg class="avatar_icon" …></svg></span>
+
+.avatar {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 50%;
+
+  // 상태 점은 원 밖으로 살짝 나가므로 클리핑을 끈다
+  &:has(.avatar_badge) {
+    overflow: visible;
+  }
+  background: var(--color-surface-raised);
+  color: color-token(muted);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: var(--avatar-font-size);
+  font-family: inherit;
+  font-weight: 600;
+  line-height: 1;
+  user-select: none;
+  @include square-size(var(--avatar-size));
+
+  &:is(button, a) {
+    cursor: pointer;
+  }
+
+  &.color_default {
+    color: color-token(default);
+    background: var(--color-surface-raised);
+    border: 1px solid var(--color-border-subtle);
+  }
+
+  @include surface-soft-colors();
+
+  &_sm {
+    font-size: var(--avatar-font-size-sm);
+    @include square-size(var(--avatar-size-sm));
+
+    .avatar_icon {
+      @include square-size(var(--avatar-icon-size-sm));
+    }
+
+    .avatar_badge {
+      border-width: 1.5px;
+      @include square-size(var(--avatar-badge-size-sm));
+    }
+  }
+
+  &_lg {
+    font-size: var(--avatar-font-size-lg);
+    @include square-size(var(--avatar-size-lg));
+
+    .avatar_icon {
+      @include square-size(var(--avatar-icon-size-lg));
+    }
+
+    .avatar_badge {
+      @include square-size(var(--avatar-badge-size-lg));
+    }
+  }
+
+  &_xl {
+    font-size: var(--avatar-font-size-xl);
+    @include square-size(var(--avatar-size-xl));
+
+    .avatar_icon {
+      @include square-size(var(--avatar-icon-size-xl));
+    }
+
+    .avatar_badge {
+      @include square-size(var(--avatar-badge-size-lg));
+    }
+  }
+
+  &_square {
+    border-radius: var(--radius-md);
+  }
+
+  &_image {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &_icon {
+    @include square-size(var(--avatar-icon-size));
+  }
+
+  // 그룹 — 겹쳐 표시
+  &_group {
+    display: inline-flex;
+    align-items: center;
+
+    .avatar {
+      border: 2px solid var(--color-surface);
+      margin-left: var(--avatar-group-overlap);
+
+      &:first-child {
+        margin-left: 0;
+      }
+    }
+  }
+
+  // 상태 배지 — 우하단 점
+  &_badge {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    box-sizing: content-box;
+    border: 2px solid var(--color-surface);
+    border-radius: 50%;
+    @include square-size(var(--avatar-badge-size));
+
+    @include status-dot-colors();
+  }
+}

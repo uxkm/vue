@@ -1,0 +1,366 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Rate — structure
+  --rate-star-size: 1.25rem;
+  --rate-star-size-sm: 1rem;
+  --rate-star-size-lg: 1.5rem;
+  --rate-star-gap: 0.125rem;
+  --rate-gap: var(--space-sm);
+  --rate-font-size: var(--checkbox-font-size);
+  --rate-font-size-sm: var(--checkbox-font-size-sm);
+  --rate-font-size-lg: var(--checkbox-font-size-lg);
+  --rate-line-height: var(--checkbox-line-height);
+  --rate-label-weight: var(--checkbox-label-weight);
+  --rate-value-size: var(--text-size-sm);
+  --rate-value-size-sm: var(--text-size-xs);
+  --rate-value-size-lg: var(--text-size-base);
+  --rate-hint-size: var(--checkbox-hint-size);
+  --rate-clear-size: 1.5rem;
+  --rate-clear-size-sm: 1.25rem;
+  --rate-clear-size-lg: 1.75rem;
+  --rate-clear-font-size: 1.125rem;
+
+}
+
+// Rate — OOCSS: 구조(.rate) / 크기(.rate_sm) / 변형(.rate_clearable · .rate_allow-half · .is-readonly) + 공통 색상(.color_*)
+//
+// 접근성 — 이름 · 설명 · 값
+//   fieldset + legend          그룹 레이블
+//   aria-label                 단독 사용
+//   aria-labelledby            외부 레이블(id) 연결
+//   aria-describedby           rate_hint · form_field-hint 연결
+//   output for / .rate_value   시각적 현재 값
+//
+//   <fieldset class="rate">
+//     <legend class="rate_legend">상품 만족도</legend>
+//     <div class="rate_control">
+//       <div class="rate_stars">
+//         <label class="rate_star">
+//           <input type="radio" class="rate_input" name="rate" value="1">
+//           <span class="rate_star-graphic" aria-hidden="true">…</span>
+//           <span class="rate_star-label">1점</span>
+//         </label>
+//       </div>
+//       <output class="rate_value" for="rate-3">3점</output>
+//     </div>
+//   </fieldset>
+
+@mixin rate-filled-stars($count) {
+  .rate_stars:has(.rate_star:nth-child(#{$count}) .rate_input:checked:not(.rate_input-half)) .rate_star:nth-child(-n + #{$count}) .rate_star-icon-filled {
+    opacity: 1;
+  }
+
+  @if $count > 0 {
+    .rate_stars:has(.rate_star:nth-child(#{$count}) .rate_input-half:checked) .rate_star:nth-child(-n + #{$count - 1}) .rate_star-icon-filled {
+      opacity: 1;
+    }
+
+    .rate_stars:has(.rate_star:nth-child(#{$count}) .rate_input-half:checked) .rate_star:nth-child(#{$count}) .rate_star-icon-half {
+      opacity: 1;
+    }
+  }
+}
+
+@mixin rate-hover-stars($count) {
+  .rate_stars:not(:has(.rate_input:disabled)):not(.is-readonly):has(.rate_star:nth-child(#{$count}):hover) .rate_star:nth-child(-n + #{$count}) .rate_star-icon-filled {
+    opacity: 1;
+  }
+
+  .rate_allow-half .rate_stars:not(:has(.rate_input:disabled)):not(.is-readonly):has(.rate_star:nth-child(#{$count}) .rate_star-half-left:hover) .rate_star:nth-child(-n + #{$count - 1}) .rate_star-icon-filled,
+  .rate_allow-half .rate_stars:not(:has(.rate_input:disabled)):not(.is-readonly):has(.rate_star:nth-child(#{$count}) .rate_star-half-left:hover) .rate_star:nth-child(#{$count}) .rate_star-icon-half {
+    opacity: 1;
+  }
+}
+
+@mixin rate-color-variant($name) {
+  @if $name == primary {
+    --rate-color-filled: var(--color-accent);
+  } @else if $name == success {
+    --rate-color-filled: var(--color-success);
+  } @else if $name == danger {
+    --rate-color-filled: var(--color-danger);
+  } @else if $name == warning {
+    --rate-color-filled: var(--color-warning);
+  }
+}
+
+.rate {
+  --rate-color-filled: var(--color-warning);
+  --rate-color-empty: var(--color-border-subtle);
+
+  display: inline-block;
+  width: auto;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-family: $font-family;
+  font-size: var(--rate-font-size);
+  line-height: var(--rate-line-height);
+  color: var(--color-text);
+
+  @each $name in primary, success, danger, warning {
+    &.color_#{$name} {
+      @include rate-color-variant($name);
+    }
+  }
+
+  &:has(.rate_input:disabled) {
+    @include disabled-interactive-wrapper;
+    --rate-color-empty: var(--color-border-disabled);
+    --rate-color-filled: var(--color-text-disabled);
+  }
+
+  &.is-error .rate_stars {
+    outline: 1px solid var(--color-danger);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  &_legend {
+    display: block;
+    margin-bottom: var(--rate-gap);
+    padding: 0;
+    font-size: inherit;
+    font-weight: var(--rate-label-weight);
+    line-height: inherit;
+    color: inherit;
+  }
+
+  &_control {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--rate-gap);
+  }
+
+  &_stars {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rate-star-gap);
+  }
+
+  &_star {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    margin: 0;
+    cursor: pointer;
+    line-height: 0;
+
+    &:has(.rate_input:disabled) {
+      cursor: not-allowed;
+    }
+
+    &:hover .rate_star-icon {
+      transform: scale(1.08);
+    }
+  }
+
+  &_input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+
+    &:focus-visible + .rate_star-graphic {
+      outline: var(--focus-outline-width) solid var(--rate-color-filled);
+      outline-offset: var(--focus-outline-offset);
+      border-radius: 2px;
+    }
+  }
+
+  &_star-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  &_star-graphic {
+    position: relative;
+    display: block;
+    width: var(--rate-star-size);
+    height: var(--rate-star-size);
+  }
+
+  &_star-icon {
+    display: block;
+    width: 100%;
+    height: 100%;
+    color: var(--rate-color-empty);
+    pointer-events: none;
+    transition:
+      color $transition-fast,
+      opacity $transition-fast,
+      transform $transition-fast;
+  }
+
+  &_star-icon-filled {
+    position: absolute;
+    inset: 0;
+    color: var(--rate-color-filled);
+    opacity: 0;
+  }
+
+  &_star-icon-half {
+    position: absolute;
+    inset: 0;
+    width: 50%;
+    overflow: hidden;
+    opacity: 0;
+
+    .rate_star-icon {
+      width: var(--rate-star-size);
+      height: var(--rate-star-size);
+      color: var(--rate-color-filled);
+    }
+  }
+
+  &_value {
+    flex-shrink: 0;
+    font-size: var(--rate-value-size);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-muted);
+  }
+
+  &_hint {
+    display: block;
+    width: 100%;
+    margin-top: var(--space-xs);
+    font-size: var(--rate-hint-size);
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+  }
+
+  &_clear {
+    display: none;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: var(--rate-clear-size);
+    height: var(--rate-clear-size);
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--color-text-muted);
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      color $transition-fast,
+      background-color $transition-fast;
+
+    &:hover {
+      color: var(--color-text);
+      background-color: var(--color-surface-raised);
+    }
+
+    &:focus-visible {
+      outline: var(--focus-outline-width) solid var(--rate-color-filled);
+      outline-offset: var(--focus-outline-offset);
+    }
+  }
+
+  &_clear-icon {
+    display: block;
+    width: 0.875rem;
+    height: 0.875rem;
+    pointer-events: none;
+  }
+
+  &_clearable:has(.rate_input:checked) .rate_clear,
+  &_clearable.is-rated .rate_clear {
+    display: inline-flex;
+  }
+
+  &_star-half {
+    position: absolute;
+    top: 0;
+    z-index: 1;
+    width: 50%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: var(--focus-outline-width) solid var(--rate-color-filled);
+      outline-offset: var(--focus-outline-offset);
+    }
+  }
+
+  &_star-half-left {
+    left: 0;
+  }
+
+  &_star-half-right {
+    right: 0;
+  }
+
+  &_allow-half .rate_star-half {
+    display: block;
+  }
+
+  // ----- 읽기 전용
+
+  &.is-readonly {
+    pointer-events: none;
+
+    .rate_stars {
+      pointer-events: none;
+    }
+  }
+
+  &_star-readonly {
+    display: inline-flex;
+    flex-shrink: 0;
+    line-height: 0;
+
+    &.is-filled .rate_star-icon-filled,
+    &.is-half .rate_star-icon-half {
+      opacity: 1;
+    }
+  }
+
+  // ----- 크기
+
+  &_sm {
+    --rate-star-size: var(--rate-star-size-sm);
+    --rate-font-size: var(--rate-font-size-sm);
+    --rate-value-size: var(--rate-value-size-sm);
+    --rate-clear-size: var(--rate-clear-size-sm);
+  }
+
+  &_lg {
+    --rate-star-size: var(--rate-star-size-lg);
+    --rate-font-size: var(--rate-font-size-lg);
+    --rate-value-size: var(--rate-value-size-lg);
+    --rate-clear-size: var(--rate-clear-size-lg);
+  }
+
+  // ----- 너비
+
+  &_block {
+    display: block;
+    width: 100%;
+  }
+}
+
+@for $i from 1 through 10 {
+  @include rate-filled-stars($i);
+  @include rate-hover-stars($i);
+}

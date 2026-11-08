@@ -1,0 +1,175 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Spin
+  --spin-size: 2rem;
+  --spin-size-sm: 1.25rem;
+  --spin-size-lg: 3rem;
+  --spin-border: 3px;
+  --spin-border-sm: 2px;
+  --spin-border-lg: 4px;
+  --spin-duration: 0.8s;
+  --spin-gap: var(--space-sm);
+  --spin-tip-size: var(--text-size-sm);
+  --spin-overlay-bg: rgba(15, 20, 25, 0.72);
+  --spin-overlay-tip-color: #ffffff;
+  --spin-wrap-min-height: 8rem;
+  --spin-wrap-content-opacity: 0.45;
+
+}
+
+// Spin — OOCSS: 구조(.spin) + 크기(.spin_sm) + 변형(.spin_inline · .spin_overlay) + 공통 색상(.color_*)
+//
+//   <div class="spin color_primary" role="status" aria-live="polite" aria-busy="true" aria-label="로딩 중">
+//     <span class="spin_indicator" aria-hidden="true"></span>
+//     <span class="spin_tip">로딩 중…</span>
+//   </div>
+//
+//   <div class="spin_wrap is-loading">
+//     <div class="spin_wrap-body">…</div>
+//     <div class="spin spin_overlay" role="status" aria-live="polite" aria-busy="true" aria-label="로딩 중">
+//       <span class="spin_indicator" aria-hidden="true"></span>
+//     </div>
+//   </div>
+
+@mixin spin-indicator-color($color) {
+  --spin-color: #{$color};
+
+  .spin_indicator {
+    border-color: var(--spin-track-color);
+    border-top-color: $color;
+    border-right-color: $color;
+    border-bottom-color: $color;
+  }
+}
+
+@keyframes spin-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin {
+  --spin-color: var(--color-accent);
+  --spin-track-color: var(--color-border-subtle);
+
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spin-gap);
+  color: var(--spin-color);
+  vertical-align: middle;
+
+  @each $name in primary, success, danger, warning {
+    &.color_#{$name} {
+      @if $name == primary {
+        @include spin-indicator-color(var(--color-accent));
+      } @else if $name == success {
+        @include spin-indicator-color(var(--color-success));
+      } @else if $name == danger {
+        @include spin-indicator-color(var(--color-danger));
+      } @else if $name == warning {
+        @include spin-indicator-color(var(--color-warning));
+      }
+    }
+  }
+
+  &_indicator {
+    @include square-size(var(--spin-size));
+    flex-shrink: 0;
+    border: var(--spin-border) solid var(--spin-track-color);
+    border-top-color: var(--spin-color);
+    border-right-color: var(--spin-color);
+    border-bottom-color: var(--spin-color);
+    border-radius: 50%;
+    animation: spin-rotate var(--spin-duration) linear infinite;
+
+    @media (prefers-reduced-motion: reduce) {
+      animation-duration: 1.5s;
+    }
+  }
+
+  &_tip {
+    margin: 0;
+    font-size: var(--spin-tip-size);
+    line-height: 1.4;
+    color: var(--color-text-muted);
+    text-align: center;
+  }
+
+  // ----- 크기
+
+  &_sm {
+    --spin-size: var(--spin-size-sm);
+    --spin-border: var(--spin-border-sm);
+    --spin-tip-size: var(--text-size-xs);
+  }
+
+  &_lg {
+    --spin-size: var(--spin-size-lg);
+    --spin-border: var(--spin-border-lg);
+    --spin-tip-size: var(--text-size-base);
+  }
+
+  // ----- 인라인 (스피너 + 텍스트 가로 배치)
+
+  &_inline {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  // ----- 오버레이 · 컨테이너
+
+  &_wrap {
+    position: relative;
+
+    .spin_wrap-body {
+      transition: opacity $transition-base;
+    }
+
+    &.is-loading .spin_wrap-body {
+      opacity: var(--spin-wrap-content-opacity);
+      pointer-events: none;
+      user-select: none;
+    }
+  }
+
+  &_overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spin-gap);
+    background: var(--spin-overlay-bg);
+    border-radius: inherit;
+
+    .spin_tip {
+      color: var(--spin-overlay-tip-color);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+    }
+
+    .spin_wrap.is-loading > & {
+      display: inline-flex;
+    }
+  }
+
+  &_wrap-block {
+    min-height: var(--spin-wrap-min-height);
+  }
+
+  &_wrap-blur.is-loading .spin_wrap-body {
+    filter: blur(2px);
+  }
+
+  // ----- 전체 영역
+
+  &_block {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+  }
+}

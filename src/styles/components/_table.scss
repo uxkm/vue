@@ -1,0 +1,226 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Table
+  --table-cell-padding-y: 0.65rem;
+  --table-cell-padding-x: 1rem;
+  --table-font-size: var(--text-size-sm);
+  --table-header-font-weight: 600;
+  --table-cell-padding-y-compact: 0.4rem;
+  --table-cell-padding-x-compact: 0.75rem;
+  --table-scroll-max-height: 16rem;
+  --table-sticky-shadow: 2px 0 4px -2px rgb(0 0 0 / 12%);
+}
+
+// Table — OOCSS: 구조(.table) + 스킨(.table_striped · .table_bordered · .table_compact · .table_hover)
+// sticky: .table_wrap-scroll · .table_sticky-top · .table_sticky-left · .table_sticky-cols-n
+//
+//   <div class="table_wrap">
+//     <table class="table">…</table>
+//   </div>
+
+.table_wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: $radius-md;
+
+  &:has(.table):not(.table_wrap-api):not(.table_wrap-scroll) {
+    border: none;
+    overflow-x: visible;
+
+    .table {
+      border: 1px solid var(--color-border);
+      border-radius: $radius-md;
+      overflow: hidden;
+    }
+  }
+
+  &.table_wrap-scroll {
+    overflow: auto;
+    max-height: var(--table-scroll-max-height);
+    border: 1px solid var(--color-border);
+    border-radius: $radius-md;
+    -webkit-overflow-scrolling: touch;
+
+    .table {
+      border: none;
+      border-radius: 0;
+      overflow: visible;
+    }
+  }
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--table-font-size);
+  text-align: left;
+  background: var(--color-surface);
+
+  th,
+  td {
+    padding: var(--table-cell-padding-y) var(--table-cell-padding-x);
+    border-bottom: 1px solid var(--color-border-subtle);
+    vertical-align: middle;
+  }
+
+  th {
+    font-weight: var(--table-header-font-weight);
+    color: var(--color-text);
+    background: var(--color-surface-raised);
+    white-space: nowrap;
+  }
+
+  td {
+    color: var(--color-text-muted);
+  }
+
+  tbody tr:last-child {
+    th,
+    td {
+      border-bottom: none;
+    }
+  }
+
+  &_striped {
+    tbody tr:nth-child(even) {
+      background: var(--color-surface-raised);
+    }
+  }
+
+  &_bordered {
+    th,
+    td {
+      border: 1px solid var(--color-border-subtle);
+    }
+
+    tbody tr:last-child {
+      th,
+      td {
+        border-bottom: 1px solid var(--color-border-subtle);
+      }
+    }
+  }
+
+  &_compact {
+    &:not(.table_columns) {
+      th,
+      td {
+        padding: var(--table-cell-padding-y-compact) var(--table-cell-padding-x-compact);
+      }
+    }
+
+    &.table_columns {
+      @for $i from 1 through 12 {
+        th:nth-child(#{$i}),
+        td:nth-child(#{$i}) {
+          padding: var(
+            --table-col-#{$i}-padding,
+            var(--table-cell-padding-y-compact) var(--table-cell-padding-x-compact)
+          );
+        }
+      }
+    }
+  }
+
+  &_hover {
+    tbody tr {
+      transition: background-color $transition-fast;
+
+      &:hover {
+        background: var(--color-accent-muted);
+      }
+    }
+  }
+
+  // columns prop — 열별 너비·패딩 (columnRootVars + colgroup)
+  &_columns {
+    table-layout: fixed;
+
+    @for $i from 1 through 12 {
+      th:nth-child(#{$i}),
+      td:nth-child(#{$i}) {
+        padding: var(
+          --table-col-#{$i}-padding,
+          var(--table-cell-padding-y) var(--table-cell-padding-x)
+        );
+        white-space: var(--table-col-#{$i}-white-space, inherit);
+      }
+    }
+  }
+
+  &_col-nowrap {
+    white-space: nowrap;
+  }
+
+  &_sticky-top {
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: var(--color-surface-raised);
+    }
+  }
+
+  &_sticky-left {
+    th,
+    td {
+      background-clip: padding-box;
+    }
+  }
+
+  @for $cols from 1 through 4 {
+    &_sticky-cols-#{$cols} {
+      @for $i from 1 through $cols {
+        th:nth-child(#{$i}),
+        td:nth-child(#{$i}) {
+          position: sticky;
+          left: var(--table-sticky-left-#{$i}, 0);
+          z-index: 1;
+          background: var(--color-surface);
+        }
+
+        thead th:nth-child(#{$i}) {
+          z-index: 3;
+          background: var(--color-surface-raised);
+        }
+      }
+
+      th:nth-child(#{$cols}),
+      td:nth-child(#{$cols}) {
+        box-shadow: var(--table-sticky-shadow);
+      }
+    }
+  }
+
+  &_striped.table_sticky-left {
+    @for $cols from 1 through 4 {
+      &.table_sticky-cols-#{$cols} {
+        tbody tr:nth-child(even) {
+          @for $i from 1 through $cols {
+            th:nth-child(#{$i}),
+            td:nth-child(#{$i}) {
+              background: var(--color-surface-raised);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &_hover.table_sticky-left {
+    @for $cols from 1 through 4 {
+      &.table_sticky-cols-#{$cols} {
+        tbody tr:hover {
+          @for $i from 1 through $cols {
+            th:nth-child(#{$i}),
+            td:nth-child(#{$i}) {
+              background: var(--color-accent-muted);
+            }
+          }
+        }
+      }
+    }
+  }
+}

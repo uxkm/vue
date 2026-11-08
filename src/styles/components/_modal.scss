@@ -1,0 +1,413 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Modal — structure
+  --modal-z-index: 300;
+  --modal-margin: var(--space-md);
+  --modal-width: 32rem;
+  --modal-width-sm: 24rem;
+  --modal-width-lg: 48rem;
+  --modal-bg: var(--color-surface);
+  --modal-radius: var(--radius-lg);
+  --modal-shadow: var(--shadow-lg);
+  --modal-header-gap: var(--space-sm);
+  --modal-header-padding-y: var(--space-md);
+  --modal-header-padding-x: var(--space-lg);
+  --modal-title-font-size: var(--text-size-lg);
+  --modal-title-font-weight: 600;
+  --modal-close-size: 2rem;
+  --modal-close-icon-size: 1.125rem;
+  --modal-body-padding-y: var(--space-lg);
+  --modal-body-padding-x: var(--space-lg);
+  --modal-body-font-size: var(--text-size-sm);
+  --modal-footer-gap: var(--space-sm);
+  --modal-footer-padding-y: var(--space-md);
+  --modal-footer-padding-x: var(--space-lg);
+
+}
+
+// Modal — OOCSS: 구조(.modal) + 스킨(.modal_sm · .modal_lg · .modal_fullscreen) + 파트(.modal_dialog · .modal_header · .modal_body · .modal_footer)
+//
+//   <button type="button" data-modal-trigger="#modal-1" aria-controls="modal-1" aria-expanded="false">열기</button>
+//
+//   <div class="modal" id="modal-1" data-modal role="dialog" aria-modal="true"
+//     aria-labelledby="modal-1-title" tabindex="-1" hidden>
+//     <div class="modal_backdrop" data-modal-close aria-hidden="true"></div>
+//     <div class="modal_dialog">
+//       <div class="modal_header">
+//         <h2 class="modal_title" id="modal-1-title">제목</h2>
+//         <button type="button" class="modal_close" data-modal-close aria-label="닫기">…</button>
+//       </div>
+//       <div class="modal_body">…</div>
+//       <div class="modal_footer">…</div>
+//     </div>
+//   </div>
+//
+//   data-modal              — Modal 루트
+//   data-modal-trigger      — 열기 트리거 (값: #id 선택자)
+//   data-modal-close        — 닫기 (백드롭·닫기 버튼)
+//   data-modal-backdrop="false" — 백드롭 비표시·백드롭 클릭 닫기 비활성 (Vue: :backdrop="false")
+//
+// 푸터 정렬 (.modal_footer + 변형)
+//   .modal_footer-start · .modal_footer-center · .modal_footer-end
+//   .modal_footer-between — 좌·우 분리 (modal_footer-group으로 1~2개씩 묶음)
+//   .modal_footer-even    — 버튼 균등 너비 (기본 1:1)
+//   .modal_footer-even-1-2 · .modal_footer-even-2-1 — 좌·우 비율
+//   .modal_footer-no-pad-b — 하단 패딩 없음 (even과 함께 쓰면 좌우 패딩·간격도 제거)
+//
+// 상태 클래스
+//   .is-open       — 대화상자 표시 (aria-expanded="true"와 함께)
+//   .is-stack-covered — 중첩 시 하위 레이어 (백드롭 숨김)
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--modal-z-index) + var(--modal-stack-level, 0) * 10);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--modal-margin);
+  pointer-events: none;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &.is-open {
+    display: flex;
+    pointer-events: auto;
+  }
+
+  &_backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: calc(var(--modal-z-index) + var(--modal-stack-level, 0) * 10);
+    background: var(--color-overlay);
+    opacity: 0;
+    transition: opacity var(--transition-base);
+
+    .modal.is-open & {
+      opacity: 1;
+    }
+
+    .modal.is-open.is-stack-covered & {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .modal[data-modal-backdrop="false"] & {
+      display: none;
+    }
+  }
+
+  &_dialog {
+    position: relative;
+    z-index: calc(var(--modal-z-index) + var(--modal-stack-level, 0) * 10 + 1);
+    display: flex;
+    flex-direction: column;
+    width: var(--modal-width);
+    max-width: 100%;
+    max-height: 100%;
+    background: var(--modal-bg);
+    color: var(--color-text);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--modal-radius);
+    box-shadow: var(--modal-shadow);
+    opacity: 0;
+    transform: scale(0.96) translateY(0.5rem);
+    transition:
+      opacity var(--transition-base),
+      transform var(--transition-base);
+
+    .modal.is-open & {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  &_header {
+    display: flex;
+    align-items: center;
+    gap: var(--modal-header-gap);
+    flex-shrink: 0;
+    padding: var(--modal-header-padding-y) var(--modal-header-padding-x);
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+
+  // `.section h2` 등 문서 타이포가 새지 않도록 상위 포함 선택자로 리셋
+  & &_title {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    font-size: var(--modal-title-font-size);
+    font-weight: var(--modal-title-font-weight);
+    line-height: 1.3;
+  }
+
+  &_close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: var(--modal-close-size);
+    height: var(--modal-close-size);
+    margin: 0 0 0 auto; // 헤더 오른쪽 끝 고정 (제목 유무와 무관)
+    padding: 0;
+    border: none;
+    border-radius: $radius-sm;
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition:
+      color $transition-fast,
+      background-color $transition-fast;
+    @include focus-ring;
+
+    &:hover {
+      color: var(--color-text);
+      background: var(--color-surface-raised);
+    }
+  }
+
+  &_close-icon {
+    width: var(--modal-close-icon-size);
+    height: var(--modal-close-icon-size);
+  }
+
+  &_body {
+    flex: 1;
+    min-height: 0;
+    padding: var(--modal-body-padding-y) var(--modal-body-padding-x);
+    font-size: var(--modal-body-font-size);
+    line-height: 1.6;
+
+    > :first-child {
+      margin-top: 0;
+    }
+
+    > :last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &_footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--modal-footer-gap);
+    flex-shrink: 0;
+    padding: var(--modal-footer-padding-y) var(--modal-footer-padding-x);
+    border-top: 1px solid var(--color-border-subtle);
+  }
+
+  // 푸터 정렬 — 기본(end) · start · center · between · even
+  &_footer-start {
+    justify-content: flex-start;
+  }
+
+  &_footer-center {
+    justify-content: center;
+  }
+
+  &_footer-end {
+    justify-content: flex-end;
+  }
+
+  &_footer-between {
+    justify-content: space-between;
+  }
+
+  &_footer-even {
+    > * {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+  }
+
+  // 균등 정렬 좌·우 비율 (기본 1:1은 modal_footer-even)
+  &_footer-even-1-2 {
+    > *:first-child {
+      flex: 1 1 0;
+    }
+
+    > *:last-child {
+      flex: 2 1 0;
+    }
+  }
+
+  &_footer-even-2-1 {
+    > *:first-child {
+      flex: 2 1 0;
+    }
+
+    > *:last-child {
+      flex: 1 1 0;
+    }
+  }
+
+  // 하단 패딩 없음 — 균등 정렬과 함께 쓰면 버튼이 대화상자 하단에 붙음
+  &_footer-no-pad-b {
+    padding-bottom: 0;
+
+    &.modal_footer-even {
+      padding: 0;
+      gap: 0;
+
+      > *:first-child {
+        border-bottom-left-radius: calc(var(--modal-radius) - 1px);
+      }
+
+      > *:last-child {
+        border-bottom-right-radius: calc(var(--modal-radius) - 1px);
+      }
+
+      > *:only-child {
+        border-bottom-left-radius: calc(var(--modal-radius) - 1px);
+        border-bottom-right-radius: calc(var(--modal-radius) - 1px);
+      }
+    }
+  }
+
+  // 병합 정렬용 버튼 묶음 (좌·우 각 1~2개)
+  &_footer-group {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--modal-footer-gap);
+    min-width: 0;
+  }
+
+  // ----- 크기
+
+  &_sm {
+    --modal-width: var(--modal-width-sm);
+  }
+
+  &_lg {
+    --modal-width: var(--modal-width-lg);
+  }
+
+  &_fullscreen {
+    --modal-width: 100%;
+    --modal-margin: 0;
+
+    .modal_dialog {
+      width: 100%;
+      max-width: none;
+      height: 100%;
+      max-height: none;
+      border-radius: 0;
+      border: none;
+    }
+  }
+
+  // ----- 스크롤 가능 본문
+
+  &_scrollable {
+    .modal_dialog {
+      max-height: calc(100vh - var(--modal-margin) * 2);
+    }
+
+    .modal_body {
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    &.modal_fullscreen .modal_dialog {
+      max-height: 100vh;
+    }
+  }
+
+  // ----- 데모 레이아웃
+
+  &_demo-frame {
+    position: relative;
+    flex: 1 1 100%;
+    width: 100%;
+    height: 32rem;
+    min-height: 28rem;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: $radius-md;
+    overflow: hidden;
+    background: var(--color-bg);
+
+    // 열린 상태·푸터 정렬 문서 미리보기만 프레임 안에 고정
+    // 클릭으로 여는 Modal은 기본 fixed 배치를 유지해 뷰포트 전체에 표시
+    .modal.modal_demo-static {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      padding: var(--space-md);
+      display: flex;
+      pointer-events: none;
+
+      > .modal_backdrop {
+        position: absolute;
+        opacity: 1;
+        pointer-events: none;
+      }
+
+      > .modal_dialog {
+        pointer-events: auto;
+        opacity: 1;
+        transform: none;
+      }
+
+      &[data-modal-backdrop="false"] > .modal_backdrop {
+        display: none;
+      }
+
+      &.modal_scrollable > .modal_dialog {
+        max-height: calc(100% - var(--space-md) * 2);
+      }
+
+      &.modal_fullscreen {
+        padding: 0;
+
+        > .modal_dialog {
+          height: 100%;
+          max-height: none;
+        }
+      }
+    }
+  }
+
+  &_demo-content {
+    padding: var(--space-lg);
+    font-size: var(--text-size-sm);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+
+  &_demo-frame-compact {
+    height: 16rem;
+    min-height: 14rem;
+  }
+
+  &_demo-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    width: 100%;
+  }
+
+  &_demo-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+}
+
+// ----- 바디 스크롤 잠금
+
+body.is-modal-open {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal_dialog,
+  .modal_backdrop {
+    transition: none;
+  }
+}

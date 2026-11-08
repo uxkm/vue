@@ -1,134 +1,39 @@
 {
   "folders": [
     {
-      "id": "login",
-      "name": "0. 로그인",
-      "file": "login.json"
-    },
-    {
-      "id": "home",
-      "name": "1. Home",
-      "file": "home.json"
-    },
-    {
-      "id": "feed",
-      "name": "2. Feed",
-      "file": "feed.json"
-    },
-    {
-      "id": "content",
-      "name": "3. Content",
-      "file": "content.json"
-    },
-    {
-      "id": "campus",
-      "name": "4. Campus",
-      "file": "campus.json"
-    },
-    {
-      "id": "my-learning",
-      "name": "5. My Learning",
-      "file": "my-learning.json"
-    },
-    {
-      "id": "feed-create",
-      "name": "6. 피드생성",
-      "file": "feed-create.json"
-    },
-    {
-      "id": "learning-resource",
-      "name": "7. 학습자원",
-      "file": "learning-resource.json"
-    },
-    {
-      "id": "search",
-      "name": "8. 통합검색",
-      "file": "search.json"
-    },
-    {
-      "id": "course-apply",
-      "name": "수강신청",
-      "file": "course-apply.json"
-    },
-    {
-      "id": "user-page",
-      "name": "9. 사용자 페이지",
-      "file": "user-page.json"
-    },
-    {
-      "id": "library-package",
-      "name": "10. 라이브러리패키지",
-      "file": "library-package.json"
-    },
-    {
-      "id": "payment",
-      "name": "13. 온라인결제",
-      "file": "payment.json"
-    },
-    {
-      "id": "class",
-      "name": "15. Class",
-      "file": "class.json"
-    },
-    {
-      "id": "crowd-class",
-      "name": "16. Crowd Class",
-      "file": "crowd-class.json"
-    },
-    {
-      "id": "certification",
-      "name": "18. 자격인증",
-      "file": "certification.json"
-    },
-    {
-      "id": "learning-materials",
-      "name": "19. 학습자료 전체보기",
-      "file": "learning-materials.json"
-    },
-    {
-      "id": "comment",
-      "name": "20. 댓글",
-      "file": "comment.json"
-    },
-    {
-      "id": "college",
-      "name": "21. College",
-      "file": "college.json"
-    },
-    {
-      "id": "language",
-      "name": "26. Language",
-      "file": "language.json"
-    },
-    {
-      "id": "personal-home",
-      "name": "27. 개인화홈",
-      "file": "personal-home.json"
-    },
-    {
       "id": "common",
-      "name": "99. Common",
+      "name": "공통 페이지",
       "file": "common.json"
     },
     {
-      "id": "board",
-      "name": "99. 게시판",
-      "file": "board.json"
+      "id": "main",
+      "name": "메인화면",
+      "file": "main.json"
     },
     {
-      "id": "customer-center",
-      "name": "99. 고객센터",
-      "file": "customer-center.json"
+      "id": "corpeduc",
+      "name": "기업교육",
+      "file": "corpeduc.json"
     },
     {
-      "id": "dream-fund",
-      "name": "200. 꿈금고",
-      "file": "dream-fund.json"
+      "id": "service",
+      "name": "서비스",
+      "file": "service.json"
     },
     {
-      "id": "consulting",
-      "name": "200. 상담시스템",
-      "file": "consulting.json"
+      "id": "insight",
+      "name": "문의하기",
+      "file": "insight.json"
+    },
+    {
+      "id": "about",
+      "name": "회사소개",
+      "file": "about.json"
+    },
+    {
+      "id": "sample",
+      "name": "3뎁스 샘플",
+      "file": "sample.json"
     }
   ]
 }

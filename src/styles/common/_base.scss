@@ -1,4 +1,4 @@
-@use '../helpers' as *;
+@use '../foundations/helpers' as *;
 
 html,
 body {
@@ -7,8 +7,8 @@ body {
   font-family: $font-sans;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: $color-bg;
-  color: $color-ink;
+  // background: $color-bg;
+  color: $color-text;
 }
 
 #root {

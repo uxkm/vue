@@ -1,0 +1,116 @@
+// =============================================================================
+// Design tokens — :root CSS 변수 (공통)
+// =============================================================================
+// 색상(테마) → _themes.scss · SCSS 전용(브레이크포인트 등) → _variables.scss
+// 레이아웃 토큰 → components/_container.scss · _flex.scss · _grid.scss · _divider.scss · _space.scss
+// 컴포넌트별 토큰 → components/_*.scss
+// =============================================================================
+
+:root {
+  // ----- Global — spacing (px 스케일 + 시맨틱 별칭)
+  --space-2: 2px;
+  --space-4: 4px;
+  --space-6: 6px;
+  --space-8: 8px;
+  --space-10: 10px;
+  --space-12: 12px;
+  --space-14: 14px;
+  --space-16: 16px;
+  --space-18: 18px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-28: 28px;
+  --space-32: 32px;
+  --space-40: 40px;
+  --space-48: 48px;
+  --space-56: 56px;
+
+  --space-2xs: var(--space-2);
+  --space-xs: var(--space-4);
+  --space-sm: var(--space-8);
+  --space-md: var(--space-12);
+  --space-lg: var(--space-16);
+  --space-xl: var(--space-20);
+  --space-2xl: var(--space-24);
+  --space-3xl: var(--space-28);
+  --space-4xl: var(--space-32);
+  --space-5xl: var(--space-40);
+  --space-6xl: var(--space-48);
+  --space-7xl: var(--space-56);
+
+  // ----- Global — radius
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-panel: 18px;
+  --radius-pill: 999px;
+
+  // ----- Global — motion
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.2s ease;
+
+  // ----- Global — ripple (클릭 파장)
+  --ripple-color: currentColor;
+  --ripple-opacity: 0.18;
+  --ripple-duration: 550ms;
+  --ripple-easing: cubic-bezier(0, 0, 0.2, 1);
+
+  // ----- Global — focus
+  --focus-outline-width: 2px;
+  --focus-outline-offset: 2px;
+  --focus-shadow-width: 3px;
+
+  // ----- Global — layout
+  --sidebar-width: 280px;
+  --header-height: 56px;
+  --app-header-height: 0px;
+
+  // ----- Global — font
+  --font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --font-size-2xs: 10px;
+  --font-size-xs: 11px;
+  --font-size-sm: 12px;
+  --font-size-md: 13px;
+  --font-size-base: 14px;
+  --font-size-lg: 15px;
+  --font-size-xl: 16px;
+  --font-size-2xl: 18px;
+  --font-size-3xl: 20px;
+  --font-size-4xl: 24px;
+  --font-size-5xl: 32px;
+
+  // 공통 .size_* · size-token()
+  --text-size-xs: var(--font-size-xs);
+  --text-size-sm: var(--font-size-sm);
+  --text-size-base: var(--font-size-base);
+  --text-size-lg: var(--font-size-lg);
+  --text-size-xl: var(--font-size-xl);
+
+  // ----- Global — control
+  --control-height-sm: 32px;
+  --control-height-md: 40px;
+  --control-height-lg: 48px;
+
+  // ----- Global — breakpoint widths (문서·컨테이너 참조)
+  --bp-pc-sm: 1024px;
+  --bp-pc-md: 1440px;
+  --bp-pc-lg: 1920px;
+  --bp-pc-xl: 2580px;
+
+  --bp-mobile-sm: 360px;
+  --bp-mobile-md: 768px;
+  --bp-mobile-lg: 1024px;
+  --bp-mobile-xl: 1280px;
+
+  --size-360: 360px;
+  --size-768: 768px;
+  --size-1024: 1024px;
+  --size-1280: 1280px;
+  --size-1440: 1440px;
+  --size-1920: 1920px;
+  --size-2580: 2580px;
+
+  --content-max: var(--size-1440);
+}

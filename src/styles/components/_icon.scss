@@ -1,0 +1,177 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Icon — size (xs → 3xl)
+  --icon-size-xs: 0.75rem;   // 12px
+  --icon-size-sm: 1rem;      // 16px
+  --icon-size: 1.25rem;      // 20px · md 기본
+  --icon-size-lg: 1.5rem;    // 24px
+  --icon-size-xl: 2rem;      // 32px
+  --icon-size-2xl: 2.5rem;   // 40px
+  --icon-size-3xl: 3rem;     // 48px
+  --icon-spin-duration: 0.8s;
+  --icon-circle-size-xs: 1.5rem;
+  --icon-circle-size-sm: 1.75rem;
+  --icon-circle-size: 2.25rem;
+  --icon-circle-size-lg: 2.75rem;
+  --icon-circle-size-xl: 3.25rem;
+  --icon-circle-size-2xl: 3.75rem;
+  --icon-circle-size-3xl: 4.5rem;
+  --icon-pulse-duration: 1.5s;
+}
+
+// Icon — OOCSS: 구조(.icon) + 크기(.icon_*) + 공통 색상(.color_*)
+//
+//   <svg class="icon" ... aria-hidden="true">…</svg>
+//   <svg class="icon icon_lg color_primary" ...>…</svg>
+//
+// 장식용 아이콘은 aria-hidden="true", 의미 전달 시 aria-label 또는 title 사용
+
+.icon {
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: -0.125em;
+  // --icon-custom-size 가 있으면 토큰보다 우선 (숫자·px·rem·var(…) 커스텀)
+  @include square-size(var(--icon-custom-size, var(--icon-size)));
+
+  > img,
+  > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  // md 는 기본(--icon-size)이라 클래스 없음
+  @each $size in xs, sm, lg, xl, 2xl, 3xl {
+    &_#{$size} {
+      @include square-size(var(--icon-custom-size, var(--icon-size-#{$size})));
+    }
+  }
+
+  &_inline {
+    vertical-align: -0.2em;
+  }
+
+  &_spin {
+    animation: icon-spin var(--icon-spin-duration) linear infinite;
+  }
+
+  &_circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    border-radius: 50%;
+    background: var(--color-surface-raised);
+    color: color-token(muted);
+    @include square-size(var(--icon-custom-size, var(--icon-circle-size)));
+
+    @include surface-soft-colors(primary success danger);
+  }
+
+  // 원형·사각 배경 크기 (md 는 &_circle / &_square 기본값)
+  @each $size in xs, sm, lg, xl, 2xl, 3xl {
+    &_circle-#{$size} {
+      @include square-size(var(--icon-custom-size, var(--icon-circle-size-#{$size})));
+    }
+  }
+
+  &_square {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    border-radius: $radius-md;
+    background: var(--color-surface-raised);
+    color: color-token(muted);
+    @include square-size(var(--icon-custom-size, var(--icon-circle-size)));
+
+    @include surface-soft-colors(primary);
+  }
+
+  &_button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: $radius-sm;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    @include square-size(var(--icon-custom-size, var(--icon-circle-size-sm)));
+    @include focus-ring;
+
+    &:hover {
+      background: var(--color-surface-raised);
+    }
+  }
+
+  &_pulse {
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: inherit;
+      border: 2px solid currentColor;
+      opacity: 0.45;
+      animation: icon-pulse var(--icon-pulse-duration) ease-out infinite;
+    }
+  }
+
+  &_group {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-sm;
+  }
+
+  &_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(4.5rem, 1fr));
+    gap: var(--space-md);
+    justify-items: center;
+    align-items: start;
+    width: 100%;
+  }
+
+  &_grid-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: size-token(xs);
+    color: color-token(muted);
+  }
+}
+
+@keyframes icon-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes icon-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.45;
+  }
+
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+.section > .icon_grid,
+.demo_section-preview .icon_grid,
+.sb-demo-layout .icon_grid {
+  padding: var(--space-xl);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}

@@ -1,0 +1,376 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Slider — structure
+  --slider-track-height: 4px;
+  --slider-track-height-sm: 3px;
+  --slider-track-height-lg: 6px;
+  --slider-thumb-size: 14px;
+  --slider-thumb-size-sm: 12px;
+  --slider-thumb-size-lg: 18px;
+  --slider-thumb-border-width: 2px;
+  --slider-radius: 999px;
+  --slider-width: 100%;
+  --slider-max-width: var(--input-max-width);
+  --slider-gap: var(--space-sm);
+  --slider-font-size: var(--checkbox-font-size);
+  --slider-font-size-sm: var(--checkbox-font-size-sm);
+  --slider-font-size-lg: var(--checkbox-font-size-lg);
+  --slider-line-height: var(--checkbox-line-height);
+  --slider-label-weight: var(--checkbox-label-weight);
+  --slider-value-size: var(--text-size-sm);
+  --slider-value-size-sm: var(--text-size-xs);
+  --slider-value-size-lg: var(--text-size-base);
+  --slider-tick-size: var(--text-size-xs);
+  --slider-hint-size: var(--checkbox-hint-size);
+  --slider-step-size: 2.25rem;
+  --slider-step-size-sm: 1.875rem;
+  --slider-step-size-lg: 2.5rem;
+  --slider-step-gap: var(--space-sm);
+  --slider-step-icon-size: 1rem;
+
+}
+
+// Slider — OOCSS: 구조(.slider) / 크기(.slider_sm) / 색상(.color_*)
+//
+// 접근성 — 이름 · 설명 · 값
+//   label for="id"           보이는 레이블 연결
+//   aria-label               단독 사용
+//   aria-labelledby          외부 레이블(id) 연결
+//   aria-describedby         slider_hint · form_field-hint 연결
+//   output for="id"          시각적 현재 값
+//   aria-valuetext           스크린 리더용 값 (data-slider-valuetext-*)
+//
+//   <div class="slider slider_stepper">
+//     <div class="slider_header">
+//       <label class="slider_label" for="id">볼륨</label>
+//       <output class="slider_value" for="id">30</output>
+//     </div>
+//     <div class="slider_control">
+//       <button type="button" class="slider_step slider_step-decrease" aria-label="값 줄이기">…</button>
+//       <input type="range" class="slider_input" id="id" min="0" max="100" value="30">
+//       <button type="button" class="slider_step slider_step-increase" aria-label="값 늘리기">…</button>
+//     </div>
+//   </div>
+
+@mixin slider-thumb-style() {
+  width: var(--slider-thumb-size);
+  height: var(--slider-thumb-size);
+  background-color: var(--slider-thumb-bg, var(--color-bg));
+  border: var(--slider-thumb-border-width) solid var(--slider-thumb-color, var(--color-accent));
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
+  cursor: pointer;
+  transition:
+    border-color $transition-fast,
+    box-shadow $transition-fast,
+    transform $transition-fast;
+}
+
+@mixin slider-track-fill($fill-color, $track-color) {
+  background: linear-gradient(
+    to right,
+    $fill-color 0%,
+    $fill-color var(--slider-progress, 0%),
+    $track-color var(--slider-progress, 0%),
+    $track-color 100%
+  );
+}
+
+@mixin slider-skin($color) {
+  --slider-thumb-color: #{$color};
+
+  .slider_input {
+    &::-webkit-slider-runnable-track {
+      @include slider-track-fill($color, var(--color-border));
+    }
+
+    &::-moz-range-progress {
+      background-color: $color;
+    }
+
+    &::-moz-range-thumb {
+      border-color: $color;
+    }
+
+    &:focus-visible::-webkit-slider-thumb {
+      outline-color: $color;
+    }
+
+    &:focus-visible::-moz-range-thumb {
+      outline-color: $color;
+    }
+  }
+}
+
+@mixin slider-color-variant($name) {
+  @if $name == primary {
+    @include slider-skin(var(--color-accent));
+  } @else if $name == success {
+    @include slider-skin(var(--color-success));
+  } @else if $name == danger {
+    @include slider-skin(var(--color-danger));
+  } @else if $name == warning {
+    @include slider-skin(var(--color-warning));
+  }
+}
+
+.slider {
+  --slider-progress: 0%;
+  --slider-thumb-color: var(--color-accent);
+
+  display: block;
+  width: var(--slider-width);
+  max-width: 100%;
+  font-size: var(--slider-font-size);
+  line-height: var(--slider-line-height);
+  color: var(--color-text);
+
+  @each $name in primary, success, danger, warning {
+    &.color_#{$name} {
+      @include slider-color-variant($name);
+    }
+  }
+
+  &:has(.slider_input:disabled) {
+    @include disabled-interactive-wrapper;
+    --slider-thumb-color: var(--color-border-disabled);
+
+    .slider_input {
+      &::-webkit-slider-runnable-track {
+        @include slider-track-fill(var(--color-border-disabled), var(--color-surface-disabled));
+      }
+
+      &::-moz-range-progress {
+        background-color: var(--color-border-disabled);
+      }
+
+      &::-moz-range-track {
+        background-color: var(--color-surface-disabled);
+      }
+
+      &::-webkit-slider-thumb,
+      &::-moz-range-thumb {
+        border-color: var(--color-border-disabled);
+        background-color: var(--color-surface-disabled);
+      }
+    }
+  }
+
+  &:has(.slider_input:disabled) .slider_step {
+    @include disabled-surface;
+  }
+
+  &.is-error {
+    --slider-thumb-color: var(--color-danger);
+
+    .slider_input {
+      &::-webkit-slider-runnable-track {
+        @include slider-track-fill(var(--color-danger), var(--color-border));
+      }
+
+      &::-moz-range-progress {
+        background-color: var(--color-danger);
+      }
+    }
+  }
+
+  &_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--slider-gap);
+    margin-bottom: var(--space-xs);
+  }
+
+  &_label {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-weight: var(--slider-label-weight);
+  }
+
+  &_value {
+    flex-shrink: 0;
+    font-size: var(--slider-value-size);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-muted);
+  }
+
+  &_hint {
+    display: block;
+    margin-top: var(--space-xs);
+    font-size: var(--slider-hint-size);
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+  }
+
+  &_control {
+    display: flex;
+    align-items: center;
+    gap: var(--slider-step-gap);
+  }
+
+  &_step {
+    display: none;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: var(--slider-step-size);
+    height: var(--slider-step-size);
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    cursor: pointer;
+    transition:
+      border-color $transition-fast,
+      color $transition-fast,
+      background-color $transition-fast,
+      box-shadow $transition-fast;
+
+    &:hover:not(:disabled) {
+      border-color: var(--slider-thumb-color, var(--color-accent));
+      color: var(--slider-thumb-color, var(--color-accent));
+      background-color: var(--color-surface-raised);
+    }
+
+    &:focus-visible {
+      outline: var(--focus-outline-width) solid var(--slider-thumb-color, var(--color-accent));
+      outline-offset: var(--focus-outline-offset);
+    }
+
+    &:disabled {
+      @include disabled-surface;
+    }
+  }
+
+  &_step-icon {
+    display: block;
+    width: var(--slider-step-icon-size);
+    height: var(--slider-step-icon-size);
+    pointer-events: none;
+  }
+
+  &_input {
+    -webkit-appearance: none;
+    appearance: none;
+    display: block;
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+    height: var(--slider-thumb-size);
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+    }
+
+    &:focus-visible::-webkit-slider-thumb {
+      outline: var(--focus-outline-width) solid var(--slider-thumb-color, var(--color-accent));
+      outline-offset: var(--focus-outline-offset);
+    }
+
+    &:focus-visible::-moz-range-thumb {
+      outline: var(--focus-outline-width) solid var(--slider-thumb-color, var(--color-accent));
+      outline-offset: var(--focus-outline-offset);
+    }
+
+    &::-webkit-slider-runnable-track {
+      height: var(--slider-track-height);
+      border-radius: var(--slider-radius);
+      @include slider-track-fill(var(--slider-thumb-color, var(--color-accent)), var(--color-border));
+    }
+
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      margin-top: calc((var(--slider-track-height) - var(--slider-thumb-size)) / 2);
+      @include slider-thumb-style;
+    }
+
+    &::-moz-range-track {
+      height: var(--slider-track-height);
+      border-radius: var(--slider-radius);
+      background-color: var(--color-border);
+    }
+
+    &::-moz-range-progress {
+      height: var(--slider-track-height);
+      border-radius: var(--slider-radius);
+      background-color: var(--slider-thumb-color, var(--color-accent));
+    }
+
+    &::-moz-range-thumb {
+      @include slider-thumb-style;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  &_ticks {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--space-xs);
+    padding: 0 calc(var(--slider-thumb-size) / 2);
+    font-size: var(--slider-tick-size);
+    line-height: 1.2;
+    color: var(--color-text-muted);
+    user-select: none;
+  }
+
+  &_tick {
+    flex: 0 0 auto;
+    text-align: center;
+  }
+
+  // ----- 너비
+
+  &_fit {
+    max-width: var(--slider-max-width);
+  }
+
+  &_block {
+    width: 100%;
+  }
+
+  // ----- 크기
+
+  &_sm {
+    --slider-track-height: var(--slider-track-height-sm);
+    --slider-thumb-size: var(--slider-thumb-size-sm);
+    --slider-font-size: var(--slider-font-size-sm);
+    --slider-value-size: var(--slider-value-size-sm);
+  }
+
+  &_lg {
+    --slider-track-height: var(--slider-track-height-lg);
+    --slider-thumb-size: var(--slider-thumb-size-lg);
+    --slider-font-size: var(--slider-font-size-lg);
+    --slider-value-size: var(--slider-value-size-lg);
+    --slider-step-size: var(--slider-step-size-lg);
+  }
+
+  // ----- 스텝 버튼 (모바일)
+
+  &_stepper {
+    .slider_step {
+      @media (max-width: $breakpoint-md) {
+        display: inline-flex;
+      }
+    }
+
+    &.slider_stepper_always .slider_step {
+      display: inline-flex;
+    }
+
+    &.slider_sm {
+      --slider-step-size: var(--slider-step-size-sm);
+    }
+  }
+}

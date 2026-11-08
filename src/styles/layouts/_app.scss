@@ -1,0 +1,195 @@
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  text-align: left;
+
+  &__main {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// AppHeader (from AppHeader SFC)
+// ---------------------------------------------------------------------------
+.app-header {
+  --app-header-top-height: 0px;
+
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-header-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform 0.22s ease;
+  will-change: transform;
+
+  // inline(기본 한 줄): 스크롤 시 헤더 전체 숨김
+  &:not(.app-header--stacked).is-scroll-hidden {
+    transform: translateY(-100%);
+    pointer-events: none;
+  }
+
+  // stacked + hideNavOnScroll: 네비까지 함께 전체 숨김
+  &--stacked.app-header--hide-nav-on-scroll.is-scroll-hidden {
+    transform: translateY(-100%);
+    pointer-events: none;
+  }
+
+  // stacked 기본: 상단(브랜드)만 올리고 하단 네비는 뷰포트에 유지
+  &--stacked:not(.app-header--hide-nav-on-scroll).is-scroll-hidden {
+    transform: translateY(calc(-1 * var(--app-header-top-height)));
+
+    .app-header__top {
+      pointer-events: none;
+    }
+  }
+
+  &__top {
+    position: relative;
+    z-index: 1;
+
+    // 언어 드롭다운 등이 열릴 때 nav-bar 위로 올림
+    &:has(.lang-switcher.is-open),
+    &:has(.dropdown.is-open) {
+      z-index: 3;
+    }
+  }
+
+  &__nav-bar {
+    position: relative;
+    z-index: 2;
+    border-top: 1px solid var(--color-border-subtle);
+    background: var(--color-header-bg);
+  }
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 12px 24px;
+    box-sizing: border-box;
+
+    &--nav {
+      justify-content: flex-start;
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
+  }
+
+  &__start {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  &__back {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  &__back-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 0 8px 0 2px;
+    color: var(--color-accent-text);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:hover {
+      color: var(--color-accent-text-hover);
+    }
+  }
+
+  &__brand-wrap {
+    min-width: 0;
+  }
+
+  &__brand {
+    color: var(--color-accent-text);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--color-accent-text-hover);
+    }
+  }
+
+  &__end {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  &__nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 0 10px;
+    border-radius: 8px;
+    color: var(--color-text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--color-text);
+      background: var(--color-accent-muted);
+    }
+
+    // react-router NavLink: `.is-active` (+ legacy `.router-link-exact-active` alias)
+    &.is-active,
+    &.router-link-exact-active {
+      color: var(--color-accent-text);
+      background: var(--color-accent-muted);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// AppFooter (from AppFooter SFC)
+// ---------------------------------------------------------------------------
+.app-footer {
+  flex-shrink: 0;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+
+  &__inner {
+    padding: 14px 24px;
+    box-sizing: border-box;
+  }
+
+  &__text {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 12px;
+  }
+}

@@ -1,0 +1,109 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Select — native caret
+  --select-padding-right: 2.25rem;
+  --select-padding-right-sm: 2rem;
+  --select-padding-right-lg: 2.5rem;
+  --select-caret-offset: 0.65rem;
+  --select-caret-offset-sm: 0.5rem;
+  --select-caret-offset-lg: 0.85rem;
+  --select-caret-size: 1em;
+  --select-caret-size-sm: 0.875em;
+  --select-caret-size-lg: 1.125em;
+
+}
+
+// Select — OOCSS: 네이티브 select는 .input 공유 · 커스텀 트리거는 .btn_select (Button)
+//
+//   네이티브: <select class="input">
+//   커스텀:   .btn_select · .btn_select-text — 드롭다운·팝오버 트리거 (Button 컴포넌트)
+
+$select-caret-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234a5568' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+$select-caret-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a8b8cf' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+
+@mixin select-native-caret(
+  $caret,
+  $offset: var(--select-caret-offset),
+  $size: var(--select-caret-size)
+) {
+  background-color: var(--color-bg);
+  background-image: $caret;
+  background-repeat: no-repeat;
+  background-position: right $offset center;
+  background-size: $size $size;
+}
+
+select.input {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: var(--select-padding-right);
+  cursor: pointer;
+  @include select-native-caret($select-caret-light);
+
+  &::-ms-expand {
+    display: none;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    background-color: var(--color-surface);
+    background-image: $select-caret-light;
+    color: var(--color-text-disabled);
+    border-color: var(--color-border-disabled);
+  }
+
+  &.input_sm {
+    padding-right: var(--select-padding-right-sm);
+    background-position: right var(--select-caret-offset-sm) center;
+    background-size: var(--select-caret-size-sm) var(--select-caret-size-sm);
+  }
+
+  &.input_lg {
+    padding-right: var(--select-padding-right-lg);
+    background-position: right var(--select-caret-offset-lg) center;
+    background-size: var(--select-caret-size-lg) var(--select-caret-size-lg);
+  }
+
+  &[multiple] {
+    padding-right: 0.75rem;
+    min-height: 6rem;
+    background-image: none;
+    cursor: default;
+
+    option {
+      padding: 0.25rem 0;
+    }
+  }
+
+  &[size]:not([size="1"]) {
+    padding-right: 0.75rem;
+    background-image: none;
+    cursor: default;
+  }
+
+  &:required:invalid {
+    color: var(--color-text-muted);
+  }
+}
+
+[data-theme="dark"] select.input {
+  @include select-native-caret($select-caret-dark);
+
+  &:disabled {
+    background-color: var(--color-surface);
+    background-image: $select-caret-dark;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) select.input {
+    @include select-native-caret($select-caret-dark);
+
+    &:disabled {
+      background-color: var(--color-surface);
+      background-image: $select-caret-dark;
+    }
+  }
+}

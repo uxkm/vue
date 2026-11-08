@@ -1,0 +1,354 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Dropdown — structure
+  --dropdown-min-width: 10rem;
+  --dropdown-menu-width: auto;
+  --dropdown-padding: var(--space-xs);
+  --dropdown-offset: var(--space-xs);
+  --dropdown-offset-sm: var(--space-2xs);
+  --dropdown-offset-md: var(--space-xs);
+  --dropdown-offset-lg: var(--space-md);
+  --dropdown-item-line-height: 1.4;
+  --z-dropdown: 100;
+
+}
+
+// Dropdown — OOCSS: 구조(.dropdown) + 스킨(.dropdown_placement-* · .dropdown_offset-* · .dropdown_block) + 파트(.dropdown_trigger · .dropdown_menu)
+//
+//   <div class="dropdown" data-dropdown>
+//     <button type="button" class="btn btn_outline dropdown_trigger" aria-haspopup="menu" aria-expanded="false" aria-controls="dd-menu-1">
+//       <span class="btn_label">메뉴</span>
+//     </button>
+//     <div class="dropdown_menu" id="dd-menu-1" role="menu">
+//       <ul class="menu menu_vertical menu_compact" role="none">…</ul>
+//     </div>
+//   </div>
+//
+// 상태 클래스
+//   .is-open       — 패널 표시 (aria-expanded="true"와 함께)
+//   .is-disabled   — 트리거 비활성
+//   .dropdown_menu-scrollable — maxVisibleItems 지정 시 menu_list 스크롤
+//   .dropdown_offset-none · _sm · _lg — 트리거 ↔ 패널 간격
+
+.dropdown {
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
+
+  &.is-open {
+    > [data-demo-slot="trigger"] > .dropdown_trigger[aria-expanded],
+    > .dropdown_trigger[aria-expanded] {
+      z-index: calc(var(--z-dropdown, 100) + 1);
+    }
+
+    > .dropdown_menu {
+      display: block;
+    }
+  }
+
+  &.is-disabled {
+    @include disabled-state;
+  }
+
+  &_trigger {
+    position: relative;
+  }
+
+  &_menu {
+    position: absolute;
+    top: calc(100% + var(--dropdown-offset));
+    left: 0;
+    z-index: var(--z-dropdown, 100);
+    display: none;
+    width: var(--dropdown-menu-width);
+    min-width: var(--dropdown-min-width);
+    padding: var(--dropdown-padding);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: $radius-lg;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+
+    .menu {
+      width: 100%;
+      max-width: none;
+    }
+
+    .menu_link.color_danger {
+      color: color-token(danger);
+
+      &:hover:not(.is-disabled) {
+        color: color-token(danger);
+        background: var(--color-badge-danger-bg);
+      }
+    }
+
+    &-scrollable {
+      .menu_list {
+        max-height: calc(
+          var(--dropdown-max-visible-items) *
+            (
+              var(--menu-item-padding-y) * 2 +
+                var(--menu-font-size) * var(--dropdown-item-line-height)
+            ) +
+            (var(--dropdown-max-visible-items) - 1) * var(--menu-gap)
+        );
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+
+        &::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          border-radius: 3px;
+          background: var(--color-border);
+        }
+      }
+    }
+  }
+
+  // ----- 스킨
+
+  // ----- 간격 (트리거 ↔ 패널)
+
+  &_offset-none {
+    --dropdown-offset: 0;
+  }
+
+  &_offset-sm {
+    --dropdown-offset: var(--dropdown-offset-sm);
+  }
+
+  &_offset-lg {
+    --dropdown-offset: var(--dropdown-offset-lg);
+  }
+
+  &_placement-end {
+    .dropdown_menu {
+      left: auto;
+      right: 0;
+    }
+  }
+
+  &_placement-bottom-center {
+    .dropdown_menu {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+
+  &_placement-top {
+    .dropdown_menu {
+      top: auto;
+      bottom: calc(100% + var(--dropdown-offset));
+    }
+  }
+
+  &_placement-top-center {
+    .dropdown_menu {
+      top: auto;
+      bottom: calc(100% + var(--dropdown-offset));
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+
+  // left / right — 기본은 세로 center. -top · -bottom 은 트리거 상·하 정렬
+  &_placement-left {
+    .dropdown_menu {
+      top: 50%;
+      bottom: auto;
+      left: auto;
+      right: calc(100% + var(--dropdown-offset));
+      transform: translateY(-50%);
+    }
+  }
+
+  &_placement-left-top {
+    .dropdown_menu {
+      top: 0;
+      bottom: auto;
+      left: auto;
+      right: calc(100% + var(--dropdown-offset));
+      transform: none;
+    }
+  }
+
+  &_placement-left-bottom {
+    .dropdown_menu {
+      top: auto;
+      bottom: 0;
+      left: auto;
+      right: calc(100% + var(--dropdown-offset));
+      transform: none;
+    }
+  }
+
+  &_placement-right {
+    .dropdown_menu {
+      top: 50%;
+      bottom: auto;
+      left: calc(100% + var(--dropdown-offset));
+      transform: translateY(-50%);
+    }
+  }
+
+  &_placement-right-top {
+    .dropdown_menu {
+      top: 0;
+      bottom: auto;
+      left: calc(100% + var(--dropdown-offset));
+      transform: none;
+    }
+  }
+
+  &_placement-right-bottom {
+    .dropdown_menu {
+      top: auto;
+      bottom: 0;
+      left: calc(100% + var(--dropdown-offset));
+      transform: none;
+    }
+  }
+
+  &_block {
+    display: flex;
+    width: 100%;
+
+    > [data-demo-slot="trigger"],
+    > [data-demo-slot="trigger"] > .dropdown_trigger,
+    > .dropdown_trigger {
+      width: 100%;
+    }
+
+    .dropdown_menu {
+      width: 100%;
+    }
+  }
+
+  &_fit {
+    > [data-demo-slot="trigger"] > .dropdown_trigger.btn_select,
+    > .dropdown_trigger.btn_select {
+      min-width: var(--dropdown-min-width);
+    }
+  }
+
+  // ----- 데모 레이아웃
+
+  &_demo-stage {
+    position: relative;
+    flex: 1 1 100%;
+    width: 100%;
+    min-height: 14rem;
+    padding: var(--space-2xl) var(--space-xl);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: $radius-md;
+    overflow: visible;
+    background: var(--color-bg);
+
+    &-placement {
+      min-height: 20rem;
+    }
+  }
+
+  &_demo-placement-stage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 14rem;
+    margin-top: var(--space-xl);
+  }
+
+  &_demo-select {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    width: 100%;
+  }
+
+  &_demo-select-controls {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  &_demo-select-control-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    align-items: center;
+  }
+
+  &_demo-select-control-label {
+    flex: 0 0 5.5rem;
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--text-size-sm);
+  }
+
+  &_demo-select-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-lg);
+    align-items: stretch;
+    width: 100%;
+    min-height: 12rem;
+    padding: var(--space-xl) 0;
+
+    @media (max-width: 56rem) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &_demo-select-cell {
+    display: grid;
+    grid-template-rows: auto auto auto;
+    gap: var(--space-sm);
+    align-content: start;
+    min-width: 0;
+
+    > .dropdown {
+      width: 100%;
+    }
+  }
+
+  &_demo-select-caption {
+    margin: 0;
+    min-height: 1.4em;
+    color: var(--color-text-muted);
+    font-size: var(--text-size-sm);
+    line-height: 1.4;
+  }
+
+  &_demo-select-meta {
+    margin: 0;
+    min-height: 1.4em;
+    font-size: var(--text-size-sm);
+    line-height: 1.4;
+  }
+
+  &_row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    align-items: flex-start;
+  }
+
+  &_demo-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    max-width: 28rem;
+    padding: var(--space-md);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: $radius-md;
+    background: var(--color-surface-raised);
+  }
+}

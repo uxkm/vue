@@ -1,0 +1,50 @@
+{
+  "id": "main",
+  "name": "메인화면",
+  "filePath": "@/b2b/main",
+  "depth2": [
+    {
+      "name": "메인화면 메인",
+      "type": "Index",
+      "id": "B2B-MAIN-000",
+      "pageUrl": "/b2b",
+      "filePath": "@/b2b/index.jsx",
+      "owner": "",
+      "start": "",
+      "expected": "",
+      "end": "",
+      "status": "pending",
+      "progress": 0,
+      "planning": {
+        "label": "피그마",
+        "url": "https://www.figma.com/design/dqM95Lpz1p919aVT9QfHGK/%ED%94%BD%EC%8A%A4%EB%8B%A4%EC%9D%B8?node-id=59-2051&t=ZIJdv8i8EJd3iUXe-1"
+      },
+      "design": {
+        "label": "피그마",
+        "url": "https://www.figma.com/design/dqM95Lpz1p919aVT9QfHGK/%ED%94%BD%EC%8A%A4%EB%8B%A4%EC%9D%B8?node-id=59-2051&t=ZIJdv8i8EJd3iUXe-1"
+      },
+      "remark": [
+        {
+          "date": "2026-03-12",
+          "author": "김퍼블",
+          "text": "최초 마크업 착수. 히어로·퀵메뉴·프로모 섹션 골격 반영."
+        },
+        {
+          "date": "2026-03-18",
+          "author": "이기획",
+          "text": "기획 검수: 메인 배너 자동재생 5초, 모바일은 스와이프만 허용."
+        },
+        {
+          "date": "2026-03-25",
+          "author": "김퍼블",
+          "text": "디자인 피드백 반영 — 퀵메뉴 아이콘 24→28, 섹션 여백 토큰 통일."
+        },
+        {
+          "date": "2026-04-02",
+          "author": "박디자인",
+          "text": "최종 시안 v1.2 전달. 다크 히어로 톤·CTA 컬러 확정."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,666 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Carousel
+  --carousel-font-size: var(--text-size-sm);
+  --carousel-height: 16rem;
+  --carousel-radius: var(--radius-lg);
+  --carousel-bg: var(--color-surface-raised);
+  --carousel-transition: 0.35s ease;
+  --carousel-nav-size: 2.25rem;
+  --carousel-nav-icon-size: 0.875rem;
+  --carousel-nav-offset: var(--space-md);
+  --carousel-nav-bg: var(--color-surface);
+  --carousel-nav-bg-hover: var(--color-surface-raised);
+  --carousel-nav-border: var(--color-border);
+  --carousel-nav-border-hover: var(--color-border);
+  --carousel-nav-color: var(--color-text);
+  --carousel-nav-color-hover: var(--color-accent-text);
+  --carousel-dot-gap: 0.375rem;
+  --carousel-dot-size: 0.5rem;
+  --carousel-dot-size-active: 1.25rem;
+  --carousel-dot-bg: var(--color-border);
+  --carousel-dot-bg-hover: var(--color-text-muted);
+  --carousel-dot-bg-active: var(--color-accent);
+  --carousel-dots-padding-y: var(--space-md);
+  --carousel-dots-padding-x: var(--space-md);
+  --carousel-card-gap: var(--space-xs);
+  --carousel-toggle-size: 2rem;
+  --carousel-toggle-icon-size: 1rem;
+  // card_media(16:9) 영역 세로 중앙 — 50cqi / (16/9) 대신 곱셈으로 계산
+  --carousel-media-nav-top: calc(50cqi * 9 / 16);
+
+  --carousel-font-size-sm: var(--text-size-xs);
+  --carousel-height-sm: 11rem;
+  --carousel-nav-size-sm: 1.875rem;
+  --carousel-nav-icon-size-sm: 0.75rem;
+  --carousel-dot-size-sm: 0.375rem;
+  --carousel-dot-size-active-sm: 1rem;
+  --carousel-toggle-size-sm: 1.75rem;
+  --carousel-toggle-icon-size-sm: 0.875rem;
+
+  --carousel-font-size-lg: var(--text-size-base);
+  --carousel-height-lg: 20rem;
+  --carousel-nav-size-lg: 2.75rem;
+  --carousel-nav-icon-size-lg: 1rem;
+  --carousel-dot-size-lg: 0.625rem;
+  --carousel-dot-size-active-lg: 1.5rem;
+  --carousel-toggle-size-lg: 2.5rem;
+  --carousel-toggle-icon-size-lg: 1.125rem;
+
+}
+
+// Carousel — React(viewport/track) · Swiper(선택)
+//
+//   <div class="carousel" data-carousel>
+//     <div class="carousel_viewport">
+//       <div class="carousel_track" style="transform: translateX(-0%)">
+//         <div class="carousel_slide is-active">…</div>
+//         <div class="carousel_slide">…</div>
+//       </div>
+//     </div>
+//     <div class="carousel_nav">
+//       <button type="button" class="carousel_prev" aria-label="이전">…</button>
+//       <button type="button" class="carousel_next" aria-label="다음">…</button>
+//     </div>
+//     <div class="carousel_dots" role="tablist">
+//       <button type="button" class="carousel_dot is-active" role="tab"></button>
+//     </div>
+//   </div>
+
+.carousel {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: clip;
+  font-size: var(--carousel-font-size);
+  color: var(--color-text);
+
+  &_demo {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  // ----- React: viewport · track · slide
+
+  &_viewport {
+    position: relative;
+    width: 100%;
+    min-height: var(--carousel-height);
+    border-radius: var(--carousel-radius);
+    overflow: hidden;
+    background: var(--carousel-bg);
+  }
+
+  &_track {
+    display: flex;
+    width: 100%;
+    min-height: var(--carousel-height);
+    transition: transform var(--carousel-transition);
+    will-change: transform;
+  }
+
+  &_slide {
+    display: flex;
+    flex: 0 0 100%;
+    align-items: stretch;
+    justify-content: stretch;
+    width: 100%;
+    min-width: 0;
+    min-height: var(--carousel-height);
+    box-sizing: border-box;
+
+    > .card {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      min-height: var(--carousel-height);
+      border-radius: 0;
+    }
+  }
+
+  &_panel {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: var(--carousel-height);
+    padding: var(--space-lg);
+    text-align: center;
+    gap: var(--space-xs);
+  }
+
+  // ----- React: nav · dots
+
+  &_nav {
+    pointer-events: none;
+  }
+
+  &_prev,
+  &_next {
+    position: absolute;
+    top: 50%;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--carousel-nav-size);
+    height: var(--carousel-nav-size);
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--carousel-nav-border);
+    border-radius: $radius-pill;
+    background: var(--carousel-nav-bg);
+    color: var(--carousel-nav-color);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-50%);
+    cursor: pointer;
+    pointer-events: auto;
+    transition:
+      background-color $transition-fast,
+      border-color $transition-fast,
+      color $transition-fast,
+      opacity $transition-fast;
+    @include focus-ring;
+
+    &:hover:not(:disabled) {
+      background: var(--carousel-nav-bg-hover);
+      border-color: var(--carousel-nav-border-hover);
+      color: var(--carousel-nav-color-hover);
+    }
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  }
+
+  &_prev {
+    left: var(--carousel-nav-offset);
+  }
+
+  &_next {
+    right: var(--carousel-nav-offset);
+  }
+
+  &_nav-icon {
+    width: var(--carousel-nav-icon-size);
+    height: var(--carousel-nav-icon-size);
+    flex-shrink: 0;
+  }
+
+  &_dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--carousel-dot-gap);
+    padding: var(--carousel-dots-padding-y) var(--carousel-dots-padding-x);
+  }
+
+  &_dot {
+    display: inline-flex;
+    width: var(--carousel-dot-size);
+    height: var(--carousel-dot-size);
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: $radius-pill;
+    background: var(--carousel-dot-bg);
+    cursor: pointer;
+    transition:
+      background-color $transition-fast,
+      width $transition-fast;
+    @include focus-ring;
+
+    &:hover {
+      background: var(--carousel-dot-bg-hover);
+    }
+
+    &.is-active {
+      width: var(--carousel-dot-size-active);
+      background: var(--carousel-dot-bg-active);
+    }
+  }
+
+  // ----- Swiper (선택)
+
+  .swiper {
+    width: 100%;
+    max-width: 100%;
+    min-height: var(--carousel-height);
+    border-radius: var(--carousel-radius);
+    overflow: hidden;
+    container-type: inline-size;
+    --swiper-navigation-size: var(--carousel-nav-size);
+    --swiper-navigation-color: var(--carousel-nav-color);
+    --swiper-navigation-sides-offset: var(--carousel-nav-offset);
+    --swiper-navigation-top-offset: 50%;
+    --swiper-pagination-color: var(--carousel-dot-bg-active);
+    --swiper-pagination-bullet-size: var(--carousel-dot-size);
+    --swiper-pagination-bullet-horizontal-gap: var(--carousel-dot-gap);
+    --swiper-pagination-bullet-inactive-color: var(--carousel-dot-bg);
+    --swiper-pagination-bullet-inactive-opacity: 1;
+    --swiper-pagination-bottom: var(--carousel-dots-padding-y);
+  }
+
+  // 상단 card_media가 있으면 내비게이션을 이미지 영역 세로 중앙에 배치
+  &:has(.swiper-slide .card_media, .swiper-slide .card_media-placeholder) {
+    .swiper {
+      --swiper-navigation-top-offset: var(--carousel-media-nav-top);
+    }
+
+    .swiper-button-prev,
+    .swiper-button-next {
+      top: var(--carousel-media-nav-top);
+    }
+  }
+
+  &:not(.carousel_multi) .swiper-slide {
+    flex-shrink: 0;
+    box-sizing: border-box;
+  }
+
+  .swiper-slide {
+    display: flex;
+    height: auto;
+    box-sizing: border-box;
+
+    > .card {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      min-height: var(--carousel-height);
+      border-radius: 0;
+    }
+  }
+
+  .swiper[data-swiper-space-between] .swiper-slide > .card,
+  &_multi .swiper-slide > .card {
+    border-radius: $radius-lg;
+  }
+
+  .swiper-button-prev,
+  .swiper-button-next {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--carousel-nav-size);
+    height: var(--carousel-nav-size);
+    margin-top: calc(var(--carousel-nav-size) * -0.5);
+    border: 1px solid var(--carousel-nav-border);
+    border-radius: $radius-pill;
+    background: var(--carousel-nav-bg);
+    box-shadow: var(--shadow-sm);
+    transition:
+      background-color $transition-fast,
+      border-color $transition-fast,
+      color $transition-fast,
+      opacity $transition-fast;
+    @include focus-ring;
+
+    svg,
+    .swiper-navigation-icon {
+      width: var(--carousel-nav-icon-size);
+      height: var(--carousel-nav-icon-size);
+      flex-shrink: 0;
+    }
+
+    &:hover {
+      background: var(--carousel-nav-bg-hover);
+      border-color: var(--carousel-nav-border-hover);
+      color: var(--carousel-nav-color-hover);
+    }
+
+    &.swiper-button-disabled {
+      opacity: 0.35;
+      pointer-events: none;
+    }
+  }
+
+  .swiper-pagination-bullet {
+    opacity: 1;
+    transition:
+      background-color $transition-fast,
+      width $transition-fast,
+      transform $transition-fast;
+
+    &:hover {
+      background: var(--carousel-dot-bg-hover);
+    }
+  }
+
+  .swiper-pagination-bullet-active {
+    width: var(--carousel-dot-size-active);
+    border-radius: $radius-pill;
+  }
+
+  .swiper-pagination-fraction {
+    font-size: var(--text-size-sm);
+    font-weight: 600;
+    color: var(--color-text-muted);
+  }
+
+  .swiper-pagination-progressbar {
+    background: color-mix(in srgb, var(--carousel-dot-bg) 70%, transparent);
+  }
+
+  .swiper-pagination-progressbar-fill {
+    background: var(--carousel-dot-bg-active);
+  }
+
+  // ----- pagination progress
+
+  &_pagination-progress {
+    .swiper {
+      --swiper-pagination-bottom: 0;
+    }
+
+    .swiper-pagination-progressbar {
+      top: auto;
+      bottom: 0;
+      height: 0.25rem;
+    }
+  }
+
+  // ----- pagination custom (번호 불릿)
+
+  &_pagination-custom {
+    .swiper-pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--carousel-dot-gap);
+    }
+
+    .swiper-pagination-bullet {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.5rem;
+      height: 1.5rem;
+      margin: 0 !important;
+      border-radius: $radius-pill;
+      font-size: var(--text-size-xs);
+      font-weight: 600;
+      line-height: 1;
+      color: var(--color-text-muted);
+      background: var(--carousel-dot-bg);
+    }
+
+    .swiper-pagination-bullet-active {
+      width: 1.5rem;
+      color: var(--color-surface);
+      background: var(--carousel-dot-bg-active);
+    }
+  }
+
+  // ----- coverflow
+  // 너비: 항상 sides=1 크기(3등분). peek는 JS spaceBetween(간격)으로 조절
+  // CSS fallback: 100cqi / 3
+
+  &_coverflow {
+    --carousel-coverflow-gap: 0px;
+    --carousel-coverflow-aspect-ratio: 3 / 4;
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: clip;
+    container-type: inline-size;
+
+    .swiper {
+      overflow: hidden;
+      padding-block: var(--space-md);
+    }
+
+    .swiper-slide {
+      width: var(
+        --carousel-coverflow-slide-width,
+        calc((100cqi - 2 * var(--carousel-coverflow-gap)) / 3)
+      );
+      height: auto !important;
+      aspect-ratio: var(--carousel-coverflow-aspect-ratio);
+      max-height: min(24rem, 75svh);
+      flex-shrink: 0;
+      box-sizing: border-box;
+      align-items: stretch;
+      // 3D 회전 시 뒷면/뒤집힌 글자 렌더 방지
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+
+      > .card {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        max-height: 100%;
+        overflow: hidden;
+        border-radius: $radius-lg;
+      }
+
+      .card_media,
+      .card_media-placeholder {
+        flex: 0 0 auto;
+        min-height: 0;
+      }
+
+      .card_header {
+        flex-shrink: 0;
+      }
+
+      .card_title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .card_body {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+      }
+    }
+  }
+
+  &_coverflow-sides-1 .swiper-slide,
+  &_coverflow-sides-15 .swiper-slide,
+  &_coverflow-sides-auto .swiper-slide,
+  &_coverflow-sides-2 .swiper-slide {
+    width: var(
+      --carousel-coverflow-slide-width,
+      calc((100cqi - 2 * var(--carousel-coverflow-gap)) / 3)
+    );
+  }
+
+  &_coverflow-rise {
+    .swiper-slide {
+      align-items: stretch;
+      justify-content: stretch;
+    }
+  }
+
+  // ----- grid
+
+  &_grid {
+    .swiper {
+      height: calc(var(--carousel-height) * 2 + var(--space-md));
+    }
+
+    .swiper-slide {
+      height: calc((100% - var(--space-md)) / 2) !important;
+
+      > .card {
+        min-height: 0;
+        height: 100%;
+        border-radius: $radius-lg;
+      }
+    }
+  }
+
+  // ----- thumbs gallery
+
+  &_gallery {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    width: 100%;
+    min-width: 0;
+  }
+
+  &_thumbs {
+    overflow-x: visible;
+
+    .swiper {
+      min-height: 0;
+      border-radius: $radius-md;
+      overflow: hidden;
+    }
+
+    .swiper-wrapper {
+      // 시작 위치 좌측 정렬 — centeredSlides 여백으로 인한 잘림 방지
+      justify-content: flex-start;
+    }
+
+    .swiper-slide {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: auto;
+      opacity: 0.45;
+      cursor: pointer;
+      transition:
+        opacity $transition-fast,
+        transform $transition-fast;
+
+      > .card {
+        width: 100%;
+        min-height: 4.5rem;
+        border-radius: $radius-md;
+      }
+
+      &.swiper-slide-thumb-active {
+        opacity: 1;
+      }
+    }
+  }
+
+  &_toggle {
+    position: absolute;
+    top: var(--carousel-nav-offset);
+    right: var(--carousel-nav-offset);
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--carousel-toggle-size);
+    height: var(--carousel-toggle-size);
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--carousel-nav-border);
+    border-radius: $radius-pill;
+    background: var(--carousel-nav-bg);
+    color: var(--carousel-nav-color);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition:
+      background-color $transition-fast,
+      border-color $transition-fast,
+      color $transition-fast;
+    @include focus-ring;
+
+    &:hover {
+      background: var(--carousel-nav-bg-hover);
+      border-color: var(--carousel-nav-border-hover);
+      color: var(--carousel-nav-color-hover);
+    }
+
+    .carousel_toggle-icon-play {
+      display: none;
+    }
+
+    &[aria-pressed="false"] {
+      .carousel_toggle-icon-pause {
+        display: none;
+      }
+
+      .carousel_toggle-icon-play {
+        display: block;
+      }
+    }
+  }
+
+  &_toggle-icon {
+    width: var(--carousel-toggle-icon-size);
+    height: var(--carousel-toggle-icon-size);
+    flex-shrink: 0;
+  }
+
+  // ----- slides per view · auto
+
+  &_multi {
+    max-width: 100%;
+
+    .swiper-slide {
+      width: min(18rem, 78%);
+      height: auto;
+
+      > .card {
+        min-height: var(--carousel-height);
+        border-radius: $radius-lg;
+      }
+    }
+  }
+
+  // ----- dots 외부
+
+  &_dots-outside {
+    .swiper {
+      padding-bottom: 0;
+    }
+
+    > .swiper-pagination {
+      position: static;
+      width: 100%;
+      margin-top: var(--space-sm);
+    }
+
+    .carousel_toggle {
+      top: var(--space-sm);
+      right: 0;
+    }
+  }
+
+  // ----- 크기
+
+  &_sm {
+    --carousel-height: var(--carousel-height-sm);
+    --carousel-font-size: var(--carousel-font-size-sm);
+    --carousel-nav-size: var(--carousel-nav-size-sm);
+    --carousel-nav-icon-size: var(--carousel-nav-icon-size-sm);
+    --carousel-dot-size: var(--carousel-dot-size-sm);
+    --carousel-dot-size-active: var(--carousel-dot-size-active-sm);
+    --carousel-toggle-size: var(--carousel-toggle-size-sm);
+    --carousel-toggle-icon-size: var(--carousel-toggle-icon-size-sm);
+  }
+
+  &_lg {
+    --carousel-height: var(--carousel-height-lg);
+    --carousel-font-size: var(--carousel-font-size-lg);
+    --carousel-nav-size: var(--carousel-nav-size-lg);
+    --carousel-nav-icon-size: var(--carousel-nav-icon-size-lg);
+    --carousel-dot-size: var(--carousel-dot-size-lg);
+    --carousel-dot-size-active: var(--carousel-dot-size-active-lg);
+    --carousel-toggle-size: var(--carousel-toggle-size-lg);
+    --carousel-toggle-icon-size: var(--carousel-toggle-icon-size-lg);
+  }
+}

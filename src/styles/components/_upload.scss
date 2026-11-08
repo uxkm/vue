@@ -1,0 +1,378 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Upload
+  --upload-max-width: var(--input-max-width);
+  --upload-gap: var(--space-sm);
+  --upload-dropzone-padding: var(--space-xl);
+  --upload-dropzone-gap: var(--space-sm);
+  --upload-dropzone-icon-size: 2.5rem;
+  --upload-list-gap: var(--space-xs);
+  --upload-item-gap: var(--space-sm);
+  --upload-item-padding-y: 0.5rem;
+  --upload-item-padding-x: 0.75rem;
+  --upload-item-icon-size: 1.5rem;
+  --upload-progress-height: 4px;
+  --upload-card-size: 6.5rem;
+  --upload-card-gap: var(--space-sm);
+  --upload-hint-size: var(--text-size-sm);
+
+}
+
+// Upload — OOCSS: 구조(.upload) + 스킨(.upload_dropzone · .upload_cards) + 파트(.upload_item · .upload_progress)
+//
+//   <label class="upload_trigger">
+//     <input type="file" class="upload_input" tabindex="-1">
+//     <span class="btn btn_filled color_primary"><span class="btn_label">파일 선택</span></span>
+//   </label>
+//
+//   <label class="upload_dropzone">
+//     <input type="file" class="upload_input" tabindex="-1" multiple>
+//     …
+//   </label>
+//
+// 상태 (구조에 부착)
+//   .is-dragover  — 드래그 오버 (드롭존)
+//   .is-uploading  — 업로드 진행 중 (항목)
+//   .is-done       — 업로드 완료 (항목)
+//   .is-error      — 오류 (드롭존 · 항목)
+//   .is-disabled   — 비활성 (컨테이너)
+
+.upload {
+  display: flex;
+  flex-direction: column;
+  gap: var(--upload-gap);
+  width: 100%;
+
+  &.upload_fit {
+    max-width: var(--upload-max-width);
+  }
+
+  &.is-disabled {
+    @include disabled-interactive-wrapper;
+  }
+
+  &_input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  &_trigger {
+    position: relative;
+    display: inline-flex;
+    align-self: flex-start;
+    width: fit-content;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--upload-gap);
+    max-width: 100%;
+
+    &:has(.upload_input:disabled) {
+      cursor: not-allowed;
+      pointer-events: none;
+
+      .btn {
+        @include disabled-surface;
+      }
+    }
+  }
+
+  &_hint {
+    margin: 0;
+    font-size: var(--upload-hint-size);
+    color: var(--color-text-muted);
+    line-height: 1.5;
+  }
+
+  // ----- Dropzone
+
+  &_dropzone {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--upload-dropzone-gap);
+    width: 100%;
+    padding: var(--upload-dropzone-padding);
+    border: 1px dashed var(--color-border);
+    border-radius: $radius-md;
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    text-align: center;
+    cursor: pointer;
+    transition:
+      border-color $transition-fast,
+      background-color $transition-fast,
+      color $transition-fast;
+    @include focus-ring;
+
+    &:hover:not(:has(.upload_input:disabled)) {
+      border-color: var(--color-accent);
+      background: var(--color-accent-muted);
+      color: color-token(primary);
+    }
+
+    &.is-dragover {
+      border-color: var(--color-accent);
+      background: var(--color-accent-muted);
+      color: color-token(primary);
+    }
+
+    &.is-error {
+      border-color: var(--color-danger);
+      background: var(--color-alert-error-bg);
+      color: color-token(danger);
+    }
+
+    &:has(.upload_input:disabled) {
+      @include disabled-surface;
+      background: var(--color-surface-disabled);
+    }
+  }
+
+  &_dropzone-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+    @include square-size(var(--upload-dropzone-icon-size));
+  }
+
+  &_dropzone-title {
+    font-size: size-token(base);
+    font-weight: 500;
+    color: var(--color-text);
+  }
+
+  &_dropzone-desc {
+    font-size: var(--upload-hint-size);
+    color: inherit;
+    line-height: 1.5;
+  }
+
+  &_sm .upload_dropzone {
+    --upload-dropzone-padding: var(--space-lg);
+    --upload-dropzone-icon-size: 2rem;
+  }
+
+  &_lg .upload_dropzone {
+    --upload-dropzone-padding: var(--space-2xl);
+    --upload-dropzone-icon-size: 3rem;
+  }
+
+  // ----- File list
+
+  &_list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--upload-list-gap);
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &_item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--upload-item-gap);
+    padding: var(--upload-item-padding-y) var(--upload-item-padding-x);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: $radius-sm;
+    background: var(--color-surface);
+
+    &.is-error {
+      border-color: var(--color-danger);
+      background: var(--color-alert-error-bg);
+    }
+
+    &.is-done .upload_progress {
+      display: none;
+    }
+  }
+
+  &_item-icon {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    color: color-token(primary);
+    @include square-size(var(--upload-item-icon-size));
+  }
+
+  &_item-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &_item-name {
+    font-size: size-token(sm);
+    font-weight: 500;
+    color: var(--color-text);
+  }
+
+  &_item-meta {
+    font-size: var(--upload-hint-size);
+    color: var(--color-text-muted);
+
+    .upload_item.is-error & {
+      color: color-token(danger);
+    }
+
+    .upload_item.is-done & {
+      color: color-token(success);
+    }
+  }
+
+  &_item-action {
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  &_progress {
+    width: 100%;
+    height: var(--upload-progress-height);
+    border-radius: $radius-pill;
+    background: var(--color-border-subtle);
+    overflow: hidden;
+  }
+
+  &_progress-bar {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--color-accent);
+    transition: width $transition-base;
+
+    .upload_item.is-error & {
+      background: var(--color-danger);
+    }
+
+    .upload_item.is-done & {
+      background: var(--color-success);
+    }
+  }
+
+  // ----- Picture card
+
+  &_cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--upload-card-gap);
+  }
+
+  &_card {
+    position: relative;
+    width: var(--upload-card-size);
+    height: var(--upload-card-size);
+    border: 1px solid var(--color-border);
+    border-radius: $radius-md;
+    background: var(--color-surface);
+    overflow: hidden;
+  }
+
+  &_card-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &_card-trigger {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: $space-xs;
+    border-style: dashed;
+    color: var(--color-text-muted);
+    font-size: var(--upload-hint-size);
+    cursor: pointer;
+    transition:
+      border-color $transition-fast,
+      color $transition-fast,
+      background-color $transition-fast;
+    @include focus-ring;
+
+    &:hover:not(:has(.upload_input:disabled)) {
+      border-color: var(--color-accent);
+      background: var(--color-accent-muted);
+      color: color-token(primary);
+    }
+
+    &:has(.upload_input:disabled) {
+      @include disabled-surface;
+    }
+  }
+
+  &_card-actions {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $space-xs;
+    background: var(--color-overlay);
+    opacity: 0;
+    transition: opacity $transition-fast;
+
+    .upload_card:hover &,
+    .upload_card:focus-within & {
+      opacity: 1;
+    }
+  }
+
+  // ----- Avatar
+
+  &:has(> .upload_avatar) {
+    width: auto;
+    align-items: flex-start;
+  }
+
+  &_avatar {
+    position: relative;
+    display: inline-flex;
+    align-self: flex-start;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    @include focus-ring;
+
+    .avatar {
+      display: block;
+    }
+
+    &:has(.upload_input:disabled) {
+      @include disabled-surface;
+    }
+  }
+
+  &_avatar-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: inherit;
+    background: var(--color-overlay);
+    color: #fff;
+    opacity: 0;
+    transition: opacity $transition-fast;
+
+    .upload_avatar:hover &,
+    .upload_avatar:focus-within & {
+      opacity: 1;
+    }
+  }
+}

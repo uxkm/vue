@@ -5,20 +5,18 @@
 
 ```
 src/components/
-  layout/       Container, Divider, Flex, Grid, Space
-  basic/        Button, Icon, Link, Typography
-  data/         Avatar, Badge, Card, List, Stat, Table, Tag, Tree …
-  form/         Checkbox, Input, Radio, Select, Switch, Textarea …
-  feedback/     Alert, Empty, Modal, Progress, Spin, Tooltip …
-  navigation/   Breadcrumb, Menu, Navbar, Pagination, Steps, Tabs …
-  misc/         Accordion, Affix, BackTop, Carousel, Collapse
+  ui/           기본·레이아웃·폼·피드백·데이터·내비게이션·기타
+  widget/       AppHeader, AppFooter, AppLayout, PageChrome
+  module/       Header, Footer, Page, LayoutSlot, LayoutContext
+  providers/    AppProviders
+  shared/       컴포넌트가 공유하는 계약 (.ts 만)
   index.js      공개 export
 ```
 
 ## 사용
 
 ```js
-import { Button, Container, Input } from '@/components'
+import { Button, Container, Input } from '@/comp'
 ```
 
 ```vue

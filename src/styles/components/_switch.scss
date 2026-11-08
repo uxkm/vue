@@ -1,0 +1,297 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Switch — structure
+  --switch-width: 2.75rem;
+  --switch-height: 1.5rem;
+  --switch-width-sm: 2.25rem;
+  --switch-height-sm: 1.25rem;
+  --switch-width-lg: 3.25rem;
+  --switch-height-lg: 1.75rem;
+  --switch-padding: 2px;
+  --switch-radius: 999px;
+  --switch-gap: var(--checkbox-gap);
+  --switch-gap-sm: var(--checkbox-gap-sm);
+  --switch-gap-lg: var(--checkbox-gap-lg);
+  --switch-font-size: var(--checkbox-font-size);
+  --switch-font-size-sm: var(--checkbox-font-size-sm);
+  --switch-font-size-lg: var(--checkbox-font-size-lg);
+  --switch-line-height: var(--checkbox-line-height);
+  --switch-label-weight: var(--checkbox-label-weight);
+  --switch-hint-size: var(--checkbox-hint-size);
+  --switch-group-gap: var(--checkbox-group-gap);
+
+}
+
+// Switch — OOCSS: 구조(.switch) / 크기(.switch_sm) / 변형(.switch_label-end) + 공통 색상(.color_*)
+//
+//   <label class="switch">
+//     <span class="switch_control">…</span>
+//     <span class="switch_label">레이블</span>
+//   </label>
+//
+//   <label class="switch switch_label-end">
+//     <span class="switch_label">레이블</span>
+//     <span class="switch_control">…</span>
+//   </label>
+
+@mixin switch-thumb-offset() {
+  transform: translateY(-50%) translateX(var(--switch-thumb-travel));
+}
+
+@mixin switch-checked-skin($bg) {
+  background-color: $bg;
+
+  .switch_thumb {
+    @include switch-thumb-offset;
+  }
+}
+
+@mixin switch-color-variant($name) {
+  @if $name == primary {
+    .switch_input:checked + .switch_track {
+      @include switch-checked-skin(var(--color-accent));
+    }
+  } @else if $name == success {
+    .switch_input:checked + .switch_track {
+      @include switch-checked-skin(var(--color-success));
+    }
+  } @else if $name == danger {
+    .switch_input:checked + .switch_track {
+      @include switch-checked-skin(var(--color-danger));
+    }
+  } @else if $name == warning {
+    .switch_input:checked + .switch_track {
+      @include switch-checked-skin(var(--color-warning));
+    }
+  }
+}
+
+.switch {
+  --switch-thumb-size: calc(var(--switch-height) - var(--switch-padding) * 2);
+  --switch-thumb-travel: calc(var(--switch-width) - var(--switch-thumb-size) - var(--switch-padding) * 2);
+
+  display: inline-flex;
+  width: auto;
+  align-self: flex-start;
+  align-items: center;
+  gap: var(--switch-gap);
+  max-width: 100%;
+  margin: 0;
+  font-size: var(--switch-font-size);
+  line-height: var(--switch-line-height);
+  color: var(--color-text);
+  cursor: pointer;
+  user-select: none;
+  vertical-align: middle;
+
+  @each $name in primary, success, danger, warning {
+    &.color_#{$name} {
+      @include switch-color-variant($name);
+    }
+  }
+
+  &:has(.switch_input:disabled) {
+    @include disabled-interactive-wrapper;
+
+    .switch_track {
+      background-color: var(--color-control-disabled);
+    }
+
+    .switch_input:checked + .switch_track {
+      background-color: var(--color-accent-disabled);
+    }
+  }
+
+  @each $name in primary, success, danger, warning {
+    &.color_#{$name}:has(.switch_input:disabled) .switch_input:checked + .switch_track {
+      @if $name == primary {
+        background-color: var(--color-accent-disabled);
+      } @else if $name == success {
+        background-color: var(--color-success-disabled);
+      } @else if $name == danger {
+        background-color: var(--color-danger-disabled);
+      } @else if $name == warning {
+        background-color: var(--color-warning-disabled);
+      }
+    }
+  }
+
+  &.is-error .switch_track {
+    box-shadow: inset 0 0 0 1px var(--color-danger);
+  }
+
+  &.is-error .switch_input:focus-visible + .switch_track {
+    outline-color: var(--color-danger);
+  }
+
+  &_control {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: var(--switch-width);
+    height: var(--switch-height);
+  }
+
+  &_input {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+
+    &:focus-visible + .switch_track {
+      outline: var(--focus-outline-width) solid var(--color-accent);
+      outline-offset: var(--focus-outline-offset);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+
+    &:checked + .switch_track {
+      @include switch-checked-skin(var(--color-accent));
+    }
+  }
+
+  &_track {
+    position: relative;
+    display: block;
+    width: var(--switch-width);
+    height: var(--switch-height);
+    background-color: var(--color-border);
+    border-radius: var(--switch-radius);
+    transition:
+      background-color $transition-fast,
+      box-shadow $transition-fast;
+  }
+
+  &_thumb {
+    position: absolute;
+    top: 50%;
+    left: var(--switch-padding);
+    width: var(--switch-thumb-size);
+    height: var(--switch-thumb-size);
+    background-color: var(--color-bg);
+    border-radius: 50%;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
+    transform: translateY(-50%);
+    transition:
+      transform $transition-fast,
+      background-color $transition-fast;
+  }
+
+  &_label {
+    flex: 0 1 auto;
+    min-width: 0;
+    font-weight: var(--switch-label-weight);
+  }
+
+  &_hint {
+    display: block;
+    margin-top: var(--space-xs);
+    font-size: var(--switch-hint-size);
+    font-weight: 400;
+    color: var(--color-text-muted);
+  }
+
+  &_content {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  // ----- 너비
+
+  &_block {
+    width: 100%;
+    max-width: 100%;
+
+    .switch_label,
+    .switch_content {
+      flex: 1 1 auto;
+    }
+  }
+
+  // ----- 크기
+
+  &_sm {
+    --switch-width: var(--switch-width-sm);
+    --switch-height: var(--switch-height-sm);
+    --switch-font-size: var(--switch-font-size-sm);
+    --switch-gap: var(--switch-gap-sm);
+  }
+
+  &_lg {
+    --switch-width: var(--switch-width-lg);
+    --switch-height: var(--switch-height-lg);
+    --switch-font-size: var(--switch-font-size-lg);
+    --switch-gap: var(--switch-gap-lg);
+  }
+
+  // ----- 레이블 뒤
+
+  &_label-end {
+    .switch_control {
+      flex-shrink: 0;
+    }
+
+    &.switch_block,
+    .switch_group_block > & {
+      width: 100%;
+      max-width: 100%;
+
+      .switch_control {
+        margin-left: auto;
+      }
+
+      .switch_label,
+      .switch_content {
+        flex: 1 1 auto;
+      }
+    }
+  }
+
+  // ----- 그룹
+
+  &_group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--switch-group-gap);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    width: auto;
+    max-width: 100%;
+
+    &_compact {
+      --switch-group-gap: var(--space-sm);
+    }
+
+    &_block {
+      align-items: stretch;
+      width: 100%;
+
+      > .switch {
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+  }
+
+  &_group-legend {
+    display: block;
+    width: 100%;
+    margin-bottom: var(--space-xs);
+    padding: 0;
+    font-size: size-token(base);
+    font-weight: 500;
+    color: var(--color-text);
+  }
+}

@@ -1,0 +1,88 @@
+@use 'mixins' as m;
+
+// =============================================================================
+// Utilities — 타이포 · 색상 · 간격
+// =============================================================================
+// 레이아웃(.flex · .grid · .container · .divider · .space) → components/
+// =============================================================================
+
+// DOM 구조·접근성은 유지하고 래퍼 박스는 만들지 않음 (input_split · input_otp 등)
+.display_contents {
+  display: contents;
+}
+
+// ----- Typography — 말줄임 (.text_ellipsis*)
+
+.text {
+  &_ellipsis {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  @for $lines from 2 through 3 {
+    &_ellipsis-#{$lines} {
+      min-width: 0;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: $lines;
+      line-clamp: $lines;
+      white-space: normal;
+    }
+  }
+}
+
+// ----- Color — 시맨틱 텍스트 색상 (.color_*)
+
+.color {
+  @each $name in default, muted, primary, success, warning, danger, info, error {
+    &_#{$name} {
+      color: m.color-token($name);
+    }
+  }
+}
+
+// ----- Size — 텍스트 크기 (.size_*)
+// base 는 body 기본값. .size_xs · .size_sm · .size_lg · .size_xl
+
+.size {
+  @each $name in xs, sm, lg, xl {
+    &_#{$name} {
+      font-size: m.size-token($name);
+    }
+  }
+}
+
+// ----- Spacing — margin · padding (.m_* · .p_*)
+
+$spacing-sizes: xs, sm, md, lg, xl;
+
+@each $prefix, $property in (
+  m: margin,
+  mt: margin-top,
+  mr: margin-right,
+  mb: margin-bottom,
+  ml: margin-left,
+  mx: margin-inline,
+  my: margin-block,
+  p: padding,
+  pt: padding-top,
+  pr: padding-right,
+  pb: padding-bottom,
+  pl: padding-left,
+  px: padding-inline,
+  py: padding-block
+) {
+  .#{$prefix} {
+    @each $size in $spacing-sizes {
+      &_#{$size} {
+        #{$property}: var(--space-#{$size});
+      }
+    }
+  }
+}

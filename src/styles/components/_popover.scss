@@ -1,0 +1,613 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Popover — structure
+  --popover-min-width: 10rem;
+  --popover-max-width: 20rem;
+  --popover-padding-x: var(--space-md);
+  --popover-padding-y: var(--space-md);
+  --popover-title-padding-y: var(--space-sm);
+  --popover-footer-padding-y: var(--space-sm);
+  --popover-title-font-size: var(--text-size-sm);
+  --popover-body-font-size: var(--text-size-sm);
+  --popover-offset: var(--space-sm);
+  --popover-offset-md: var(--space-sm);
+  --popover-offset-sm: var(--space-xs);
+  --popover-offset-lg: var(--space-md);
+  --popover-arrow-size: 8px;
+  --popover-close-size: 1.5rem;
+  --popover-close-icon-size: 0.875rem;
+  --z-popover: 110;
+
+
+  // ----- Popover — size sm · lg
+  --popover-min-width-sm: 8rem;
+  --popover-max-width-sm: 16rem;
+  --popover-padding-x-sm: var(--space-sm);
+  --popover-padding-y-sm: var(--space-sm);
+  --popover-title-padding-y-sm: var(--space-xs);
+  --popover-footer-padding-y-sm: var(--space-xs);
+  --popover-title-font-size-sm: var(--text-size-xs);
+  --popover-body-font-size-sm: var(--text-size-xs);
+  --popover-arrow-size-sm: 6px;
+
+  --popover-min-width-lg: 12rem;
+  --popover-max-width-lg: 28rem;
+  --popover-padding-x-lg: var(--space-lg);
+  --popover-padding-y-lg: var(--space-lg);
+  --popover-title-padding-y-lg: var(--space-md);
+  --popover-footer-padding-y-lg: var(--space-md);
+  --popover-title-font-size-lg: var(--text-size-base);
+  --popover-body-font-size-lg: var(--text-size-base);
+  --popover-arrow-size-lg: 10px;
+
+}
+
+// Popover — OOCSS: 구조(.popover) + 스킨(.popover_placement-*) + 파트(.popover_trigger · .popover_panel · .popover_title · .popover_body · .popover_footer)
+//
+//   <div class="popover" data-popover>
+//     <button type="button" class="btn btn_outline popover_trigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="popover-1">
+//       <span class="btn_label">열기</span>
+//     </button>
+//     <div class="popover_panel" id="popover-1" role="dialog" aria-labelledby="popover-1-title" hidden>
+//       <span class="popover_arrow" aria-hidden="true"></span>
+//       <div class="popover_header">
+//         <div class="popover_title" id="popover-1-title">제목</div>
+//         <button type="button" class="popover_close" data-popover-close aria-label="닫기">…</button>
+//       </div>
+//       <div class="popover_body">본문</div>
+//       <div class="popover_footer">…</div>
+//     </div>
+//   </div>
+//
+//   data-popover                  — 클릭 트리거 (기본)
+//   data-popover-trigger="hover"  — 호버·포커스 트리거
+//
+// 크기
+//   .popover_sm     — 작은 패널
+//   .popover_lg     — 큰 패널
+//
+// 간격 (트리거 ↔ 패널)
+//   .popover_offset-none · _sm · _lg  — 전 방향 동일
+//   .popover_offset-top-* · _right-* · _bottom-* · _left-*  — 방향별
+//
+// 화살표 기준
+//   (기본) content              — 패널·패딩 기준
+//   .popover_arrow-anchor-target — 화살표만 트리거 기준
+//   .popover_arrow-anchor-mixed  — 패널·화살표 독립 (panel-align + data-*)
+//
+// 패널 정렬 (교차축)
+//   .popover_panel-align-center · popover_panel-align-end
+//
+// 상태 클래스
+//   .is-open       — 패널 표시 (aria-expanded="true"와 함께)
+//   .is-disabled   — 트리거 비활성
+
+.popover {
+  --popover-offset: var(--popover-offset-md);
+  --popover-offset-top: var(--popover-offset);
+  --popover-offset-right: var(--popover-offset);
+  --popover-offset-bottom: var(--popover-offset);
+  --popover-offset-left: var(--popover-offset);
+  --popover-arrow-clearance: calc(var(--popover-arrow-size) / 2);
+
+  @include overlay-arrow-edge-tokens(popover, var(--radius-lg));
+
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
+
+  &.is-open {
+    > .popover_trigger[aria-expanded] {
+      z-index: calc(var(--z-popover, 110) + 1);
+    }
+
+    > .popover_panel {
+      display: block;
+    }
+  }
+
+  &.is-disabled {
+    @include disabled-state;
+  }
+
+  &_trigger {
+    position: relative;
+  }
+
+  &_panel {
+    position: absolute;
+    top: calc(
+      100% + var(--popover-offset-bottom) + var(--popover-arrow-clearance)
+    );
+    left: 0;
+    z-index: var(--z-popover, 110);
+    display: none;
+    min-width: var(--popover-min-width);
+    max-width: var(--popover-max-width);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--popover-panel-radius);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+    color: var(--color-text);
+    text-align: left;
+    overflow: visible;
+
+    &-closable {
+      .popover_body {
+        padding-right: calc(var(--popover-padding-x) + var(--popover-close-size) * 0.15);
+      }
+    }
+
+    &[hidden] {
+      display: none;
+    }
+
+    .popover.is-open > & {
+      display: block !important;
+
+      &[hidden] {
+        display: block !important;
+      }
+    }
+  }
+
+  &_arrow {
+    position: absolute;
+    width: var(--popover-arrow-size);
+    height: var(--popover-arrow-size);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-subtle);
+    pointer-events: none;
+  }
+
+  &_header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding-right: calc(var(--popover-padding-x) - var(--space-xs));
+    border-bottom: 1px solid var(--color-border-subtle);
+
+    .popover_title {
+      flex: 1;
+      min-width: 0;
+      padding-right: 0;
+      border-bottom: none;
+    }
+  }
+
+  &_title {
+    padding: var(--popover-title-padding-y) var(--popover-padding-x);
+    font-size: var(--popover-title-font-size);
+    font-weight: 600;
+    line-height: 1.4;
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+
+  &_close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: var(--popover-close-size);
+    height: var(--popover-close-size);
+    margin: 0 0 0 auto; // 헤더 오른쪽 끝 고정
+    padding: 0;
+    border: none;
+    border-radius: $radius-sm;
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition:
+      color $transition-fast,
+      background-color $transition-fast;
+    @include focus-ring;
+
+    &:hover {
+      color: var(--color-text);
+      background: var(--color-surface-raised);
+    }
+
+  }
+
+  // Button ripple([data-ripple] position:relative)보다 우선 — 패널 우측 상단 고정
+  &_panel > .btn.popover_close.popover_close-floating {
+    position: absolute;
+    top: var(--space-xs);
+    right: var(--space-xs);
+    z-index: 1;
+  }
+
+  &_close-icon {
+    width: var(--popover-close-icon-size);
+    height: var(--popover-close-icon-size);
+  }
+
+  &_body {
+    padding: var(--popover-padding-y) var(--popover-padding-x);
+    font-size: var(--popover-body-font-size);
+    line-height: 1.5;
+    color: var(--color-text);
+
+    > :first-child {
+      margin-top: 0;
+    }
+
+    > :last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &_footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    align-items: center;
+    justify-content: flex-end;
+    padding: var(--popover-footer-padding-y) var(--popover-padding-x);
+    border-top: 1px solid var(--color-border-subtle);
+  }
+
+  // ----- 크기
+
+  &_sm {
+    --popover-min-width: var(--popover-min-width-sm);
+    --popover-max-width: var(--popover-max-width-sm);
+    --popover-padding-x: var(--popover-padding-x-sm);
+    --popover-padding-y: var(--popover-padding-y-sm);
+    --popover-title-padding-y: var(--popover-title-padding-y-sm);
+    --popover-footer-padding-y: var(--popover-footer-padding-y-sm);
+    --popover-title-font-size: var(--popover-title-font-size-sm);
+    --popover-body-font-size: var(--popover-body-font-size-sm);
+    --popover-arrow-size: var(--popover-arrow-size-sm);
+    --popover-panel-radius: var(--radius-md);
+  }
+
+  &_lg {
+    --popover-min-width: var(--popover-min-width-lg);
+    --popover-max-width: var(--popover-max-width-lg);
+    --popover-padding-x: var(--popover-padding-x-lg);
+    --popover-padding-y: var(--popover-padding-y-lg);
+    --popover-title-padding-y: var(--popover-title-padding-y-lg);
+    --popover-footer-padding-y: var(--popover-footer-padding-y-lg);
+    --popover-title-font-size: var(--popover-title-font-size-lg);
+    --popover-body-font-size: var(--popover-body-font-size-lg);
+    --popover-arrow-size: var(--popover-arrow-size-lg);
+    --popover-panel-radius: var(--radius-lg);
+  }
+
+  // ----- 간격 (트리거 ↔ 패널)
+
+  &_offset-none {
+    --popover-offset: 0;
+  }
+
+  &_offset-sm {
+    --popover-offset: var(--popover-offset-sm);
+  }
+
+  &_offset-lg {
+    --popover-offset: var(--popover-offset-lg);
+  }
+
+  @include overlay-offset-side-classes(popover);
+
+  // ----- 배치 (기본: 트리거 아래 · 왼쪽 정렬)
+
+  &_placement-end {
+    .popover_panel {
+      left: auto;
+      right: 0;
+    }
+  }
+
+  &_placement-bottom-center {
+    .popover_panel {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+
+  &_placement-top {
+    .popover_panel {
+      top: auto;
+      bottom: calc(
+        100% + var(--popover-offset-top) + var(--popover-arrow-clearance)
+      );
+    }
+  }
+
+  &_placement-top-center {
+    .popover_panel {
+      top: auto;
+      bottom: calc(
+        100% + var(--popover-offset-top) + var(--popover-arrow-clearance)
+      );
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+
+  &_placement-left {
+    .popover_panel {
+      top: 50%;
+      bottom: auto;
+      left: auto;
+      right: calc(
+        100% + var(--popover-offset-left) + var(--popover-arrow-clearance)
+      );
+      transform: translateY(-50%);
+    }
+  }
+
+  &_placement-right {
+    .popover_panel {
+      top: 50%;
+      bottom: auto;
+      left: calc(
+        100% + var(--popover-offset-right) + var(--popover-arrow-clearance)
+      );
+      transform: translateY(-50%);
+    }
+  }
+
+  // ----- 패널 정렬 (교차축 · CSS — target · content)
+
+  &_panel-align-center:not(&_arrow-anchor-mixed) {
+    &:not(.popover_placement-left, .popover_placement-right) .popover_panel {
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%);
+    }
+
+    &.popover_placement-left .popover_panel,
+    &.popover_placement-right .popover_panel {
+      top: 50%;
+      bottom: auto;
+      transform: translateY(-50%);
+    }
+  }
+
+  &_panel-align-end:not(&_arrow-anchor-mixed) {
+    &:not(.popover_placement-left, .popover_placement-right) .popover_panel {
+      left: auto;
+      right: 0;
+      transform: none;
+    }
+
+    &.popover_placement-left .popover_panel,
+    &.popover_placement-right .popover_panel {
+      top: auto;
+      bottom: 0;
+      transform: none;
+    }
+  }
+
+  // ----- 화살표 위치
+
+  &:not(.popover_placement-top, .popover_placement-top-center, .popover_placement-left, .popover_placement-right, .popover_placement-bottom-center) {
+    .popover_arrow {
+      top: 0;
+      left: max(var(--popover-padding-x), var(--popover-arrow-edge-inset));
+      transform: translateY(-50%) rotate(45deg);
+      border-right: none;
+      border-bottom: none;
+    }
+  }
+
+  &_placement-end:not(.popover_placement-top, .popover_placement-top-center, .popover_placement-left, .popover_placement-right, .popover_placement-bottom-center) {
+    .popover_arrow {
+      left: auto;
+      right: max(var(--popover-padding-x), var(--popover-arrow-edge-inset));
+    }
+  }
+
+  &_placement-bottom-center {
+    .popover_arrow {
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(45deg);
+      border-right: none;
+      border-bottom: none;
+    }
+  }
+
+  &_placement-top:not(.popover_placement-left, .popover_placement-right, .popover_placement-top-center) {
+    .popover_arrow {
+      top: auto;
+      bottom: 0;
+      left: max(var(--popover-padding-x), var(--popover-arrow-edge-inset));
+      transform: translateY(50%) rotate(45deg);
+      border-top: none;
+      border-left: none;
+    }
+
+    &.popover_placement-end .popover_arrow {
+      left: auto;
+      right: max(var(--popover-padding-x), var(--popover-arrow-edge-inset));
+    }
+  }
+
+  &_placement-top-center {
+    .popover_arrow {
+      top: auto;
+      bottom: 0;
+      left: 50%;
+      transform: translate(-50%, 50%) rotate(45deg);
+      border-top: none;
+      border-left: none;
+    }
+  }
+
+  &_placement-left {
+    .popover_arrow {
+      top: clamp(
+        var(--popover-arrow-edge-inset),
+        50%,
+        calc(100% - var(--popover-arrow-edge-inset))
+      );
+      right: 0;
+      left: auto;
+      transform: translate(50%, -50%) rotate(45deg);
+      border-bottom: none;
+      border-left: none;
+    }
+  }
+
+  &_placement-right {
+    .popover_arrow {
+      top: clamp(
+        var(--popover-arrow-edge-inset),
+        50%,
+        calc(100% - var(--popover-arrow-edge-inset))
+      );
+      left: 0;
+      right: auto;
+      transform: translate(-50%, -50%) rotate(45deg);
+      border-top: none;
+      border-right: none;
+    }
+  }
+
+  // ----- 화살표 기준 — target · mixed (--popover-arrow-position)
+
+  &_arrow-anchor-target,
+  &_arrow-anchor-mixed {
+    &:not(.popover_placement-top, .popover_placement-top-center, .popover_placement-left, .popover_placement-right) {
+      .popover_arrow {
+        left: clamp(
+          var(--popover-arrow-edge-inset),
+          var(--popover-arrow-position, 50%),
+          calc(100% - var(--popover-arrow-edge-inset))
+        );
+        right: auto;
+        transform: translate(-50%, -50%) rotate(45deg);
+        border-right: none;
+        border-bottom: none;
+      }
+    }
+
+    &.popover_placement-bottom-center {
+      .popover_arrow {
+        left: clamp(
+          var(--popover-arrow-edge-inset),
+          var(--popover-arrow-position, 50%),
+          calc(100% - var(--popover-arrow-edge-inset))
+        );
+        right: auto;
+        transform: translate(-50%, -50%) rotate(45deg);
+      }
+    }
+
+    &.popover_placement-top:not(.popover_placement-left, .popover_placement-right),
+    &.popover_placement-top-center {
+      .popover_arrow {
+        top: auto;
+        bottom: 0;
+        left: clamp(
+          var(--popover-arrow-edge-inset),
+          var(--popover-arrow-position, 50%),
+          calc(100% - var(--popover-arrow-edge-inset))
+        );
+        right: auto;
+        transform: translate(-50%, 50%) rotate(45deg);
+        border-top: none;
+        border-left: none;
+      }
+    }
+
+    &.popover_placement-left {
+      .popover_arrow {
+        top: clamp(
+          var(--popover-arrow-edge-inset),
+          var(--popover-arrow-position, 50%),
+          calc(100% - var(--popover-arrow-edge-inset))
+        );
+        right: 0;
+        left: auto;
+        transform: translate(50%, -50%) rotate(45deg);
+        border-bottom: none;
+        border-left: none;
+      }
+    }
+
+    &.popover_placement-right {
+      .popover_arrow {
+        top: clamp(
+          var(--popover-arrow-edge-inset),
+          var(--popover-arrow-position, 50%),
+          calc(100% - var(--popover-arrow-edge-inset))
+        );
+        left: 0;
+        right: auto;
+        transform: translate(-50%, -50%) rotate(45deg);
+        border-top: none;
+        border-right: none;
+      }
+    }
+  }
+
+  &_no-arrow {
+    --popover-arrow-clearance: 0px;
+
+    .popover_arrow {
+      display: none;
+    }
+  }
+
+  // ----- 데모 레이아웃
+
+  &_demo-stage {
+    position: relative;
+    flex: 1 1 100%;
+    width: 100%;
+    min-height: 18rem;
+    padding: var(--space-2xl) var(--space-xl);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: $radius-md;
+    overflow: visible;
+    background: var(--color-bg);
+  }
+
+  &_row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    align-items: center;
+  }
+
+  &_inline-sentence {
+    line-height: 1.6;
+  }
+
+  &_demo-placement {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-xl);
+    align-items: center;
+    justify-items: center;
+    width: 100%;
+    min-height: 14rem;
+    padding: var(--space-2xl) var(--space-xl);
+  }
+
+  &_demo-placement-cell-top {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  &_demo-placement-cell-left {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  &_demo-placement-cell-center {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  &_demo-placement-cell-right {
+    grid-column: 3;
+    grid-row: 2;
+  }
+}

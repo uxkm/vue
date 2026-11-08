@@ -1,0 +1,481 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Radio — structure (checkbox와 동일 스케일)
+  --radio-size: var(--checkbox-size);
+  --radio-size-sm: var(--checkbox-size-sm);
+  --radio-size-lg: var(--checkbox-size-lg);
+  --radio-border-width: var(--checkbox-border-width);
+  --radio-gap: var(--checkbox-gap);
+  --radio-gap-sm: var(--checkbox-gap-sm);
+  --radio-gap-lg: var(--checkbox-gap-lg);
+  --radio-font-size: var(--checkbox-font-size);
+  --radio-font-size-sm: var(--checkbox-font-size-sm);
+  --radio-font-size-lg: var(--checkbox-font-size-lg);
+  --radio-line-height: var(--checkbox-line-height);
+  --radio-label-weight: var(--checkbox-label-weight);
+  --radio-hint-size: var(--checkbox-hint-size);
+  --radio-control-offset: var(--checkbox-control-offset);
+  --radio-group-gap: var(--checkbox-group-gap);
+  --radio-button-padding-y: var(--checkbox-button-padding-y);
+  --radio-button-padding-x: var(--checkbox-button-padding-x);
+
+}
+
+// Radio — OOCSS: 구조(.radio) / 크기(.radio_sm) / 변형(.radio_button · .radio_label-end · .radio_card) + 공통 색상(.color_*)
+//
+//   <div class="radio">
+//     <span class="radio_control">…input…</span>
+//     <label class="radio_label" for="…">레이블</label>
+//   </div>
+//
+//   <div class="radio radio_label-end">
+//     <label class="radio_label" for="…">레이블</label>
+//     <span class="radio_control">…input…</span>
+//   </div>
+//
+//   <label class="radio_control">…input…</label>  — 레이블 없음(aria-label · aria-labelledby)
+//
+//   <label class="radio radio_button">
+//     <input class="radio_input">
+//     <span class="radio_label">버튼형</span>
+//   </label>
+//
+//   <div class="radio_card">
+//     <article class="card">
+//       <div class="card_extra">
+//         <label class="radio_control">…input…</label>
+//       </div>
+//     </article>
+//   </div>
+
+@mixin radio-checked-skin($bg, $border: $bg) {
+  background-color: $bg;
+  border-color: $border;
+  color: var(--color-on-accent);
+
+  &::after {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@mixin radio-color-variant($name) {
+  @if $name == primary {
+    .radio_input:checked + .radio_box {
+      @include radio-checked-skin(var(--color-accent));
+    }
+
+    &.radio_button:has(.radio_input:checked) {
+      border-color: var(--color-accent);
+      background: var(--color-accent-muted);
+    }
+  } @else if $name == success {
+    .radio_input:checked + .radio_box {
+      @include radio-checked-skin(var(--color-success));
+    }
+
+    &.radio_button:has(.radio_input:checked) {
+      border-color: var(--color-success);
+      background: var(--color-badge-success-bg);
+    }
+  } @else if $name == danger {
+    .radio_input:checked + .radio_box {
+      @include radio-checked-skin(var(--color-danger));
+    }
+
+    &.radio_button:has(.radio_input:checked) {
+      border-color: var(--color-danger);
+      background: var(--color-badge-danger-bg);
+    }
+  } @else if $name == warning {
+    .radio_input:checked + .radio_box {
+      @include radio-checked-skin(var(--color-warning), var(--color-warning));
+    }
+
+    &.radio_button:has(.radio_input:checked) {
+      border-color: var(--color-warning);
+      background: var(--color-badge-warning-bg);
+    }
+  }
+}
+
+@mixin radio-card-color-variant($name) {
+  @if $name == primary {
+    .radio_input:checked + .radio_box {
+      @include radio-checked-skin(var(--color-accent));
+    }
+
+    &:has(.radio_input:checked) .card {
+      border-color: var(--color-accent);
+      background: var(--color-accent-muted);
+    }
+  } @else if $name == success {
+    .radio_input:checked + .radio_box {
+      @include radio-checked-skin(var(--color-success));
+    }
+
+    &:has(.radio_input:checked) .card {
+      border-color: var(--color-success);
+      background: var(--color-badge-success-bg);
+    }
+  } @else if $name == danger {
+    .radio_input:checked + .radio_box {
+      @include radio-checked-skin(var(--color-danger));
+    }
+
+    &:has(.radio_input:checked) .card {
+      border-color: var(--color-danger);
+      background: var(--color-badge-danger-bg);
+    }
+  } @else if $name == warning {
+    .radio_input:checked + .radio_box {
+      @include radio-checked-skin(var(--color-warning), var(--color-warning));
+    }
+
+    &:has(.radio_input:checked) .card {
+      border-color: var(--color-warning);
+      background: var(--color-badge-warning-bg);
+    }
+  }
+}
+
+.radio {
+  display: inline-flex;
+  width: auto;
+  align-self: flex-start;
+  align-items: flex-start;
+  gap: var(--radio-gap);
+  max-width: 100%;
+  margin: 0;
+  font-size: var(--radio-font-size);
+  line-height: var(--radio-line-height);
+  color: var(--color-text);
+  user-select: none;
+  vertical-align: middle;
+
+  // label.radio_button — input 직접 자식(암묵적 연결), control 래퍼 없음
+  &:is(label) {
+    cursor: pointer;
+  }
+
+  @each $name in primary, success, danger, warning {
+    &.color_#{$name} {
+      @include radio-color-variant($name);
+    }
+  }
+
+  &:has(.radio_input:disabled) {
+    @include disabled-interactive-wrapper;
+
+    .radio_box {
+      background-color: var(--color-surface-disabled);
+      border-color: var(--color-border-disabled);
+    }
+
+    .radio_input:checked + .radio_box {
+      background-color: var(--color-accent-disabled);
+      border-color: var(--color-accent-disabled);
+      color: var(--color-on-accent-disabled);
+    }
+  }
+
+  @include disabled-semantic-checked-box(".radio_input", ".radio_box", false);
+
+  &.is-error .radio_box {
+    border-color: var(--color-danger);
+  }
+
+  &.is-error .radio_input:focus-visible + .radio_box {
+    outline-color: var(--color-danger);
+  }
+
+  &_control {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: var(--radio-size);
+    height: var(--radio-size);
+    margin: 0;
+    margin-top: var(--radio-control-offset);
+    cursor: pointer;
+
+    &:has(.radio_input:disabled) {
+      cursor: not-allowed;
+    }
+  }
+
+  &_input {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+
+    &:focus-visible + .radio_box {
+      outline: var(--focus-outline-width) solid var(--color-accent);
+      outline-offset: var(--focus-outline-offset);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+
+    &:checked + .radio_box {
+      @include radio-checked-skin(var(--color-accent));
+    }
+  }
+
+  &_box {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--radio-size);
+    height: var(--radio-size);
+    pointer-events: none;
+    background-color: var(--color-bg);
+    border: var(--radio-border-width) solid var(--color-border);
+    border-radius: 50%;
+    color: var(--color-on-accent);
+    transition:
+      background-color $transition-fast,
+      border-color $transition-fast,
+      color $transition-fast,
+      box-shadow $transition-fast;
+
+    &::after {
+      content: "";
+      width: calc(var(--radio-size) * 0.45);
+      height: calc(var(--radio-size) * 0.45);
+      border-radius: 50%;
+      background-color: currentColor;
+      opacity: 0;
+      transform: scale(0.5);
+      transition:
+        opacity $transition-fast,
+        transform $transition-fast;
+    }
+  }
+
+  &_label {
+    flex: 0 1 auto;
+    min-width: 0;
+    margin: 0;
+    font-weight: var(--radio-label-weight);
+    cursor: pointer;
+
+    &:has(+ .radio_control .radio_input:disabled),
+    .radio:has(.radio_input:disabled) > & {
+      cursor: not-allowed;
+    }
+  }
+
+  &_hint {
+    display: block;
+    margin-top: var(--space-xs);
+    font-size: var(--radio-hint-size);
+    font-weight: 400;
+    color: var(--color-text-muted);
+  }
+
+  &_content {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  // ----- 너비
+
+  &_block {
+    width: 100%;
+    max-width: 100%;
+
+    .radio_label,
+    .radio_content {
+      flex: 1 1 auto;
+    }
+  }
+
+  // ----- 크기
+
+  &_sm {
+    --radio-size: var(--radio-size-sm);
+    --radio-font-size: var(--radio-font-size-sm);
+    --radio-gap: var(--radio-gap-sm);
+  }
+
+  &_lg {
+    --radio-size: var(--radio-size-lg);
+    --radio-font-size: var(--radio-font-size-lg);
+    --radio-gap: var(--radio-gap-lg);
+  }
+
+  // ----- 레이블 뒤
+
+  &_label-end {
+    .radio_control {
+      flex-shrink: 0;
+    }
+
+    &.radio_block,
+    .radio_group_block > & {
+      width: 100%;
+      max-width: 100%;
+
+      .radio_control {
+        margin-left: auto;
+      }
+
+      .radio_label,
+      .radio_content {
+        flex: 1 1 auto;
+      }
+    }
+  }
+
+  // ----- 버튼형
+
+  &_button {
+    position: relative;
+    align-items: center;
+    padding: var(--radio-button-padding-y) var(--radio-button-padding-x);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: $radius-sm;
+    transition:
+      color $transition-fast,
+      background-color $transition-fast,
+      border-color $transition-fast,
+      box-shadow $transition-fast;
+
+    .radio_control {
+      display: none;
+    }
+
+    .radio_label {
+      font-weight: 500;
+    }
+
+    &:hover:not(:has(.radio_input:disabled)) {
+      border-color: var(--color-accent);
+      color: color-token(primary);
+    }
+
+    &:has(.radio_input:checked) {
+      border-color: var(--color-accent);
+      background: var(--color-accent-muted);
+      color: color-token(primary);
+    }
+
+    &:has(.radio_input:focus-visible) {
+      outline: var(--focus-outline-width) solid var(--color-accent);
+      outline-offset: var(--focus-outline-offset);
+    }
+  }
+
+  // ----- 카드형 — card 컴포넌트와 조합 (래퍼는 div, control은 label.radio_control)
+
+  &_card {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+
+    @each $name in primary, success, danger, warning {
+      &.color_#{$name} {
+        @include radio-card-color-variant($name);
+      }
+    }
+
+    &:has(.radio_input:disabled) {
+      @include disabled-surface;
+    }
+
+    .card {
+      width: 100%;
+      transition:
+        border-color $transition-fast,
+        background-color $transition-fast,
+        box-shadow $transition-fast;
+    }
+
+    .radio_control {
+      margin-top: 0;
+    }
+
+    &:hover:not(:has(.radio_input:disabled)) .card {
+      border-color: var(--color-accent);
+    }
+
+    &:has(.radio_input:checked) .card {
+      border-color: var(--color-accent);
+      background: var(--color-accent-muted);
+    }
+
+    &:has(.radio_input:focus-visible) .card {
+      outline: var(--focus-outline-width) solid var(--color-accent);
+      outline-offset: var(--focus-outline-offset);
+    }
+
+    // 카드 전체 클릭 — div.radio_card-clickable + JS 클릭 위임 (label은 phrasing content만 허용)
+    &-clickable {
+      cursor: pointer;
+
+      .card {
+        cursor: pointer;
+      }
+
+      &:has(.radio_input:disabled) .card {
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  // ----- 그룹
+
+  &_group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--radio-group-gap);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    width: auto;
+    max-width: 100%;
+
+    &_horizontal {
+      flex-flow: row wrap;
+      align-items: center;
+    }
+
+    &_compact {
+      --radio-group-gap: var(--space-sm);
+    }
+
+    &_block {
+      align-items: stretch;
+      width: 100%;
+
+      > .radio {
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+  }
+
+  &_group-legend {
+    display: block;
+    width: 100%;
+    margin-bottom: var(--space-xs);
+    padding: 0;
+    font-size: size-token(base);
+    font-weight: 500;
+    color: var(--color-text);
+  }
+}

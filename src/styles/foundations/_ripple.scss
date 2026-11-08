@@ -1,0 +1,35 @@
+@use 'mixins' as *;
+
+// =============================================================================
+// Ripple — 클릭 위치 파장 효과
+// =============================================================================
+// JS · 선택자: src/utils/ripple.js
+//
+// data-ripple — 권장 opt-in (요소에 직접 지정 · Vue ripple prop)
+// data-ripple="surface" — 절대 위치 클리어 버튼 등 (position:relative 미적용)
+// data-ripple="false" · data-no-ripple — 비활성
+
+@keyframes ripple-spread {
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.ripple_wave {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  background: var(--ripple-color, currentColor);
+  opacity: var(--ripple-opacity);
+  transform: scale(0);
+  animation: ripple-spread var(--ripple-duration) var(--ripple-easing) forwards;
+}
+
+[data-ripple='surface'] {
+  @include ripple-surface;
+}
+
+[data-ripple]:not([data-ripple='false']):not([data-ripple='surface']) {
+  @include ripple-target;
+}

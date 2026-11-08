@@ -1,0 +1,318 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Navbar — structure
+  --navbar-height: var(--header-height);
+  --navbar-height-sm: 3rem;
+  --navbar-height-lg: 4rem;
+  --navbar-padding-x: var(--space-lg);
+  --navbar-gap: var(--space-md);
+  --navbar-brand-font-size: var(--text-size-lg);
+  --navbar-brand-font-weight: 700;
+  --navbar-link-padding-y: 0.35rem;
+  --navbar-link-padding-x: 0.5rem;
+  --navbar-link-font-weight: 500;
+  --navbar-search-width: 12rem;
+  --navbar-search-width-lg: 16rem;
+
+}
+
+// =============================================================================
+// Navbar
+// =============================================================================
+//
+// OOCSS 구조: .navbar(구조) + 변형 클래스를 조합해 사용합니다.
+//
+// 네이밍 규칙
+//   블록_파트        → navbar_brand, navbar_nav, navbar_link
+//   블록_변형        → navbar_sticky, navbar_borderless, navbar_dark
+//
+// 기본 조합 예시
+//   <header class="navbar">
+//     <div class="navbar_container">
+//       <a href="#" class="navbar_brand">Brand</a>
+//       <button type="button" class="navbar_toggle" aria-expanded="false" aria-controls="nav-id" aria-label="메뉴 열기">…</button>
+//       <div class="navbar_collapse" id="nav-id">
+//         <nav class="navbar_nav" aria-label="주요 메뉴">
+//           <ul class="navbar_list">
+//             <li class="navbar_item"><a href="#" class="navbar_link is-active" aria-current="page">홈</a></li>
+//           </ul>
+//         </nav>
+//         <div class="navbar_actions">…</div>
+//       </div>
+//     </div>
+//   </header>
+//
+// 상태 클래스
+//   .is-active  — 현재 페이지 링크 (aria-current="page"와 함께)
+//   .is-open    — 모바일 메뉴 열림 (aria-expanded="true"와 함께)
+//
+// 토큰: 본 파일 :root · mixin: _mixins.scss
+
+// -----------------------------------------------------------------------------
+// 1. 구조
+// -----------------------------------------------------------------------------
+
+.navbar {
+  position: relative;
+  width: 100%;
+  color: var(--color-text);
+  background: var(--color-header-bg);
+  border-bottom: 1px solid var(--color-border);
+  backdrop-filter: blur(8px);
+  transition:
+    background-color $transition-base,
+    border-color $transition-base;
+
+  &.navbar_sticky {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+
+  &.navbar_borderless {
+    border-bottom-color: transparent;
+  }
+
+  &.navbar_dark {
+    background: var(--color-surface);
+    border-bottom-color: var(--color-border-subtle);
+  }
+
+  &.navbar_sm .navbar_container {
+    min-height: var(--navbar-height-sm);
+  }
+
+  &.navbar_lg .navbar_container {
+    min-height: var(--navbar-height-lg);
+  }
+
+  &_container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--navbar-gap);
+    width: 100%;
+    max-width: var(--container-max-width);
+    min-height: var(--navbar-height);
+    margin: 0 auto;
+    padding: 0 var(--navbar-padding-x);
+  }
+
+  &_brand {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-sm;
+    flex-shrink: 0;
+    font-size: var(--navbar-brand-font-size);
+    font-weight: var(--navbar-brand-font-weight);
+    line-height: 1.2;
+    color: var(--color-text);
+    text-decoration: none;
+    white-space: nowrap;
+
+    @include focus-ring;
+
+    &:hover {
+      color: var(--color-accent-text-hover);
+    }
+
+    &-icon {
+      flex-shrink: 0;
+      width: 1.5rem;
+      height: 1.5rem;
+      color: var(--color-accent-text);
+    }
+  }
+
+  &_toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    color: var(--color-text);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: $radius-sm;
+    cursor: pointer;
+    transition:
+      background-color $transition-fast,
+      border-color $transition-fast,
+      color $transition-fast;
+
+    @include focus-ring;
+
+    &:hover {
+      border-color: var(--color-accent);
+      color: var(--color-accent-text-hover);
+    }
+
+    .navbar_toggle-icon-close {
+      display: none;
+    }
+
+    &[aria-expanded="true"] {
+      .navbar_toggle-icon-open {
+        display: none;
+      }
+
+      .navbar_toggle-icon-close {
+        display: block;
+      }
+    }
+  }
+
+  &_collapse {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: var(--navbar-gap);
+    min-width: 0;
+  }
+
+  &_nav {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  &_list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $space-xs;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &_item {
+    display: flex;
+    align-items: center;
+  }
+
+  &_link {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-xs;
+    padding: var(--navbar-link-padding-y) var(--navbar-link-padding-x);
+    font-size: var(--text-size-base);
+    font-weight: var(--navbar-link-font-weight);
+    line-height: 1.4;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    white-space: nowrap;
+    border-radius: $radius-sm;
+    transition:
+      color $transition-fast,
+      background-color $transition-fast;
+
+    @include focus-ring;
+
+    &:hover {
+      color: var(--color-text);
+      background: var(--color-surface-raised);
+      text-decoration: none;
+    }
+
+    &.is-active {
+      color: color-token(primary);
+      background: var(--color-accent-muted);
+      font-weight: 600;
+    }
+  }
+
+  &_actions {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: $space-sm;
+    margin-left: auto;
+  }
+
+  &_search {
+    flex: 0 1 var(--navbar-search-width);
+    min-width: 0;
+
+    .input {
+      padding-top: 0.35rem;
+      padding-bottom: 0.35rem;
+      font-size: var(--text-size-sm);
+    }
+  }
+
+  // -----------------------------------------------------------------------------
+  // 2. 데모 레이아웃
+  // -----------------------------------------------------------------------------
+
+  &_demo {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  &_demo-scroll {
+    max-height: 12rem;
+    overflow-y: auto;
+    margin-inline: var(--space-xl);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: $radius-md;
+  }
+
+  // -----------------------------------------------------------------------------
+  // 3. 반응형
+  // -----------------------------------------------------------------------------
+
+  @media (max-width: $breakpoint-md) {
+    &_toggle {
+      display: inline-flex;
+      margin-left: auto;
+    }
+
+    &_collapse {
+      display: none;
+      flex: 1 0 100%;
+      flex-direction: column;
+      align-items: stretch;
+      gap: $space-md;
+      padding: $space-md 0 $space-sm;
+      border-top: 1px solid var(--color-border-subtle);
+    }
+
+    &.is-open .navbar_collapse,
+    .navbar_collapse.is-open {
+      display: flex;
+    }
+
+    &_list {
+      flex-direction: column;
+      align-items: stretch;
+      gap: $space-xs;
+    }
+
+    &_link {
+      width: 100%;
+    }
+
+    &_actions {
+      flex-direction: column;
+      align-items: stretch;
+      margin-left: 0;
+
+      .btn {
+        width: 100%;
+      }
+    }
+
+    &_search {
+      flex: 1 1 auto;
+      width: 100%;
+    }
+  }
+
+  @media (min-width: $breakpoint-md) {
+    &_search {
+      flex-basis: var(--navbar-search-width-lg);
+    }
+  }
+}

@@ -1,33 +1,12 @@
-'use client'
+import { mobileScreenStaticParams } from '@/lib/staticParams'
+import MobileScreenPageClient from './page.client'
 
-import { useEffect, useState } from 'react'
-import { useParams, notFound } from 'next/navigation'
-import { mobileScreenLoaders } from '@/views/registry'
+/** 빌드할 모바일 하위 화면 주소 목록 */
+export function generateStaticParams () {
+  return mobileScreenStaticParams()
+}
 
+/** 모바일 하위 화면 서버 진입. 실제 화면은 클라이언트 RegistryPage 가 고른다 */
 export default function MobileScreenPage () {
-  const { menuId, screen } = useParams()
-  const key = `${menuId}/${screen}`
-  const [Comp, setComp] = useState(null)
-  const [missing, setMissing] = useState(false)
-
-  useEffect(() => {
-    let alive = true
-    const load = mobileScreenLoaders[key]
-    if (!load) {
-      setMissing(true)
-      return undefined
-    }
-    load()
-      .then((mod) => {
-        if (alive) setComp(() => mod.default || mod)
-      })
-      .catch(() => {
-        if (alive) setMissing(true)
-      })
-    return () => { alive = false }
-  }, [key])
-
-  if (missing) notFound()
-  if (!Comp) return null
-  return <Comp />
+  return <MobileScreenPageClient />
 }

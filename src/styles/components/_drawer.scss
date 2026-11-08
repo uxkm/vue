@@ -1,0 +1,536 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Drawer — structure
+  --drawer-z-index: 250;
+  --drawer-width: 24rem;
+  --drawer-width-sm: 18rem;
+  --drawer-width-lg: 36rem;
+  --drawer-height: 18rem;
+  --drawer-height-sm: 14rem;
+  --drawer-height-lg: 26rem;
+  --drawer-bg: var(--color-surface);
+  --drawer-shadow: var(--shadow-md);
+  --drawer-header-gap: var(--space-sm);
+  --drawer-header-padding-y: var(--space-md);
+  --drawer-header-padding-x: var(--space-lg);
+  --drawer-title-font-size: var(--text-size-lg);
+  --drawer-title-font-weight: 600;
+  --drawer-close-size: 2rem;
+  --drawer-close-icon-size: 1.125rem;
+  --drawer-body-padding-y: var(--space-lg);
+  --drawer-body-padding-x: var(--space-lg);
+  --drawer-body-font-size: var(--text-size-sm);
+  --drawer-footer-gap: var(--space-sm);
+  --drawer-footer-padding-y: var(--space-md);
+  --drawer-footer-padding-x: var(--space-lg);
+  --drawer-panel-duration-x: 0.32s;
+  --drawer-panel-duration-y: 0.36s;
+  --drawer-panel-easing-x: cubic-bezier(0.32, 0.72, 0, 1);
+  --drawer-panel-easing-y: cubic-bezier(0.33, 1, 0.68, 1);
+  --drawer-backdrop-duration: 0.24s;
+  --drawer-handle-width: 2.25rem;
+  --drawer-handle-height: 0.25rem;
+  --drawer-handle-hit: 1.25rem;
+  --drawer-handle-padding-top: var(--space-sm);
+  --drawer-height-expanded: 90%;
+
+}
+
+// Drawer — OOCSS: 구조(.drawer) + 스킨(.drawer_placement-right · .drawer_sm) + 파트(.drawer_panel · .drawer_header · .drawer_body · .drawer_footer)
+//
+//   <button type="button" data-drawer-trigger="#drawer-1" aria-controls="drawer-1" aria-expanded="false">열기</button>
+//
+//   <div class="drawer" id="drawer-1" data-drawer role="dialog" aria-modal="true"
+//     aria-labelledby="drawer-1-title" tabindex="-1" hidden>
+//     <div class="drawer_backdrop" data-drawer-close aria-hidden="true"></div>
+//     <div class="drawer_panel drawer_placement-right">
+//       <div class="drawer_header">
+//         <h2 class="drawer_title" id="drawer-1-title">제목</h2>
+//         <div class="drawer_extra">…</div>
+//         <button type="button" class="drawer_close" data-drawer-close aria-label="닫기">…</button>
+//       </div>
+//       <div class="drawer_body">…</div>
+//       <div class="drawer_footer">…</div>
+//     </div>
+//   </div>
+//
+//   data-drawer              — Drawer 루트
+//   data-drawer-trigger      — 열기 트리거 (값: #id 선택자)
+//   data-drawer-close        — 닫기 (백드롭·닫기 버튼)
+//   data-drawer-backdrop="false" — 백드롭 비표시·백드롭 클릭 닫기 비활성
+//   data-drawer-open-on-load="true" — 페이지 로드 후 자동 열기
+//
+// 푸터 정렬 (.drawer_footer + 변형)
+//   .drawer_footer-start · .drawer_footer-center · .drawer_footer-end
+//   .drawer_footer-between — 좌·우 분리 (drawer_footer-group으로 1~2개씩 묶음)
+//   .drawer_footer-even    — 버튼 균등 너비 (기본 1:1)
+//   .drawer_footer-even-1-2 · .drawer_footer-even-2-1 — 좌·우 비율
+//   .drawer_footer-no-pad-b — 하단 패딩 없음 (even과 함께 쓰면 좌우 패딩·간격도 제거)
+//
+// 상태 클래스
+//   .is-open       — 패널 표시 (aria-expanded="true"와 함께)
+//   .is-opening    — 열림 애니메이션 진행 중 (패널은 아직 닫힌 위치)
+//   .is-closing    — 닫힘 애니메이션 진행 중
+//   .is-stack-covered — 중첩 시 하위 레이어 (백드롭 숨김)
+
+.drawer {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--drawer-z-index) + var(--drawer-stack-level, 0) * 10);
+  display: none;
+  pointer-events: none;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &.is-open {
+    display: block;
+    pointer-events: auto;
+  }
+
+  &.is-opening,
+  &.is-closing {
+    display: block;
+    pointer-events: none;
+  }
+
+  &.is-opening.is-open {
+    pointer-events: auto;
+  }
+
+  &_backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: calc(var(--drawer-z-index) + var(--drawer-stack-level, 0) * 10);
+    background: var(--color-overlay);
+    opacity: 0;
+    transition: opacity var(--drawer-backdrop-duration) ease;
+
+    .drawer.is-open & {
+      opacity: 1;
+      transition-delay: 0s;
+    }
+
+    .drawer.is-open.is-stack-covered & {
+      opacity: 0;
+      pointer-events: none;
+      transition-delay: 0s;
+    }
+
+    .drawer.is-closing & {
+      opacity: 0;
+      transition-delay: 0.08s;
+    }
+
+    .drawer[data-drawer-backdrop="false"] & {
+      display: none;
+    }
+  }
+
+  &_panel {
+    position: fixed;
+    z-index: calc(var(--drawer-z-index) + var(--drawer-stack-level, 0) * 10 + 1);
+    display: flex;
+    flex-direction: column;
+    width: var(--drawer-width);
+    max-width: 100%;
+    height: 100%;
+    background: var(--drawer-bg);
+    color: var(--color-text);
+    box-shadow: var(--drawer-shadow);
+    will-change: transform;
+    transition: transform var(--drawer-panel-duration-x) var(--drawer-panel-easing-x);
+
+    .drawer.is-open & {
+      transition-delay: 0.04s;
+    }
+
+    .drawer.is-closing & {
+      transition-delay: 0s;
+    }
+  }
+
+  &_header {
+    display: flex;
+    align-items: center;
+    gap: var(--drawer-header-gap);
+    flex-shrink: 0;
+    padding: var(--drawer-header-padding-y) var(--drawer-header-padding-x);
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+
+  // `.section h2` 등 문서 타이포가 새지 않도록 상위 포함 선택자로 리셋
+  & &_title {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    font-size: var(--drawer-title-font-size);
+    font-weight: var(--drawer-title-font-weight);
+    line-height: 1.3;
+  }
+
+  &_extra {
+    display: flex;
+    align-items: center;
+    gap: var(--drawer-header-gap);
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  &_close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: var(--drawer-close-size);
+    height: var(--drawer-close-size);
+    margin: 0 0 0 auto; // 헤더 오른쪽 끝 고정 (제목 유무와 무관)
+    padding: 0;
+    border: none;
+    border-radius: $radius-sm;
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition:
+      color $transition-fast,
+      background-color $transition-fast;
+    @include focus-ring;
+
+    &:hover {
+      color: var(--color-text);
+      background: var(--color-surface-raised);
+    }
+  }
+
+  &_close-icon {
+    width: var(--drawer-close-icon-size);
+    height: var(--drawer-close-icon-size);
+  }
+
+  &_body {
+    flex: 1;
+    min-height: 0;
+    padding: var(--drawer-body-padding-y) var(--drawer-body-padding-x);
+    overflow-y: auto;
+    font-size: var(--drawer-body-font-size);
+    line-height: 1.6;
+    -webkit-overflow-scrolling: touch;
+
+    > :first-child {
+      margin-top: 0;
+    }
+
+    > :last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &_footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--drawer-footer-gap);
+    flex-shrink: 0;
+    padding: var(--drawer-footer-padding-y) var(--drawer-footer-padding-x);
+    border-top: 1px solid var(--color-border-subtle);
+  }
+
+  // 푸터 정렬 — 기본(end) · start · center · between · even
+  &_footer-start {
+    justify-content: flex-start;
+  }
+
+  &_footer-center {
+    justify-content: center;
+  }
+
+  &_footer-end {
+    justify-content: flex-end;
+  }
+
+  &_footer-between {
+    justify-content: space-between;
+  }
+
+  &_footer-even {
+    > * {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+  }
+
+  // 균등 정렬 좌·우 비율 (기본 1:1은 drawer_footer-even)
+  &_footer-even-1-2 {
+    > *:first-child {
+      flex: 1 1 0;
+    }
+
+    > *:last-child {
+      flex: 2 1 0;
+    }
+  }
+
+  &_footer-even-2-1 {
+    > *:first-child {
+      flex: 2 1 0;
+    }
+
+    > *:last-child {
+      flex: 1 1 0;
+    }
+  }
+
+  // 하단 패딩 없음 — even과 함께 쓰면 버튼이 패널 하단에 붙음
+  &_footer-no-pad-b {
+    padding-bottom: 0;
+
+    &.drawer_footer-even {
+      padding: 0;
+      gap: 0;
+    }
+  }
+
+  // 병합 정렬용 버튼 묶음 (좌·우 각 1~2개)
+  &_footer-group {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--drawer-footer-gap);
+    min-width: 0;
+  }
+
+  // ----- 배치
+
+  &_placement-left {
+    top: 0;
+    left: 0;
+    transform: translateX(-100%);
+    border-right: 1px solid var(--color-border-subtle);
+
+    .drawer.is-open & {
+      transform: translateX(0);
+    }
+  }
+
+  &_placement-right {
+    top: 0;
+    right: 0;
+    left: auto;
+    transform: translateX(100%);
+    border-left: 1px solid var(--color-border-subtle);
+
+    .drawer.is-open & {
+      transform: translateX(0);
+    }
+  }
+
+  &_placement-top {
+    top: 0;
+    right: 0;
+    left: 0;
+    width: 100%;
+    height: var(--drawer-height);
+    max-height: 100%;
+    transform: translateY(-100%);
+    border-bottom: 1px solid var(--color-border-subtle);
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    transition: transform var(--drawer-panel-duration-y) var(--drawer-panel-easing-y);
+
+    .drawer.is-open & {
+      transform: translateY(0);
+    }
+  }
+
+  &_placement-bottom {
+    top: auto;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    width: 100%;
+    height: var(--drawer-height);
+    max-height: 100%;
+    transform: translateY(100%);
+    border-top: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    transition:
+      transform var(--drawer-panel-duration-y) var(--drawer-panel-easing-y),
+      height var(--drawer-panel-duration-y) var(--drawer-panel-easing-y);
+
+    // 드래그 핸들 바는 .drawer_draggable + .drawer_handle 로만 표시 (비드래그는 바 없음)
+
+    .drawer.is-open & {
+      transform: translateY(0);
+    }
+
+    &.is-expanded {
+      height: var(--drawer-height-expanded);
+    }
+
+    &.is-dragging {
+      transition: none;
+      touch-action: none;
+    }
+  }
+
+  // ----- 드래그 핸들 (하단 시트)
+
+  &_handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    height: var(--drawer-handle-hit);
+    margin: 0;
+    padding: var(--drawer-handle-padding-top) 0 0;
+    box-sizing: content-box;
+    border: none;
+    background: transparent;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  &_handle-bar {
+    display: block;
+    width: var(--drawer-handle-width);
+    height: var(--drawer-handle-height);
+    border-radius: 999px;
+    background: var(--color-border);
+    pointer-events: none;
+  }
+
+  &_draggable {
+    // 핸들이 위 여백을 담당 → 헤더 상단 패딩 축소
+    .drawer_header {
+      padding-top: var(--space-xs);
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+
+      &:active {
+        cursor: grabbing;
+      }
+
+      .drawer_close,
+      .drawer_extra,
+      a,
+      button:not(.drawer_handle) {
+        cursor: pointer;
+        touch-action: manipulation;
+        user-select: auto;
+        -webkit-user-select: auto;
+      }
+    }
+  }
+
+  // ----- 크기
+
+  &_sm {
+    --drawer-width: var(--drawer-width-sm);
+    --drawer-height: var(--drawer-height-sm);
+  }
+
+  &_lg {
+    --drawer-width: var(--drawer-width-lg);
+    --drawer-height: var(--drawer-height-lg);
+  }
+
+  // ----- 데모 레이아웃
+
+  &_demo-frame {
+    position: relative;
+    flex: 1 1 100%;
+    width: 100%;
+    height: 32rem;
+    min-height: 28rem;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: $radius-md;
+    overflow: hidden;
+    background: var(--color-bg);
+
+    // 열린 상태·푸터 정렬 문서 미리보기만 프레임 안에 고정
+    // 클릭으로 여는 Drawer는 기본 fixed 배치를 유지해 뷰포트 전체에 표시
+    .drawer.drawer_demo-static {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      display: block;
+      pointer-events: none;
+
+      > .drawer_backdrop,
+      > .drawer_panel {
+        position: absolute;
+      }
+
+      > .drawer_panel {
+        pointer-events: auto;
+        transform: none;
+      }
+
+      > .drawer_backdrop {
+        opacity: 1;
+        pointer-events: none;
+      }
+
+      &[data-drawer-backdrop="false"] > .drawer_backdrop {
+        display: none;
+      }
+    }
+  }
+
+  &_demo-content {
+    padding: var(--space-lg);
+    font-size: var(--text-size-sm);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+
+  &_demo-frame-compact {
+    height: 16rem;
+    min-height: 14rem;
+  }
+
+  &_demo-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    width: 100%;
+  }
+
+  &_demo-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+}
+
+// ----- 바디 스크롤 잠금
+
+body.is-drawer-open {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drawer_panel,
+  .drawer_backdrop {
+    transition: none;
+  }
+
+  .drawer.is-open .drawer_panel,
+  .drawer.is-opening .drawer_panel {
+    transition-delay: 0s;
+  }
+
+  .drawer.is-closing .drawer_backdrop {
+    transition-delay: 0s;
+  }
+}

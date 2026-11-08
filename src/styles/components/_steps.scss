@@ -1,0 +1,440 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Steps
+  --steps-gap: var(--space-md);
+  --steps-head-gap: var(--space-sm);
+  --steps-indicator-size: 2rem;
+  --steps-indicator-font-size: var(--text-size-sm);
+  --steps-indicator-font-weight: 600;
+  --steps-tail-height: 2px;
+  --steps-content-gap: var(--space-xs);
+  --steps-title-size: var(--text-size-sm);
+  --steps-title-weight: 600;
+  --steps-desc-size: var(--text-size-xs);
+  --steps-icon-size: 1rem;
+  --steps-dot-size: 8px;
+  --steps-pulse-duration: 1.5s;
+
+
+  // ----- Steps size
+  --steps-indicator-size-sm: 1.75rem;
+  --steps-indicator-font-size-sm: var(--text-size-xs);
+  --steps-title-size-sm: var(--text-size-xs);
+  --steps-desc-size-sm: var(--text-size-xs);
+
+  --steps-indicator-size-lg: 2.5rem;
+  --steps-indicator-font-size-lg: var(--text-size-base);
+  --steps-title-size-lg: var(--text-size-base);
+  --steps-desc-size-lg: var(--text-size-sm);
+
+}
+
+// Steps — OOCSS: 구조(.steps) + 변형(.steps_*) + 파트(.steps_item · .steps_indicator · .steps_tail · .steps_content)
+//
+//   <ol class="steps" aria-label="주문 진행 단계">
+//     <li class="steps_item is-finished">
+//       <div class="steps_head">
+//         <span class="steps_indicator" aria-hidden="true">…</span>
+//         <span class="steps_tail" aria-hidden="true"></span>
+//       </div>
+//       <div class="steps_content">
+//         <p class="steps_title">장바구니</p>
+//         <p class="steps_desc">상품 확인</p>
+//       </div>
+//     </li>
+//     <li class="steps_item is-active" aria-current="step">…</li>
+//     <li class="steps_item is-wait">…</li>
+//   </ol>
+
+@mixin steps-indicator-pulse-ring($inset: -2px) {
+  &::after {
+    content: "";
+    position: absolute;
+    inset: $inset;
+    border-radius: inherit;
+    border: 2px solid var(--color-accent);
+    opacity: 0.45;
+    pointer-events: none;
+    animation: steps-indicator-pulse var(--steps-pulse-duration) ease-out infinite;
+  }
+}
+
+@mixin steps-indicator-base {
+  position: relative;
+  z-index: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  font-size: var(--steps-indicator-font-size);
+  font-weight: var(--steps-indicator-font-weight);
+  line-height: 1;
+  transition:
+    color $transition-fast,
+    background-color $transition-fast,
+    border-color $transition-fast,
+    box-shadow $transition-fast;
+  @include square-size(var(--steps-indicator-size));
+}
+
+.steps {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  width: 100%;
+  color: var(--color-text);
+
+  &_item {
+    position: relative;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--steps-content-gap);
+    min-width: 0;
+
+    &:last-child .steps_tail {
+      display: none;
+    }
+
+    &:only-child {
+      flex: none;
+      max-width: 100%;
+
+      .steps_head {
+        width: auto;
+      }
+
+      .steps_content {
+        padding-right: 0;
+      }
+    }
+
+    &.is-finished {
+      .steps_indicator {
+        border-color: var(--color-accent);
+        background: var(--color-accent);
+        color: var(--color-on-accent);
+      }
+
+      .steps_tail {
+        background: var(--color-accent);
+      }
+
+      .steps_title {
+        color: var(--color-text);
+      }
+    }
+
+    &.is-active {
+      .steps_indicator {
+        border-color: var(--color-accent);
+        background: var(--color-surface);
+        color: color-token(primary);
+        box-shadow: 0 0 0 3px var(--color-accent-muted);
+        @include steps-indicator-pulse-ring;
+      }
+
+      .steps_title {
+        color: color-token(primary);
+      }
+    }
+
+    &.is-wait {
+      .steps_indicator {
+        border-color: var(--color-border);
+        background: var(--color-surface);
+        color: var(--color-text-muted);
+      }
+
+      .steps_title {
+        color: var(--color-text-muted);
+        font-weight: 500;
+      }
+
+      .steps_desc {
+        color: var(--color-text-muted);
+      }
+    }
+
+    &.is-error {
+      .steps_indicator {
+        border-color: var(--color-danger);
+        background: var(--color-danger);
+        color: var(--color-on-accent);
+      }
+
+      .steps_title {
+        color: color-token(danger);
+      }
+    }
+  }
+
+  &_head {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: var(--steps-head-gap);
+  }
+
+  &_indicator {
+    @include steps-indicator-base;
+    border: 2px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+  }
+
+  &_index,
+  &_icon {
+    position: relative;
+    z-index: 1;
+  }
+
+  &_index {
+    line-height: 1;
+  }
+
+  &_icon {
+    flex-shrink: 0;
+    @include square-size(var(--steps-icon-size));
+  }
+
+  &_tail {
+    flex: 1;
+    min-width: var(--steps-gap);
+    height: var(--steps-tail-height);
+    margin-right: var(--steps-head-gap);
+    border-radius: $radius-pill;
+    background: var(--color-border-subtle);
+  }
+
+  &_content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    padding-right: var(--steps-gap);
+  }
+
+  &_title {
+    margin: 0;
+    font-size: var(--steps-title-size);
+    font-weight: var(--steps-title-weight);
+    color: var(--color-text);
+    line-height: 1.4;
+  }
+
+  &_desc {
+    margin: 0;
+    font-size: var(--steps-desc-size);
+    color: var(--color-text-muted);
+    line-height: 1.5;
+  }
+
+  // ----- Dot
+
+  &_dot {
+    .steps_indicator {
+      @include square-size(var(--steps-dot-size));
+      border-width: 0;
+      background: var(--color-border);
+    }
+
+    .steps_item {
+      &.is-finished .steps_indicator {
+        background: var(--color-accent);
+      }
+
+      &.is-active .steps_indicator {
+        background: var(--color-accent);
+        box-shadow: 0 0 0 3px var(--color-accent-muted);
+        @include steps-indicator-pulse-ring(-4px);
+      }
+
+      &.is-wait .steps_indicator {
+        background: var(--color-border);
+      }
+
+      &.is-error .steps_indicator {
+        background: var(--color-danger);
+      }
+    }
+  }
+
+  // ----- Vertical
+
+  &_vertical {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+
+    .steps_item {
+      flex: none;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: var(--steps-gap);
+      padding-bottom: var(--steps-gap);
+
+      &:last-child {
+        padding-bottom: 0;
+      }
+    }
+
+    .steps_head {
+      flex-direction: column;
+      align-items: center;
+      width: auto;
+      align-self: stretch;
+    }
+
+    .steps_tail {
+      flex: 1;
+      width: var(--steps-tail-height);
+      min-width: 0;
+      min-height: var(--steps-gap);
+      height: auto;
+      margin: 0;
+      margin-top: var(--steps-head-gap);
+    }
+
+    .steps_content {
+      flex: 1;
+      padding-top: calc((var(--steps-indicator-size) - var(--steps-title-size) * 1.4) / 2);
+      padding-right: 0;
+    }
+  }
+
+  // ----- Navigable
+
+  &_navigable {
+    .steps_trigger {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--steps-content-gap);
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      border: none;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+      @include focus-ring;
+
+      &:disabled,
+      &.is-disabled {
+        cursor: default;
+        pointer-events: none;
+      }
+    }
+
+    .steps_item.is-wait .steps_trigger {
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .steps_item.is-finished .steps_trigger:hover .steps_title {
+      color: color-token(primary);
+    }
+  }
+
+  // ----- Icon indicator
+
+  &_icon-style {
+    .steps_item.is-active .steps_indicator {
+      background: var(--color-accent-muted);
+      color: color-token(primary);
+    }
+  }
+
+  // ----- Alignment
+
+  &_align-center {
+    .steps_item {
+      align-items: center;
+      text-align: center;
+    }
+
+    .steps_head {
+      position: relative;
+      justify-content: center;
+    }
+
+    .steps_indicator {
+      position: relative;
+      z-index: 1;
+    }
+
+    .steps_tail {
+      position: absolute;
+      top: 50%;
+      left: calc(50% + var(--steps-indicator-size) / 2 + var(--steps-head-gap));
+      right: calc(-50% + var(--steps-indicator-size) / 2 + var(--steps-head-gap));
+      flex: none;
+      width: auto;
+      min-width: 0;
+      margin: 0;
+      transform: translateY(-50%);
+    }
+
+    .steps_content {
+      align-items: center;
+      padding-right: 0;
+    }
+
+    &.steps_navigable .steps_trigger {
+      align-items: center;
+      text-align: center;
+    }
+  }
+
+  // ----- Size
+
+  &_sm {
+    --steps-indicator-size: var(--steps-indicator-size-sm);
+    --steps-indicator-font-size: var(--steps-indicator-font-size-sm);
+    --steps-title-size: var(--steps-title-size-sm);
+    --steps-desc-size: var(--steps-desc-size-sm);
+    --steps-gap: var(--space-sm);
+  }
+
+  &_lg {
+    --steps-indicator-size: var(--steps-indicator-size-lg);
+    --steps-indicator-font-size: var(--steps-indicator-font-size-lg);
+    --steps-title-size: var(--steps-title-size-lg);
+    --steps-desc-size: var(--steps-desc-size-lg);
+    --steps-gap: var(--space-lg);
+  }
+
+  // ----- Demo layout
+
+  &_demo-narrow {
+    max-width: 36rem;
+  }
+}
+
+@keyframes steps-indicator-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.45;
+  }
+
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .steps_item.is-active .steps_indicator::after {
+    animation: none;
+    opacity: 0;
+  }
+}

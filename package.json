@@ -4,15 +4,17 @@
   "description": "Publish List — Next.js + React",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 8090",
-    "ui": "next dev -p 8090",
-    "build": "next build",
-    "start": "next start -p 8090",
+    "dev": "npm run generate:registry && node scripts/serve.mjs --dev",
+    "ui": "node scripts/ui.mjs",
+    "build:styles": "node scripts/build-styles.mjs",
+    "build": "npm run generate:registry && node scripts/build-styles.mjs && STYLE_MODE=css next build",
+    "start": "node scripts/serve-static.mjs",
+    "start:http": "npx --yes serve@14 out -l 8090",
     "lint": "next lint",
-    "generate:menus": "node scripts/generate-publish-menus.js",
-    "generate:registry": "node scripts/generate-page-registry.js",
-    "clean": "rm -rf .next out next-env.d.ts dist .vite node_modules/.vite node_modules/.cache .cache",
-    "reinstall": "npm run clean && rm -rf node_modules && npm install"
+    "generate:registry": "node scripts/registry.mjs",
+    "clean": "rm -rf .next out next-env.d.ts src/styles/css src/styles/dist node_modules/.cache node_modules/.vite .cache .turbo",
+    "clean:modules": "rm -rf node_modules",
+    "clean:all": "npm run clean && npm run clean:modules"
   },
   "dependencies": {
     "@amcharts/amcharts5": "^5.11.0",
@@ -31,7 +33,6 @@
     "filesize": "^10.1.6",
     "gsap": "^3.12.7",
     "hls.js": "^1.5.20",
-    "i18next": "^24.2.3",
     "js-base64": "^3.7.7",
     "lodash-es": "^4.17.21",
     "lottie-react": "^2.4.1",
@@ -39,7 +40,6 @@
     "next": "^15.5.28",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-i18next": "^15.7.4",
     "react-youtube": "^10.1.0",
     "simplebar-react": "^3.3.0",
     "swiper": "^12.2.0",
@@ -51,12 +51,28 @@
   "devDependencies": {
     "@types/aos": "^3.0.7",
     "@types/lodash-es": "^4.17.12",
-    "@types/node": "20.17.6",
+    "@types/node": "^22.15.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "autoprefixer": "^10.6.2",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "^15.5.28",
+    "postcss": "^8.5.32",
     "sass": "^1.83.0",
     "typescript": "^5.7.2"
   },
+  "overrides": {
+    "postcss": "^8.5.32",
+    "minimatch": "^11.0.1"
+  },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "Firefox ESR",
+    "not dead",
+    "iOS >= 14",
+    "Android >= 10"
+  ],
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=10.0.0"

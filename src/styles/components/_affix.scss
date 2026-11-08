@@ -1,0 +1,128 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Affix — structure
+  --affix-z-index: 10;
+  --affix-bar-gap: var(--space-sm);
+  --affix-bar-padding-y: var(--space-sm);
+  --affix-bar-padding-x: var(--space-md);
+  --affix-bar-bg: var(--color-surface);
+  --affix-bar-border: var(--color-border-subtle);
+  --affix-bar-shadow: 0 1px 4px rgb(0 0 0 / 0.08);
+
+}
+
+// Affix — OOCSS: 구조(.affix · .affix_target · .affix_placeholder) + 스킨(.affix_bar)
+//
+//   <div class="affix" data-affix data-target="#scroll-area" data-offset-top="0">
+//     <div class="affix_placeholder" aria-hidden="true" hidden></div>
+//     <div class="affix_target affix_bar">…</div>
+//   </div>
+//
+//   data-affix          — Affix 활성화
+//   data-target         — 스크롤 컨테이너 선택자 (생략 시 window)
+//   data-offset-top     — 상단 여백(px, 기본 0)
+//   data-offset-bottom  — 하단 고정 시 여백(px)
+
+.affix {
+  position: relative;
+  min-width: 0;
+
+  &_placeholder {
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  &_target {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+
+    &.is-fixed {
+      z-index: var(--affix-z-index);
+    }
+  }
+
+  // ----- 스킨: 바
+
+  &_bar {
+    display: flex;
+    align-items: center;
+    gap: var(--affix-bar-gap);
+    padding: var(--affix-bar-padding-y) var(--affix-bar-padding-x);
+    background: var(--affix-bar-bg);
+    border: 1px solid var(--affix-bar-border);
+    border-radius: $radius-md;
+    box-shadow: var(--affix-bar-shadow);
+    font-size: var(--text-size-sm);
+    color: var(--color-text);
+  }
+
+  &_bar-label {
+    flex: 1;
+    min-width: 0;
+    font-weight: 600;
+  }
+
+  &_bar-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-shrink: 0;
+  }
+
+  // ----- 스킨: 앵커 링크 바
+
+  &_anchor {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--affix-bar-padding-y) var(--affix-bar-padding-x);
+    background: var(--affix-bar-bg);
+    border-bottom: 1px solid var(--affix-bar-border);
+    font-size: var(--text-size-sm);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+
+    .link {
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+  }
+
+  // ----- 데모 레이아웃 (너비 100%)
+
+  &_demo-scroll {
+    width: 100%;
+    max-height: 14rem;
+    overflow-y: auto;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: $radius-md;
+    background: var(--color-surface);
+  }
+
+  &_demo-content {
+    padding: var(--space-lg);
+
+    > p {
+      margin: 0 0 var(--space-md);
+      font-size: var(--text-size-sm);
+      color: var(--color-text-muted);
+      line-height: 1.6;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  &_demo-page {
+    width: 100%;
+    max-height: 18rem;
+    overflow-y: auto;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: $radius-md;
+    background: var(--color-surface);
+  }
+}

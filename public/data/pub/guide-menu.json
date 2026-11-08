@@ -1,0 +1,368 @@
+{
+  "intro": {
+    "id": "intro",
+    "label": "소개"
+  },
+  "componentGroups": [
+    {
+      "id": "basic",
+      "label": "기본 요소",
+      "items": [
+        {
+          "id": "button",
+          "label": "Button"
+        },
+        {
+          "id": "typography",
+          "label": "Typography"
+        },
+        {
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "id": "icon",
+          "label": "Icon"
+        }
+      ]
+    },
+    {
+      "id": "layout",
+      "label": "레이아웃",
+      "items": [
+        {
+          "id": "container",
+          "label": "Container"
+        },
+        {
+          "id": "space",
+          "label": "Space"
+        },
+        {
+          "id": "divider",
+          "label": "Divider"
+        },
+        {
+          "id": "flex",
+          "label": "Flex"
+        },
+        {
+          "id": "grid",
+          "label": "Grid"
+        }
+      ]
+    },
+    {
+      "id": "data",
+      "label": "데이터 표시",
+      "items": [
+        {
+          "id": "badge",
+          "label": "Badge"
+        },
+        {
+          "id": "tag",
+          "label": "Tag"
+        },
+        {
+          "id": "card",
+          "label": "Card"
+        },
+        {
+          "id": "avatar",
+          "label": "Avatar"
+        },
+        {
+          "id": "table",
+          "label": "Table"
+        },
+        {
+          "id": "list",
+          "label": "List"
+        },
+        {
+          "id": "stat",
+          "label": "Stat"
+        },
+        {
+          "id": "calendar",
+          "label": "Calendar"
+        },
+        {
+          "id": "timeline",
+          "label": "Timeline"
+        },
+        {
+          "id": "tree",
+          "label": "Tree"
+        }
+      ]
+    },
+    {
+      "id": "form",
+      "label": "폼",
+      "items": [
+        {
+          "id": "form-layout",
+          "label": "Form Layout"
+        },
+        {
+          "id": "input",
+          "label": "Input"
+        },
+        {
+          "id": "textarea",
+          "label": "Textarea"
+        },
+        {
+          "id": "select",
+          "label": "Select"
+        },
+        {
+          "id": "checkbox",
+          "label": "Checkbox"
+        },
+        {
+          "id": "radio",
+          "label": "Radio"
+        },
+        {
+          "id": "switch",
+          "label": "Switch"
+        },
+        {
+          "id": "slider",
+          "label": "Slider"
+        },
+        {
+          "id": "rate",
+          "label": "Rate"
+        },
+        {
+          "id": "upload",
+          "label": "Upload"
+        },
+        {
+          "id": "date-picker",
+          "label": "DatePicker"
+        }
+      ]
+    },
+    {
+      "id": "feedback",
+      "label": "피드백",
+      "items": [
+        {
+          "id": "alert",
+          "label": "Alert"
+        },
+        {
+          "id": "snackbar",
+          "label": "Snackbar"
+        },
+        {
+          "id": "modal",
+          "label": "Modal"
+        },
+        {
+          "id": "drawer",
+          "label": "Drawer"
+        },
+        {
+          "id": "popover",
+          "label": "Popover"
+        },
+        {
+          "id": "tooltip",
+          "label": "Tooltip"
+        },
+        {
+          "id": "progress",
+          "label": "Progress"
+        },
+        {
+          "id": "spin",
+          "label": "Spin"
+        },
+        {
+          "id": "skeleton",
+          "label": "Skeleton"
+        },
+        {
+          "id": "empty",
+          "label": "Empty"
+        }
+      ]
+    },
+    {
+      "id": "navigation",
+      "label": "네비게이션",
+      "items": [
+        {
+          "id": "navbar",
+          "label": "Navbar"
+        },
+        {
+          "id": "menu",
+          "label": "Menu"
+        },
+        {
+          "id": "tabs",
+          "label": "Tabs"
+        },
+        {
+          "id": "breadcrumb",
+          "label": "Breadcrumb"
+        },
+        {
+          "id": "pagination",
+          "label": "Pagination"
+        },
+        {
+          "id": "steps",
+          "label": "Steps"
+        },
+        {
+          "id": "dropdown",
+          "label": "Dropdown"
+        }
+      ]
+    },
+    {
+      "id": "misc",
+      "label": "기타",
+      "items": [
+        {
+          "id": "accordion",
+          "label": "Accordion"
+        },
+        {
+          "id": "collapse",
+          "label": "Collapse"
+        },
+        {
+          "id": "carousel",
+          "label": "Carousel"
+        },
+        {
+          "id": "affix",
+          "label": "Affix"
+        },
+        {
+          "id": "back-top",
+          "label": "BackTop"
+        },
+        {
+          "id": "floating",
+          "label": "Floating"
+        }
+      ]
+    }
+  ],
+  "demoGroups": [
+    {
+      "id": "demo-ui",
+      "label": "Demo · UI",
+      "items": [
+        {
+          "id": "libs",
+          "label": "Libs 목록"
+        },
+        {
+          "id": "chart",
+          "label": "Chart"
+        },
+        {
+          "id": "sorting-menu",
+          "label": "Sorting Menu"
+        },
+        {
+          "id": "sorting-menu-basic",
+          "label": "Sorting Menu Basic"
+        },
+        {
+          "id": "filter-scroll",
+          "label": "Filter Scroll"
+        },
+        {
+          "id": "dnd",
+          "label": "DnD Kit"
+        },
+        {
+          "id": "fullcalendar",
+          "label": "FullCalendar"
+        },
+        {
+          "id": "lottie",
+          "label": "Lottie"
+        },
+        {
+          "id": "youtube",
+          "label": "YouTube"
+        },
+        {
+          "id": "simplebar",
+          "label": "SimpleBar"
+        },
+        {
+          "id": "swiper",
+          "label": "Swiper"
+        },
+        {
+          "id": "viewer",
+          "label": "Viewer.js"
+        },
+        {
+          "id": "aos",
+          "label": "AOS"
+        },
+        {
+          "id": "gsap",
+          "label": "GSAP"
+        },
+        {
+          "id": "hls",
+          "label": "hls.js"
+        }
+      ]
+    },
+    {
+      "id": "demo-util",
+      "label": "Demo · 유틸",
+      "items": [
+        {
+          "id": "clipboard",
+          "label": "Clipboard"
+        },
+        {
+          "id": "dayjs",
+          "label": "Day.js"
+        },
+        {
+          "id": "ajv",
+          "label": "Ajv"
+        },
+        {
+          "id": "filesize",
+          "label": "filesize"
+        },
+        {
+          "id": "base64",
+          "label": "js-base64"
+        },
+        {
+          "id": "lodash",
+          "label": "lodash-es"
+        },
+        {
+          "id": "webstomp",
+          "label": "webstomp-client"
+        },
+        {
+          "id": "xss",
+          "label": "xss"
+        }
+      ]
+    }
+  ]
+}

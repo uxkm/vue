@@ -1,0 +1,297 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Pagination
+  --pagination-gap: 0.25rem;
+  --pagination-font-size: var(--text-size-sm);
+  --pagination-font-size-sm: var(--text-size-xs);
+  --pagination-font-size-lg: var(--text-size-base);
+  --pagination-font-weight: 500;
+  --pagination-font-weight-active: 600;
+  --pagination-item-min-size: 2rem;
+  --pagination-item-min-size-sm: 1.75rem;
+  --pagination-item-min-size-lg: 2.5rem;
+  --pagination-item-padding-x: 0.5rem;
+  --pagination-border-radius: var(--radius-sm);
+  --pagination-border-color: var(--color-border);
+  --pagination-bg: var(--color-surface);
+  --pagination-bg-hover: var(--color-surface-raised);
+  --pagination-bg-active: var(--color-accent);
+  --pagination-color: var(--color-text);
+  --pagination-color-muted: var(--color-text-muted);
+  --pagination-color-active: var(--color-on-accent);
+  --pagination-icon-size: 1rem;
+  --pagination-total-gap: var(--space-md);
+  --pagination-wrap-gap: var(--space-md);
+  --pagination-simple-text-min-width: 3.5rem;
+  --pagination-jumper-gap: var(--space-xs);
+  --pagination-jumper-input-width: 3rem;
+  --pagination-jumper-input-padding-x: 0.35rem;
+
+}
+
+// Pagination — OOCSS: 구조(.pagination) + 변형(.pagination_*) + 파트(.pagination_link · .pagination_btn · .pagination_ellipsis)
+//
+//   <nav class="pagination" aria-label="페이지 이동">
+//     <ul class="pagination_list">
+//       <li class="pagination_item">
+//         <button type="button" class="pagination_btn pagination_prev" aria-label="이전 페이지" disabled>…</button>
+//       </li>
+//       <li class="pagination_item">
+//         <button type="button" class="pagination_link is-active" aria-current="page">1</button>
+//       </li>
+//       <li class="pagination_item">
+//         <button type="button" class="pagination_link">2</button>
+//       </li>
+//       <li class="pagination_item">
+//         <button type="button" class="pagination_btn pagination_next" aria-label="다음 페이지">…</button>
+//       </li>
+//     </ul>
+//   </nav>
+
+@mixin pagination-item-size($min-size, $font-size) {
+  font-size: $font-size;
+
+  .pagination_link,
+  .pagination_btn,
+  .pagination_ellipsis {
+    min-width: $min-size;
+    height: $min-size;
+  }
+}
+
+@mixin pagination-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--pagination-item-min-size);
+  height: var(--pagination-item-min-size);
+  margin: 0;
+  padding: 0 var(--pagination-item-padding-x);
+  border: 1px solid var(--pagination-border-color);
+  border-radius: var(--pagination-border-radius);
+  background: var(--pagination-bg);
+  color: var(--pagination-color);
+  font: inherit;
+  font-weight: var(--pagination-font-weight);
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color $transition-fast,
+    background-color $transition-fast,
+    border-color $transition-fast;
+  @include focus-ring;
+
+  &:hover:not(:disabled):not(.is-disabled):not(.is-active):not([aria-current="page"]) {
+    color: color-token(primary);
+    background: var(--pagination-bg-hover);
+    border-color: var(--color-accent);
+  }
+
+  &:disabled,
+  &.is-disabled {
+    @include disabled-state;
+  }
+}
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--pagination-total-gap);
+  color: var(--pagination-color);
+  font-size: var(--pagination-font-size);
+
+  &.pagination_align-center {
+    justify-content: center;
+  }
+
+  &.pagination_align-end {
+    justify-content: flex-end;
+  }
+
+  &.pagination_sm {
+    @include pagination-item-size(var(--pagination-item-min-size-sm), var(--pagination-font-size-sm));
+  }
+
+  &.pagination_lg {
+    @include pagination-item-size(var(--pagination-item-min-size-lg), var(--pagination-font-size-lg));
+  }
+
+  &.pagination_round {
+    .pagination_link,
+    .pagination_btn,
+    .pagination_ellipsis {
+      border-radius: var(--radius-pill);
+    }
+  }
+
+  &.pagination_minimal {
+    .pagination_link,
+    .pagination_btn {
+      border-color: transparent;
+      background: transparent;
+
+      &:hover:not(:disabled):not(.is-disabled):not(.is-active):not([aria-current="page"]) {
+        background: var(--pagination-bg-hover);
+      }
+    }
+
+    .pagination_link {
+      &.is-active,
+      &[aria-current="page"] {
+        border-color: transparent;
+      }
+    }
+  }
+
+  &.pagination_simple {
+    gap: var(--pagination-gap);
+
+    .pagination_simple-text {
+      min-width: var(--pagination-simple-text-min-width);
+      color: var(--pagination-color-muted);
+      font-weight: var(--pagination-font-weight);
+      text-align: center;
+    }
+
+    .pagination_simple-current {
+      color: var(--pagination-color);
+      font-weight: var(--pagination-font-weight-active);
+    }
+  }
+
+  &_total {
+    flex-shrink: 0;
+    color: var(--pagination-color-muted);
+    font-size: inherit;
+    white-space: nowrap;
+  }
+
+  &_list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--pagination-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &_item {
+    display: flex;
+  }
+
+  &_link {
+    @include pagination-control;
+
+    &.btn.btn_text {
+      min-width: var(--pagination-item-min-size);
+      height: var(--pagination-item-min-size);
+      padding: 0 var(--pagination-item-padding-x);
+      color: inherit;
+      background: var(--pagination-bg);
+      border: 1px solid var(--pagination-border-color);
+      border-radius: var(--pagination-border-radius);
+      font: inherit;
+      font-weight: var(--pagination-font-weight);
+
+      .btn_label {
+        padding: 0;
+        font: inherit;
+        font-weight: inherit;
+      }
+    }
+
+    &.is-active,
+    &[aria-current="page"] {
+      color: var(--pagination-color-active);
+      background: var(--pagination-bg-active);
+      border-color: var(--color-accent);
+      font-weight: var(--pagination-font-weight-active);
+      pointer-events: none;
+    }
+  }
+
+  &_btn {
+    @include pagination-control;
+    padding: 0;
+
+    &.btn.btn_ghost {
+      min-width: var(--pagination-item-min-size);
+      height: var(--pagination-item-min-size);
+      padding: 0;
+      color: inherit;
+      background: var(--pagination-bg);
+      border: 1px solid var(--pagination-border-color);
+      border-radius: var(--pagination-border-radius);
+    }
+  }
+
+  &_icon {
+    flex-shrink: 0;
+    width: var(--pagination-icon-size);
+    height: var(--pagination-icon-size);
+    pointer-events: none;
+  }
+
+  &_ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--pagination-item-min-size);
+    height: var(--pagination-item-min-size);
+    color: var(--pagination-color-muted);
+    font-weight: var(--pagination-font-weight);
+    user-select: none;
+    pointer-events: none;
+  }
+
+  &_jumper {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--pagination-jumper-gap);
+    color: var(--pagination-color-muted);
+    font-size: inherit;
+    white-space: nowrap;
+  }
+
+  &_jumper-input {
+    width: var(--pagination-jumper-input-width);
+    height: var(--pagination-item-min-size);
+    padding: 0 var(--pagination-jumper-input-padding-x);
+    border: 1px solid var(--pagination-border-color);
+    border-radius: var(--pagination-border-radius);
+    background: var(--pagination-bg);
+    color: var(--pagination-color);
+    font: inherit;
+    text-align: center;
+    @include focus-ring;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      margin: 0;
+      appearance: none;
+    }
+
+    appearance: textfield;
+  }
+
+  &_wrap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--pagination-wrap-gap);
+    width: 100%;
+  }
+
+  &_wrap-end {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--pagination-total-gap);
+  }
+}

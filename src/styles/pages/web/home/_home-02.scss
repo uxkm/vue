@@ -1,0 +1,428 @@
+/* HD한국조선해양 메인 참고 — WEB Home 02 */
+
+.ksoe-home {
+  --k-bg: #0b1c2c;
+  --k-ink: #0f1720;
+  --k-muted: #5b6b7a;
+  --k-line: #e5e9ee;
+  --k-panel: #f3f6f8;
+  --k-white: #fff;
+  --k-green: #00ad1d;
+  --k-blue: #003087;
+  --k-max: 1200px;
+
+  min-height: 100vh;
+  color: var(--k-ink);
+  background: var(--k-white);
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+}
+
+.ksoe-header {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80px;
+  padding: 0 40px;
+  color: var(--k-white);
+
+  &__brand {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  &__nav {
+    display: flex;
+    gap: 28px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  &__link {
+    opacity: 0.85;
+    transition: opacity 0.2s ease;
+    &:hover { opacity: 1; }
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  &__chip {
+    padding: 8px 12px;
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 999px;
+  }
+}
+
+.ksoe-hero {
+  position: relative;
+  min-height: 100vh;
+  color: var(--k-white);
+  overflow: hidden;
+
+  &__slides { position: absolute; inset: 0; }
+
+  &__slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    pointer-events: none;
+    &.is-active { opacity: 1; pointer-events: auto; }
+  }
+
+  &__media {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -10%;
+    height: 120%;
+    background-size: cover;
+    background-position: center;
+  }
+
+  &__dim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(5,15,28,0.35) 0%, rgba(5,15,28,0.55) 55%, rgba(5,15,28,0.75) 100%);
+  }
+
+  &__body {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 100vh;
+    max-width: var(--k-max);
+    margin: 0 auto;
+    padding: 120px 40px 120px;
+  }
+
+  &__tag {
+    margin: 0 0 16px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--k-green);
+  }
+
+  &__title {
+    margin: 0 0 18px;
+    max-width: 720px;
+    font-size: 44px;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.03em;
+  }
+
+  &__desc {
+    margin: 0 0 28px;
+    max-width: 520px;
+    color: rgba(255,255,255,0.78);
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  &__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(255,255,255,0.5);
+    padding-bottom: 4px;
+    width: fit-content;
+    transition: color 0.2s ease, border-color 0.2s ease;
+    &:hover { color: var(--k-green); border-color: var(--k-green); }
+  }
+
+  &__controls {
+    position: absolute;
+    left: 40px;
+    bottom: 40px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__btn {
+    width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255,255,255,0.45);
+    border-radius: 50%;
+    color: var(--k-white);
+    transition: background 0.2s ease;
+    &:hover { background: rgba(255,255,255,0.12); }
+    svg { width: 16px; height: 16px; }
+  }
+
+  &__now {
+    margin-left: 8px;
+    padding: 8px 14px;
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+}
+
+.ksoe-section {
+  padding: 96px 40px;
+  max-width: var(--k-max);
+  margin: 0 auto;
+
+  &__eyebrow {
+    margin: 0 0 12px;
+    color: var(--k-blue);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  &__title {
+    margin: 0 0 36px;
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.35;
+  }
+}
+
+.ksoe-biz {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+
+  &__card {
+    position: relative;
+    min-height: 220px;
+    padding: 24px;
+    border-radius: 8px;
+    overflow: hidden;
+    color: var(--k-white);
+    background: #123;
+    isolation: isolate;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transition: transform 0.5s ease;
+      z-index: -2;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.7));
+      z-index: -1;
+    }
+
+    &:hover::before { transform: scale(1.08); }
+  }
+
+  &__name {
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  &__desc {
+    margin-top: 10px;
+    color: rgba(255,255,255,0.78);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+}
+
+.ksoe-esg {
+  background: var(--k-panel);
+
+  &__inner {
+    max-width: var(--k-max);
+    margin: 0 auto;
+    padding: 96px 40px;
+  }
+
+  &__tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+
+  &__tab {
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: var(--k-white);
+    border: 1px solid var(--k-line);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--k-muted);
+    transition: all 0.2s ease;
+
+    &.is-active {
+      background: var(--k-blue);
+      border-color: var(--k-blue);
+      color: var(--k-white);
+    }
+  }
+
+  &__panel {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 28px;
+    padding: 36px;
+    background: var(--k-white);
+    border-radius: 12px;
+  }
+
+  &__title {
+    margin: 0 0 12px;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  &__desc {
+    margin: 0;
+    color: var(--k-muted);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  &__visual {
+    min-height: 220px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #dfe6ee;
+  }
+}
+
+.ksoe-news {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  &__item {
+    display: grid;
+    gap: 10px;
+    padding: 24px;
+    border: 1px solid var(--k-line);
+    border-radius: 8px;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+
+    &:hover {
+      border-color: var(--k-blue);
+      transform: translateY(-2px);
+    }
+  }
+
+  &__date {
+    color: var(--k-muted);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.45;
+    letter-spacing: -0.02em;
+  }
+}
+
+.ksoe-ir {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 20px;
+  padding: 32px;
+  background: var(--k-bg);
+  color: var(--k-white);
+  border-radius: 12px;
+
+  &__label {
+    margin: 0 0 8px;
+    color: var(--k-green);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  &__title {
+    margin: 0 0 12px;
+    font-size: 28px;
+    font-weight: 700;
+  }
+
+  &__desc {
+    margin: 0 0 20px;
+    color: rgba(255,255,255,0.7);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  &__stock {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 24px;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+  }
+
+  &__price {
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  &__meta {
+    margin-top: 8px;
+    color: rgba(255,255,255,0.6);
+    font-size: 13px;
+  }
+}
+
+.ksoe-foot {
+  padding: 24px 40px 40px;
+  color: var(--k-muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+@media (max-width: 1024px) {
+  .ksoe-header__nav { display: none; }
+  .ksoe-biz { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ksoe-esg__panel,
+  .ksoe-news,
+  .ksoe-ir { grid-template-columns: 1fr; }
+  .ksoe-hero__title { font-size: 32px; }
+}
+
+@media (max-width: 640px) {
+  .ksoe-biz { grid-template-columns: 1fr; }
+  .ksoe-header,
+  .ksoe-section,
+  .ksoe-esg__inner,
+  .ksoe-hero__body { padding-left: 20px; padding-right: 20px; }
+}

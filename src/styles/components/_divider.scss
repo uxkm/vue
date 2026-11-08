@@ -1,0 +1,131 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Divider
+  --divider-color: var(--color-border-subtle);
+  --divider-thickness: 1px;
+  --divider-margin-y: var(--space-md);
+  --divider-margin-x: var(--space-sm);
+  --divider-text-gap: var(--space-md);
+  --divider-orient-inset: 5%;
+}
+
+// ----- Layout — divider (.divider_*)
+//
+//   <hr class="divider" />
+//   <hr class="divider divider_dashed" />
+//   <div class="divider">섹션 제목</div>
+//   <div class="divider divider_orient-left">왼쪽 정렬</div>
+//   <span class="divider divider_vertical" aria-hidden="true"></span>
+//
+// 텍스트가 있으면 가운데 레이블·양쪽 선으로 자동 전환됩니다.
+
+.divider {
+  box-sizing: border-box;
+  margin: var(--divider-margin-y) 0;
+  padding: 0;
+  border: none;
+  border-top: var(--divider-thickness) solid var(--divider-color);
+  width: 100%;
+  height: 0;
+  clear: both;
+  color: var(--color-text-muted);
+  font-size: var(--text-size-base);
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  text-align: center;
+
+  &:not(:empty) {
+    display: flex;
+    align-items: center;
+    height: auto;
+    border-top: none;
+
+    &::before,
+    &::after {
+      content: "";
+      flex: 1;
+      border-top: var(--divider-thickness) solid var(--divider-color);
+    }
+
+    &::before {
+      margin-right: var(--divider-text-gap);
+    }
+
+    &::after {
+      margin-left: var(--divider-text-gap);
+    }
+  }
+
+  &_dashed {
+    border-top-style: dashed;
+
+    &:not(:empty)::before,
+    &:not(:empty)::after {
+      border-top-style: dashed;
+    }
+  }
+
+  &_plain:not(:empty) {
+    font-weight: 400;
+  }
+
+  &_orient-left:not(:empty)::before {
+    flex: 0 0 var(--divider-orient-inset);
+  }
+
+  &_orient-right:not(:empty)::after {
+    flex: 0 0 var(--divider-orient-inset);
+  }
+
+  &_vertical {
+    display: inline-block;
+    width: 0;
+    height: auto;
+    min-height: 1em;
+    margin: 0 var(--divider-margin-x);
+    border: none;
+    border-left: var(--divider-thickness) solid var(--divider-color);
+    vertical-align: middle;
+    align-self: stretch;
+
+    &:not(:empty) {
+      display: inline-flex;
+      flex-direction: column;
+      width: auto;
+      height: auto;
+      min-height: 1em;
+      margin: var(--divider-margin-x) 0;
+      border-left: none;
+
+      &::before,
+      &::after {
+        flex: 1;
+        width: 0;
+        margin: 0;
+        border-top: none;
+        border-left: var(--divider-thickness) solid var(--divider-color);
+      }
+
+      &::before {
+        margin-bottom: var(--divider-text-gap);
+      }
+
+      &::after {
+        margin-top: var(--divider-text-gap);
+      }
+    }
+  }
+
+  &_vertical#{&}_dashed {
+    border-top: none;
+    border-left-style: dashed;
+
+    &:not(:empty)::before,
+    &:not(:empty)::after {
+      border-top: none;
+      border-left-style: dashed;
+    }
+  }
+}

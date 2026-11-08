@@ -1,9 +1,18 @@
 import { create } from 'zustand'
+import { DEFAULT_LOCALE } from './i18n'
 
-/** Vuex 대체 — 앱 전역 상태가 필요할 때 확장 */
+/** Vuex 대체 — 앱 전역 상태 */
 export const useAppStore = create((set) => ({
-  locale: 'ko',
-  setLocale: (locale) => set({ locale })
+  /** 현재 언어. 기본은 원문(ko) */
+  locale: DEFAULT_LOCALE,
+  /** 언어를 저장소에 기록 */
+  setLocale: (locale) => set({ locale }),
+  /**
+   * 페이지 번역 진행률 0~100.
+   * null 이면 대기(표시 안 함).
+   */
+  localeProgress: null,
+  setLocaleProgress: (localeProgress) => set({ localeProgress })
 }))
 
 export default useAppStore

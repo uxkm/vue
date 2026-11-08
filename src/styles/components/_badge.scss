@@ -1,0 +1,164 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Badge — structure
+  --badge-padding-y: 0.15rem;
+  --badge-padding-x: 0.5rem;
+  --badge-font-size: var(--text-size-xs);
+  --badge-font-weight: 600;
+  --badge-line-height: 1.4;
+  --badge-gap: var(--space-xs);
+
+
+  // ----- Badge — size sm · lg
+  --badge-padding-y-sm: 0.05rem;
+  --badge-padding-x-sm: 0.35rem;
+  --badge-font-size-sm: 0.6875rem;
+
+  --badge-padding-y-lg: 0.25rem;
+  --badge-padding-x-lg: 0.65rem;
+  --badge-font-size-lg: var(--text-size-sm);
+
+
+  // ----- Badge — dot · count
+  --badge-dot-size: 6px;
+  --badge-dot-size-sm: 5px;
+  --badge-dot-size-lg: 7px;
+  --badge-count-min-width: 1.25rem;
+  --badge-count-min-width-sm: 1rem;
+  --badge-count-min-width-lg: 1.5rem;
+  --badge-overlay-border: 2px;
+
+}
+
+// Badge — OOCSS: 구조(.badge) + 크기(.badge_*) + 변형(.badge_dot · .badge_count) + 공통 색상(.color_*)
+//
+//   <span class="badge color_primary">New</span>
+//   <span class="badge color_success badge_dot">Active</span>
+//   <span class="badge badge_count color_danger">8</span>
+//
+//   <span class="badge_wrap">
+//     <button type="button" class="btn btn_filled color_primary">…</button>
+//     <span class="badge badge_count color_danger">5</span>
+//   </span>
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--badge-padding-y) var(--badge-padding-x);
+  font-size: var(--badge-font-size);
+  font-weight: var(--badge-font-weight);
+  line-height: var(--badge-line-height);
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+  vertical-align: middle;
+
+  &.color_default {
+    color: color-token(muted);
+    background: var(--color-surface-raised);
+    border: 1px solid var(--color-border);
+  }
+
+  @include surface-soft-colors();
+
+  &.badge_dot {
+    gap: var(--badge-gap);
+    padding-left: 0.4rem;
+
+    &::before {
+      content: "";
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: currentColor;
+      @include square-size(var(--badge-dot-size));
+    }
+  }
+
+  &_sm {
+    padding: var(--badge-padding-y-sm) var(--badge-padding-x-sm);
+    font-size: var(--badge-font-size-sm);
+
+    &.badge_dot {
+      padding-left: 0.3rem;
+
+      &::before {
+        @include square-size(var(--badge-dot-size-sm));
+      }
+    }
+  }
+
+  &_lg {
+    padding: var(--badge-padding-y-lg) var(--badge-padding-x-lg);
+    font-size: var(--badge-font-size-lg);
+
+    &.badge_dot {
+      padding-left: 0.5rem;
+
+      &::before {
+        @include square-size(var(--badge-dot-size-lg));
+      }
+    }
+  }
+
+  &_count {
+    min-width: var(--badge-count-min-width);
+    padding-inline: 0.35rem;
+    font-variant-numeric: tabular-nums;
+
+    &.badge_sm {
+      min-width: var(--badge-count-min-width-sm);
+      padding-inline: 0.25rem;
+    }
+
+    &.badge_lg {
+      min-width: var(--badge-count-min-width-lg);
+      padding-inline: 0.45rem;
+    }
+  }
+
+  // 단독 점 표시 — 텍스트 없이 상태만 표시
+  &_dot-only {
+    display: inline-block;
+    flex-shrink: 0;
+    border-radius: 50%;
+    @include square-size(var(--badge-dot-size));
+
+    @include status-dot-colors();
+
+    &.badge_sm {
+      @include square-size(var(--badge-dot-size-sm));
+    }
+
+    &.badge_lg {
+      @include square-size(var(--badge-dot-size-lg));
+    }
+  }
+
+  // 요소 위에 배지를 겹쳐 표시
+  &_wrap {
+    position: relative;
+    display: inline-flex;
+    vertical-align: middle;
+
+    > .badge_count,
+    > .badge_dot-only {
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 1;
+      transform: translate(50%, -50%);
+    }
+
+    > .badge_count {
+      border: var(--badge-overlay-border) solid var(--color-surface);
+
+      @include overlay-badge-colors();
+    }
+
+    > .badge_dot-only {
+      box-sizing: content-box;
+      border: var(--badge-overlay-border) solid var(--color-surface);
+    }
+  }
+}

@@ -1,0 +1,93 @@
+.lang-switcher {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+
+  // 헤더 nav-bar(z-index:2) 아래로 메뉴가 깔리지 않도록
+  &.is-open {
+    z-index: 5;
+  }
+
+  .dropdown_trigger.btn_select {
+    min-width: 8.75rem;
+  }
+
+  &__label-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  &__label-text {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__progress {
+    flex: 0 0 auto;
+    color: var(--color-accent-text);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    font-size: 0.92em;
+  }
+
+  .dropdown_menu {
+    top: calc(100% + 6px);
+    min-width: max(100%, 8.5rem);
+    z-index: calc(var(--z-dropdown, 100) + 2);
+  }
+
+  .menu_link {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: var(--control-height-sm, 32px);
+    padding: 0 var(--space-12);
+    border: 0;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--color-text);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background: var(--color-surface-raised);
+    }
+
+    &.is-active {
+      background: var(--color-accent-muted);
+      color: var(--color-accent-text);
+      font-weight: 600;
+    }
+
+    &:disabled {
+      cursor: wait;
+      opacity: 0.7;
+    }
+  }
+
+  &.is-loading {
+    opacity: 0.92;
+  }
+
+  &__status {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 2px);
+    white-space: nowrap;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    pointer-events: none;
+
+    &--error {
+      color: var(--color-danger, #c0392b);
+    }
+  }
+}

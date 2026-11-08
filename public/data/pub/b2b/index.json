@@ -1,0 +1,39 @@
+{
+  "folders": [
+    {
+      "id": "common",
+      "name": "공통 페이지",
+      "file": "common.json"
+    },
+    {
+      "id": "main",
+      "name": "메인화면",
+      "file": "main.json"
+    },
+    {
+      "id": "corpeduc",
+      "name": "기업교육",
+      "file": "corpeduc.json"
+    },
+    {
+      "id": "service",
+      "name": "서비스",
+      "file": "service.json"
+    },
+    {
+      "id": "insight",
+      "name": "문의하기",
+      "file": "insight.json"
+    },
+    {
+      "id": "about",
+      "name": "회사소개",
+      "file": "about.json"
+    },
+    {
+      "id": "sample",
+      "name": "3뎁스 샘플",
+      "file": "sample.json"
+    }
+  ]
+}

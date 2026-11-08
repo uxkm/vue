@@ -1,0 +1,182 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Link
+  --link-gap: var(--space-xs);
+  --link-font-weight: 500;
+  --link-underline-offset: 2px;
+  --link-nav-padding-y: 0.35rem;
+  --link-nav-padding-x: 0.5rem;
+  --link-standalone-padding-y: 0.25rem;
+  --link-standalone-padding-x: 0.15rem;
+  --link-icon-only-size: 2rem;
+
+}
+
+// Link — OOCSS: 구조(.link) + 변형(.link_*) + 공통 색상(.color_*)
+//
+//   <a href="#" class="link color_primary">더 보기</a>
+//   <a href="#" class="link color_primary link_underline">항상 밑줄</a>
+//
+// 본문 인라인 링크는 Typography의 typo_link를 사용합니다.
+
+@mixin link-skin($color, $color-hover) {
+  color: $color;
+
+  &:hover:not(.is-disabled):not([aria-disabled="true"]) {
+    color: $color-hover;
+  }
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--link-gap);
+  font-weight: var(--link-font-weight);
+  font-size: inherit;
+  font-family: inherit;
+  line-height: inherit;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+
+  @include focus-ring(var(--color-accent));
+  @include link-skin(color-token(primary), var(--color-accent-text-hover));
+
+  &:hover:not(.is-disabled):not([aria-disabled="true"]):not(.link_no-underline) {
+    text-decoration: underline;
+    text-underline-offset: var(--link-underline-offset);
+  }
+
+  &.color_muted {
+    @include link-skin(color-token(muted), color-token(default));
+  }
+
+  &.color_success {
+    @include link-skin(color-token(success), var(--color-success-text-hover));
+  }
+
+  &.color_warning {
+    @include link-skin(color-token(warning), var(--color-warning-text-hover));
+  }
+
+  &.color_danger {
+    @include link-skin(color-token(danger), var(--color-danger-text-hover));
+  }
+
+  &.color_info {
+    @include link-skin(color-token(info), color-token(info));
+  }
+
+  &.is-disabled,
+  &[aria-disabled="true"] {
+    @include disabled-state;
+  }
+
+  &_underline {
+    text-decoration: underline;
+    text-underline-offset: var(--link-underline-offset);
+  }
+
+  &_no-underline:hover {
+    text-decoration: none;
+  }
+
+  &_block {
+    display: flex;
+    width: 100%;
+  }
+
+  &_standalone {
+    padding: var(--link-standalone-padding-y) var(--link-standalone-padding-x);
+    border-radius: $radius-sm;
+  }
+
+  &_nav {
+    padding: var(--link-nav-padding-y) var(--link-nav-padding-x);
+    border-radius: $radius-sm;
+    font-weight: 500;
+    text-decoration: none;
+
+    &:hover:not(.is-disabled):not([aria-disabled="true"]) {
+      text-decoration: none;
+      background: var(--color-surface-raised);
+    }
+
+    &.is-active {
+      color: color-token(primary);
+      background: var(--color-accent-muted);
+      font-weight: 600;
+    }
+  }
+
+  &_back {
+    gap: $space-xs;
+    font-weight: 500;
+
+    .link_icon {
+      width: 1.125em;
+      height: 1.125em;
+    }
+  }
+
+  &_group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $space-sm;
+  }
+
+  &_group-inline {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $space-md;
+  }
+
+  &_icon-only {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: $radius-sm;
+    @include square-size(var(--link-icon-only-size));
+
+    .link_icon {
+      width: 1.125rem;
+      height: 1.125rem;
+    }
+
+    &:hover:not(.is-disabled) {
+      text-decoration: none;
+      background: var(--color-surface-raised);
+    }
+  }
+
+  &_icon {
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+    pointer-events: none;
+  }
+
+  &_media {
+    display: block;
+    width: 1.5em;
+    height: 1.5em;
+    flex-shrink: 0;
+    object-fit: cover;
+    border-radius: $radius-sm;
+  }
+
+  &_row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+  }
+}

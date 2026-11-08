@@ -1,0 +1,636 @@
+@use 'sass:map';
+@use 'variables' as *;
+
+// =============================================================================
+// Mixins
+// =============================================================================
+//
+// ----- Common focus · disabled · color · size tokens
+// ----- Button 스킨 · 상태 · 그룹
+// ----- 앱 반응형 (respond-*)
+// =============================================================================
+
+// ----- Common — focus · disabled
+
+@mixin focus-ring($color: var(--color-accent)) {
+  outline: var(--focus-outline-width) solid transparent;
+  outline-offset: var(--focus-outline-offset);
+
+  &:focus-visible {
+    outline-color: $color;
+  }
+}
+
+@mixin disabled-state {
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+@mixin disabled-surface {
+  @include disabled-state;
+  background-color: var(--color-surface-disabled);
+  border-color: var(--color-border-disabled);
+}
+
+@mixin disabled-filled($bg, $text) {
+  color: $text;
+  background-color: $bg;
+  border-color: $bg;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+@mixin disabled-interactive-wrapper {
+  cursor: not-allowed;
+  pointer-events: none;
+  color: var(--color-text-disabled);
+}
+
+@mixin disabled-semantic-checked-box($input, $box, $indeterminate: true) {
+  @each $name in primary, success, danger, warning {
+    &.color_#{$name}:has(#{$input}:disabled) {
+      #{$input}:checked + #{$box} {
+        @if $name == primary {
+          background-color: var(--color-accent-disabled);
+          border-color: var(--color-accent-disabled);
+          color: var(--color-on-accent-disabled);
+        } @else if $name == success {
+          background-color: var(--color-success-disabled);
+          border-color: var(--color-success-disabled);
+          color: var(--color-on-success-disabled);
+        } @else if $name == danger {
+          background-color: var(--color-danger-disabled);
+          border-color: var(--color-danger-disabled);
+          color: var(--color-on-danger-disabled);
+        } @else if $name == warning {
+          background-color: var(--color-warning-disabled);
+          border-color: var(--color-warning-disabled);
+          color: var(--color-on-warning-disabled);
+        }
+      }
+
+      @if $indeterminate {
+        #{$input}:indeterminate + #{$box} {
+          @if $name == primary {
+            background-color: var(--color-accent-disabled);
+            border-color: var(--color-accent-disabled);
+            color: var(--color-on-accent-disabled);
+          } @else if $name == success {
+            background-color: var(--color-success-disabled);
+            border-color: var(--color-success-disabled);
+            color: var(--color-on-success-disabled);
+          } @else if $name == danger {
+            background-color: var(--color-danger-disabled);
+            border-color: var(--color-danger-disabled);
+            color: var(--color-on-danger-disabled);
+          } @else if $name == warning {
+            background-color: var(--color-warning-disabled);
+            border-color: var(--color-warning-disabled);
+            color: var(--color-on-warning-disabled);
+          }
+        }
+      }
+    }
+  }
+}
+
+// ----- Common — semantic skins (반복 color_* 변형)
+
+@mixin surface-soft($name) {
+  @if $name == primary {
+    color: color-token(primary);
+    background: var(--color-accent-muted);
+  } @else if $name == success {
+    color: color-token(success);
+    background: var(--color-badge-success-bg);
+  } @else if $name == warning {
+    color: color-token(warning);
+    background: var(--color-badge-warning-bg);
+  } @else if $name == danger {
+    color: color-token(danger);
+    background: var(--color-badge-danger-bg);
+  } @else if $name == info {
+    color: color-token(info);
+    background: var(--color-alert-info-bg);
+  } @else {
+    @error "Unknown surface-soft name: #{$name}";
+  }
+}
+
+@mixin surface-soft-colors($names: primary success warning danger info) {
+  @each $name in $names {
+    &.color_#{$name} {
+      @include surface-soft($name);
+    }
+  }
+}
+
+@mixin alert-surface($name) {
+  color: color-token($name);
+  background: var(--color-alert-#{$name}-bg);
+  border-color: var(--color-alert-#{$name}-border);
+}
+
+@mixin alert-surface-colors($names: info success warning error) {
+  @each $name in $names {
+    &.color_#{$name} {
+      @include alert-surface($name);
+    }
+  }
+}
+
+@mixin status-dot($name) {
+  @if $name == primary {
+    background: var(--color-accent);
+  } @else if $name == success {
+    background: var(--color-success);
+  } @else if $name == warning {
+    background: var(--color-warning);
+  } @else if $name == danger {
+    background: var(--color-danger);
+  } @else {
+    @error "Unknown status-dot name: #{$name}";
+  }
+}
+
+@mixin status-dot-colors($names: success warning danger primary) {
+  @each $name in $names {
+    &.color_#{$name} {
+      @include status-dot($name);
+    }
+  }
+}
+
+@mixin overlay-badge($name) {
+  @if $name == warning {
+    color: var(--color-on-warning);
+    background: var(--color-warning);
+  } @else if $name == primary or $name == success or $name == danger {
+    color: var(--color-on-accent);
+    background: var(--color-#{$name});
+  } @else {
+    @error "Unknown overlay-badge name: #{$name}";
+  }
+}
+
+@mixin overlay-badge-colors($names: danger primary success warning) {
+  @each $name in $names {
+    &.color_#{$name} {
+      @include overlay-badge($name);
+    }
+  }
+}
+
+@mixin accent-edge-color($name) {
+  @if $name == primary or $name == info {
+    border-left-color: var(--color-accent);
+  } @else {
+    border-left-color: var(--color-#{$name});
+  }
+}
+
+@mixin accent-edge-colors($names: primary success warning danger info) {
+  @each $name in $names {
+    &.color_#{$name} {
+      @include accent-edge-color($name);
+    }
+  }
+}
+
+@function semantic-border-color($name) {
+  @if $name == default {
+    @return var(--color-border);
+  } @else if $name == primary or $name == info {
+    @return var(--color-accent);
+  } @else {
+    @return var(--color-#{$name});
+  }
+}
+
+@mixin outline-border-colors($names: default primary success danger warning info) {
+  @each $name in $names {
+    &.color_#{$name} {
+      border-color: semantic-border-color($name);
+    }
+  }
+}
+
+@mixin surface-filled($name) {
+  @if $name == default {
+    color: var(--color-text);
+    background: var(--color-surface-raised);
+    border: 1px solid var(--color-border);
+  } @else if $name == primary or $name == info {
+    color: var(--color-on-accent);
+    background: var(--color-accent);
+    border: 1px solid var(--color-accent);
+  } @else if $name == success or $name == danger {
+    color: var(--color-on-accent);
+    background: var(--color-#{$name});
+    border: 1px solid var(--color-#{$name});
+  } @else if $name == warning {
+    color: var(--color-on-warning);
+    background: var(--color-warning);
+    border: 1px solid var(--color-warning);
+  } @else {
+    @error "Unknown surface-filled name: #{$name}";
+  }
+}
+
+@mixin typo-title($level) {
+  font-size: var(--typo-title-#{$level}-size);
+  font-weight: var(--typo-title-#{$level}-weight);
+  line-height: var(--typo-title-#{$level}-line-height);
+
+  @if $level <= 3 {
+    letter-spacing: var(--typo-title-#{$level}-letter-spacing);
+  }
+}
+
+@mixin flex-stack($gap) {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: $gap;
+}
+
+// color-token(default) → var(--color-text)
+// color-token(primary) → var(--color-accent-text)
+
+@function color-token($name) {
+  @if $name == default {
+    @return var(--color-text);
+  } @else if $name == muted {
+    @return var(--color-text-muted);
+  } @else if $name == primary {
+    @return var(--color-accent-text);
+  } @else if $name == success {
+    @return var(--color-success-text);
+  } @else if $name == warning {
+    @return var(--color-warning-text);
+  } @else if $name == danger {
+    @return var(--color-danger-text);
+  } @else if $name == info {
+    @return var(--color-alert-info-text);
+  } @else if $name == error {
+    @return var(--color-alert-error-text);
+  }
+
+  @error "Unknown color token: #{$name}";
+}
+
+// size-token(xs) → var(--text-size-xs)
+
+@function size-token($name) {
+  @if $name == xs {
+    @return var(--text-size-xs);
+  } @else if $name == sm {
+    @return var(--text-size-sm);
+  } @else if $name == base {
+    @return var(--text-size-base);
+  } @else if $name == lg {
+    @return var(--text-size-lg);
+  } @else if $name == xl {
+    @return var(--text-size-xl);
+  }
+
+  @error "Unknown size token: #{$name}";
+}
+
+// ----- Button — transition · 상태
+
+@mixin btn-transition {
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    opacity var(--transition-fast);
+}
+
+@mixin btn-hover-active {
+  &:hover:not(:disabled):not(.is-disabled):not(.is-loading) {
+    @content;
+  }
+}
+
+@mixin btn-open-state {
+  &.is-open,
+  &[aria-expanded='true'] {
+    @content;
+  }
+}
+
+@mixin btn-focus-shadow($color) {
+  box-shadow: 0 0 0 var(--focus-shadow-width) $color;
+}
+
+// ----- Button — 스킨
+
+@mixin btn-skin-filled($bg, $bg-hover, $text: var(--color-on-accent)) {
+  color: $text;
+  background: $bg;
+  border-color: $bg;
+
+  @include btn-hover-active {
+    background: $bg-hover;
+    border-color: $bg-hover;
+  }
+}
+
+@mixin btn-skin-surface {
+  color: var(--color-text);
+  background: var(--color-surface-raised);
+  border-color: var(--color-border);
+
+  @include btn-hover-active {
+    border-color: var(--color-accent);
+    color: var(--color-accent-text-hover);
+  }
+}
+
+@mixin btn-skin-ghost {
+  color: var(--color-text-muted);
+  background: transparent;
+  border-color: transparent;
+
+  @include btn-hover-active {
+    color: var(--color-text);
+    background: var(--color-accent-muted);
+  }
+}
+
+@mixin btn-skin-outline {
+  color: var(--color-accent-text);
+  background: transparent;
+  border-color: var(--color-accent);
+
+  @include btn-hover-active {
+    color: var(--color-on-accent);
+    background: var(--color-accent);
+  }
+}
+
+@mixin btn-skin-text($color, $color-hover, $bg-hover) {
+  color: $color;
+  background: transparent;
+  border-color: transparent;
+
+  @include btn-hover-active {
+    color: $color-hover;
+    background: $bg-hover;
+  }
+}
+
+// ----- Button — 파트 · 그룹
+
+@mixin btn-icon-size($size) {
+  width: $size;
+  height: $size;
+}
+
+@mixin btn-label-truncate {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+  font-weight: inherit;
+}
+
+@mixin btn-group-connected-horizontal($radius: var(--radius-sm)) {
+  .btn {
+    border-radius: 0;
+
+    &:first-child {
+      border-radius: $radius 0 0 $radius;
+    }
+
+    &:last-child {
+      border-radius: 0 $radius $radius 0;
+    }
+
+    & + .btn {
+      margin-left: var(--btn-group-overlap);
+    }
+
+    &:hover,
+    &:focus-visible {
+      z-index: 1;
+    }
+  }
+}
+
+@mixin btn-group-connected-vertical($radius: var(--radius-sm)) {
+  .btn {
+    width: 100%;
+
+    &:first-child {
+      border-radius: $radius $radius 0 0;
+    }
+
+    &:last-child {
+      border-radius: 0 0 $radius $radius;
+    }
+
+    & + .btn {
+      margin-left: 0;
+      margin-top: var(--btn-group-overlap);
+    }
+  }
+}
+
+@mixin btn-group-pill-horizontal($radius: var(--radius-pill)) {
+  .btn {
+    border-radius: 0;
+
+    &:first-child {
+      border-radius: $radius 0 0 $radius;
+    }
+
+    &:last-child {
+      border-radius: 0 $radius $radius 0;
+    }
+
+    &:only-child {
+      border-radius: $radius;
+    }
+  }
+}
+
+@mixin btn-group-pill-vertical($radius: var(--radius-pill)) {
+  .btn {
+    &:first-child {
+      border-radius: $radius $radius 0 0;
+    }
+
+    &:last-child {
+      border-radius: 0 0 $radius $radius;
+    }
+
+    &:only-child {
+      border-radius: $radius;
+    }
+  }
+}
+
+@mixin square-size($width, $height: $width) {
+  width: $width;
+  height: $height;
+}
+
+@mixin ripple-surface {
+  overflow: hidden;
+  isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@mixin ripple-target {
+  @include ripple-surface;
+  position: relative;
+}
+
+@mixin overlay-offset-side-classes($name) {
+  @each $side in top, right, bottom, left {
+    &_offset-#{$side}-none {
+      --#{$name}-offset-#{$side}: 0;
+    }
+
+    &_offset-#{$side}-sm {
+      --#{$name}-offset-#{$side}: var(--#{$name}-offset-sm);
+    }
+
+    &_offset-#{$side}-md {
+      --#{$name}-offset-#{$side}: var(--#{$name}-offset-md);
+    }
+
+    &_offset-#{$side}-lg {
+      --#{$name}-offset-#{$side}: var(--#{$name}-offset-lg);
+    }
+  }
+}
+
+@mixin overlay-arrow-edge-tokens($name, $panel-radius: var(--radius-lg)) {
+  --#{$name}-panel-radius: #{$panel-radius};
+  --#{$name}-arrow-edge-inset: calc(var(--#{$name}-panel-radius) + var(--#{$name}-arrow-size) * 0.35);
+}
+
+// ----- App — typography · layout · surface
+
+@mixin ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin line-clamp($lines: 2) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $lines;
+  line-clamp: $lines;
+  overflow: hidden;
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin absolute-fill {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+@mixin panel {
+  border: 1px solid $color-border;
+  border-radius: $radius-panel;
+  background: $color-surface;
+  box-shadow: $shadow-md;
+}
+
+// ----- App — responsive
+// PC: 1024 / 1440 / 1920 / 2580 · Mobile: 360 / 768 / 1024 / 1280
+
+@function _bp-map($platform) {
+  @if $platform == pc {
+    @return $bp-pc;
+  }
+  @if $platform == mobile {
+    @return $bp-mobile;
+  }
+  @error 'Unknown platform `#{$platform}`. Use `pc` or `mobile`.';
+}
+
+@mixin respond-up($name, $platform: mobile) {
+  $map: _bp-map($platform);
+  @if map.has-key($map, $name) {
+    @media (min-width: map.get($map, $name)) {
+      @content;
+    }
+  } @else {
+    @warn 'Unknown #{$platform} breakpoint `#{$name}`.';
+  }
+}
+
+@mixin respond-down($name, $platform: mobile) {
+  $map: _bp-map($platform);
+  @if map.has-key($map, $name) {
+    @media (max-width: map.get($map, $name)) {
+      @content;
+    }
+  } @else {
+    @warn 'Unknown #{$platform} breakpoint `#{$name}`.';
+  }
+}
+
+@mixin respond-pc-up($name) {
+  @include respond-up($name, pc) {
+    @content;
+  }
+}
+
+@mixin respond-pc-down($name) {
+  @include respond-down($name, pc) {
+    @content;
+  }
+}
+
+@mixin respond-mobile-up($name) {
+  @include respond-up($name, mobile) {
+    @content;
+  }
+}
+
+@mixin respond-mobile-down($name) {
+  @include respond-down($name, mobile) {
+    @content;
+  }
+}
+
+@mixin respond-to($name) {
+  @include respond-down($name, mobile) {
+    @content;
+  }
+}

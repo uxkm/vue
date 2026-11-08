@@ -1,32 +1,12 @@
-'use client'
+import { demoStaticParams } from '@/lib/staticParams'
+import DemoPageClient from './page.client'
 
-import { useEffect, useState } from 'react'
-import { useParams, notFound } from 'next/navigation'
-import { testLoaders } from '@/views/registry'
+/** 빌드할 데모 화면 주소 목록 */
+export function generateStaticParams () {
+  return demoStaticParams()
+}
 
-export default function TestPage () {
-  const { name } = useParams()
-  const [Comp, setComp] = useState(null)
-  const [missing, setMissing] = useState(false)
-
-  useEffect(() => {
-    let alive = true
-    const load = testLoaders[name]
-    if (!load) {
-      setMissing(true)
-      return undefined
-    }
-    load()
-      .then((mod) => {
-        if (alive) setComp(() => mod.default || mod)
-      })
-      .catch(() => {
-        if (alive) setMissing(true)
-      })
-    return () => { alive = false }
-  }, [name])
-
-  if (missing) notFound()
-  if (!Comp) return null
-  return <Comp />
+/** 데모 화면 서버 진입. 이름에 맞는 데모를 클라이언트가 불러온다 */
+export default function DemoPage () {
+  return <DemoPageClient />
 }

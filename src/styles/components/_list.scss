@@ -1,0 +1,431 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- List
+  --list-gap: var(--space-xs);
+  --list-item-padding-y: 0.65rem;
+  --list-item-padding-x: 1rem;
+  --list-title-size: var(--text-size-base);
+  --list-meta-size: var(--text-size-sm);
+  --list-desc-size: var(--text-size-sm);
+  --list-marker-padding: var(--space-lg);
+  --list-marker-gap: var(--space-xs);
+  --list-inline-label-width: 8rem;
+  --list-inline-gap: var(--space-md);
+
+}
+
+// List — OOCSS: 구조(.list) + 스킨(.list_bordered · .list_bullet · .list_ordered) + 파트(.list_item · .list_link)
+//
+//   <ul class="list list_bullet">
+//     <li class="list_item">항목</li>
+//   </ul>
+//
+//   <ol class="list list_ordered">
+//     <li class="list_item">1단계</li>
+//   </ol>
+//
+//   계층 번호 — list_ordered-outline(1.1) · list_ordered-dash(1-1) · list_ordered-depth(1→a→i)
+//   <ol class="list list_ordered list_ordered-outline">
+//     <li class="list_item">1단계
+//       <ol class="list list_ordered list_ordered-outline">
+//         <li class="list_item">1.1 하위</li>
+//       </ol>
+//     </li>
+//   </ol>
+//
+//   정의 목록 — variant="definition" (또는 tag="dl") + title · description prop
+//   <dl class="list list_definition">
+//     <dt class="list_title">용어</dt>
+//     <dd class="list_desc">설명</dd>
+//   </dl>
+//
+//   tag="dt" · tag="dd"로 용어·설명을 개별 지정할 수도 있습니다.
+//   <dl class="list list_definition">
+//     <dt class="list_item list_title">용어</dt>
+//     <dd class="list_item list_desc">설명</dd>
+//   </dl>
+//
+//   정의 목록 — 인라인(가로) 배치
+//   <dl class="list list_definition list_inline">
+//     <dt class="list_title">용어</dt>
+//     <dd class="list_desc">설명</dd>
+//   </dl>
+//
+//   클릭 가능 항목 — li는 구조만 유지하고, a·button.list_link에 인터랙션을 부여합니다.
+//   <li class="list_item">
+//     <a href="#" class="list_link">…</a>
+//   </li>
+
+// 불릿 · 번호 목록
+@mixin list-marker-item {
+  display: list-item;
+  width: 100%;
+  padding-block: var(--list-marker-gap);
+  padding-inline: 0;
+  border-radius: 0;
+
+  &:has(.list_link) {
+    display: list-item;
+    padding: 0;
+  }
+
+  .list_link {
+    padding-block: var(--list-marker-gap);
+    padding-inline: 0;
+    border-radius: $radius-sm;
+  }
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--list-gap);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &_item {
+    display: flex;
+    align-items: center;
+    gap: $space-md;
+    width: 100%;
+    padding: var(--list-item-padding-y) var(--list-item-padding-x);
+    border-radius: $radius-md;
+
+    &:has(.list_link) {
+      display: block;
+      padding: 0;
+    }
+
+    &:has(.card) {
+      display: block;
+      padding: 0;
+    }
+  }
+
+  &_link {
+    display: flex;
+    align-items: center;
+    gap: $space-md;
+    width: 100%;
+    margin: 0;
+    padding: var(--list-item-padding-y) var(--list-item-padding-x);
+    border: none;
+    border-radius: inherit;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color $transition-fast;
+    @include focus-ring;
+
+    &:hover {
+      background: var(--color-surface-raised);
+    }
+  }
+
+  &_content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+
+    &:not(:has(.list_title)) {
+      display: block;
+    }
+  }
+
+  &_title {
+    font-size: var(--list-title-size);
+    font-weight: 500;
+    color: var(--color-text);
+  }
+
+  &_meta {
+    font-size: var(--list-meta-size);
+    color: var(--color-text-muted);
+  }
+
+  &_desc {
+    font-size: var(--list-desc-size);
+    color: var(--color-text-muted);
+    line-height: 1.5;
+  }
+
+  &_action {
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  // 인라인 — 기본 너비 auto, 제목·내용 가로 배치
+  &_inline {
+    width: auto;
+    max-width: 100%;
+
+    &.list_block {
+      width: 100%;
+    }
+
+    &:not(.list_definition) {
+      .list_item {
+        width: auto;
+      }
+
+      .list_content:has(.list_title):has(.list_desc) {
+        flex-direction: row;
+        align-items: baseline;
+        gap: var(--list-inline-gap);
+      }
+
+      .list_content .list_desc {
+        margin-top: 0;
+      }
+    }
+  }
+
+  &_bordered {
+    .list_item {
+      border: 1px solid var(--color-border-subtle);
+      background: var(--color-surface);
+    }
+
+    .list_item:has(.list_link) {
+      border: none;
+      background: transparent;
+
+      .list_link {
+        border: 1px solid var(--color-border-subtle);
+        background: var(--color-surface);
+        border-radius: $radius-md;
+      }
+    }
+  }
+
+  &_compact {
+    .list_item:not(:has(.list_link)) {
+      padding-block: $space-sm;
+    }
+
+    .list_link {
+      padding-block: $space-sm;
+    }
+  }
+
+  &_divider {
+    .list_item + .list_item {
+      border-top: 1px solid var(--color-border-subtle);
+    }
+
+    .list_item {
+      border-radius: 0;
+      padding-inline: 0;
+    }
+
+    .list_item:has(.list_link) {
+      padding-inline: 0;
+    }
+
+    .list_link {
+      padding-inline: 0;
+      border-radius: 0;
+    }
+  }
+
+  &_bullet {
+    list-style: disc;
+    padding-left: var(--list-marker-padding);
+
+    .list_item {
+      @include list-marker-item;
+    }
+
+    .list {
+      margin-top: var(--list-marker-gap);
+      padding-left: var(--list-marker-padding);
+    }
+  }
+
+  &_bullet-circle {
+    list-style: circle;
+  }
+
+  &_bullet-square {
+    list-style: square;
+  }
+
+  // 계층 번호 — counters()로 뎁스별 1.1 · 1-1 형식 생성
+  @mixin list-ordered-hierarchical($separator, $suffix: ". ") {
+    list-style: none;
+    counter-reset: outline;
+
+    .list_item {
+      counter-increment: outline;
+      @include list-marker-item;
+
+      &::marker {
+        content: counters(outline, "#{$separator}") "#{$suffix}";
+      }
+    }
+
+    .list {
+      margin-top: var(--list-marker-gap);
+      padding-left: var(--list-marker-padding);
+    }
+  }
+
+  &_ordered {
+    list-style: decimal;
+    padding-left: var(--list-marker-padding);
+
+    .list_item {
+      @include list-marker-item;
+    }
+
+    .list {
+      margin-top: var(--list-marker-gap);
+      padding-left: var(--list-marker-padding);
+    }
+  }
+
+  &_ordered-alpha {
+    list-style: lower-alpha;
+  }
+
+  &_ordered-roman {
+    list-style: lower-roman;
+  }
+
+  &_ordered-upper-alpha {
+    list-style: upper-alpha;
+  }
+
+  &_ordered-upper-roman {
+    list-style: upper-roman;
+  }
+
+  // 1 → 1.1 → 1.1.1
+  &_ordered-outline {
+    @include list-ordered-hierarchical(".");
+  }
+
+  // 1 → 1-1 → 1-1-1
+  &_ordered-dash {
+    @include list-ordered-hierarchical("-", " ");
+  }
+
+  // 뎁스마다 번호 형식 자동 전환 (1 → a → i → 1 …)
+  &_ordered-depth {
+    list-style: decimal;
+    padding-left: var(--list-marker-padding);
+
+    .list_item {
+      @include list-marker-item;
+    }
+
+    .list {
+      margin-top: var(--list-marker-gap);
+      padding-left: var(--list-marker-padding);
+      list-style: lower-alpha;
+
+      .list {
+        list-style: lower-roman;
+
+        .list {
+          list-style: decimal;
+        }
+      }
+    }
+  }
+
+  // 카드 항목 목록 — li 안에 card 배치
+  &_cards {
+    gap: $space-md;
+
+    .list_item .card {
+      width: 100%;
+    }
+  }
+
+  // 정의 목록 — dt · dd 직계 자식
+  &_definition {
+    dt,
+    dd {
+      margin: 0;
+    }
+
+    dt.list_title,
+    .list_item .list_title,
+    .list_title {
+      display: block;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    dd.list_desc,
+    .list_item .list_desc,
+    .list_desc {
+      display: block;
+      margin-top: $space-xs;
+      line-height: 1.5;
+    }
+
+    dd.list_desc + dt.list_title,
+    .list_desc + .list_title {
+      margin-top: $space-sm;
+    }
+
+    .list_item {
+      display: block;
+      padding: 0;
+      border-radius: 0;
+
+      + .list_item .list_title {
+        margin-top: $space-sm;
+      }
+    }
+
+    .list_content {
+      display: block;
+      gap: 0;
+    }
+
+    &.list_inline {
+      display: grid;
+      grid-template-columns: var(--list-inline-label-width) 1fr;
+      column-gap: var(--list-inline-gap);
+      row-gap: var(--list-gap);
+
+      dt.list_title,
+      .list_item .list_title,
+      .list_title {
+        grid-column: 1;
+        margin-top: 0;
+      }
+
+      dd.list_desc,
+      .list_item .list_desc,
+      .list_desc {
+        grid-column: 2;
+        margin-top: 0;
+      }
+
+      dd.list_desc + dt.list_title,
+      .list_desc + .list_title {
+        margin-top: 0;
+      }
+    }
+
+    &.list_desc-right {
+      dd.list_desc,
+      .list_item .list_desc,
+      .list_desc {
+        text-align: right;
+      }
+    }
+  }
+}

@@ -1,0 +1,526 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Checkbox — structure
+  --checkbox-size: 1rem;
+  --checkbox-size-sm: 0.875rem;
+  --checkbox-size-lg: 1.125rem;
+  --checkbox-border-width: 1px;
+  --checkbox-radius: 4px;
+  --checkbox-gap: var(--space-sm);
+  --checkbox-gap-sm: 0.375rem;
+  --checkbox-gap-lg: 0.625rem;
+  --checkbox-font-size: var(--text-size-base);
+  --checkbox-font-size-sm: var(--text-size-sm);
+  --checkbox-font-size-lg: var(--text-size-lg);
+  --checkbox-line-height: 1.5;
+  --checkbox-label-weight: 400;
+  --checkbox-hint-size: var(--text-size-sm);
+  --checkbox-control-offset: 0.125rem;
+  --checkbox-group-gap: var(--space-sm);
+  --checkbox-button-padding-y: 0.35rem;
+  --checkbox-button-padding-x: 0.75rem;
+
+}
+
+// Checkbox — OOCSS: 구조(.checkbox) / 크기(.checkbox_sm) / 변형(.checkbox_button · .checkbox_label-end · .checkbox_card) + 공통 색상(.color_*)
+//
+//   <div class="checkbox">
+//     <span class="checkbox_control">…input…</span>
+//     <label class="checkbox_label" for="…">레이블</label>
+//   </div>
+//
+//   <div class="checkbox checkbox_label-end">
+//     <label class="checkbox_label" for="…">레이블</label>
+//     <span class="checkbox_control">…input…</span>
+//   </div>
+//
+//   <label class="checkbox_control">…input…</label>  — 레이블 없음(aria-label · aria-labelledby)
+//
+//   <label class="checkbox checkbox_button">
+//     <input class="checkbox_input">
+//     <span class="checkbox_label">버튼형</span>
+//   </label>
+//
+//   <div class="checkbox_card">
+//     <article class="card">
+//       <div class="card_extra">
+//         <label class="checkbox_control">…input…</label>
+//       </div>
+//     </article>
+//   </div>
+
+@mixin checkbox-checked-skin($bg, $border: $bg) {
+  background-color: $bg;
+  border-color: $border;
+  color: var(--color-on-accent);
+
+  &::after {
+    opacity: 1;
+    transform: translate(-55%, -65%) rotate(45deg) scale(1);
+  }
+}
+
+@mixin checkbox-color-variant($name) {
+  @if $name == primary {
+    .checkbox_input:checked + .checkbox_box {
+      @include checkbox-checked-skin(var(--color-accent));
+    }
+
+    .checkbox_input:indeterminate + .checkbox_box {
+      @include checkbox-checked-skin(var(--color-accent));
+    }
+
+    &.checkbox_button:has(.checkbox_input:checked) {
+      border-color: var(--color-accent);
+      background: var(--color-accent-muted);
+    }
+  } @else if $name == success {
+    .checkbox_input:checked + .checkbox_box {
+      @include checkbox-checked-skin(var(--color-success));
+    }
+
+    .checkbox_input:indeterminate + .checkbox_box {
+      @include checkbox-checked-skin(var(--color-success));
+    }
+
+    &.checkbox_button:has(.checkbox_input:checked) {
+      border-color: var(--color-success);
+      background: var(--color-badge-success-bg);
+    }
+  } @else if $name == danger {
+    .checkbox_input:checked + .checkbox_box {
+      @include checkbox-checked-skin(var(--color-danger));
+    }
+
+    .checkbox_input:indeterminate + .checkbox_box {
+      @include checkbox-checked-skin(var(--color-danger));
+    }
+
+    &.checkbox_button:has(.checkbox_input:checked) {
+      border-color: var(--color-danger);
+      background: var(--color-badge-danger-bg);
+    }
+  } @else if $name == warning {
+    .checkbox_input:checked + .checkbox_box {
+      @include checkbox-checked-skin(var(--color-warning), var(--color-warning));
+    }
+
+    .checkbox_input:indeterminate + .checkbox_box {
+      @include checkbox-checked-skin(var(--color-warning), var(--color-warning));
+    }
+
+    &.checkbox_button:has(.checkbox_input:checked) {
+      border-color: var(--color-warning);
+      background: var(--color-badge-warning-bg);
+    }
+  }
+}
+
+@mixin checkbox-card-color-variant($name) {
+  @if $name == primary {
+    .checkbox_input:checked + .checkbox_box,
+    .checkbox_input:indeterminate + .checkbox_box {
+      @include checkbox-checked-skin(var(--color-accent));
+    }
+
+    &:has(.checkbox_input:checked) .card {
+      border-color: var(--color-accent);
+      background: var(--color-accent-muted);
+    }
+  } @else if $name == success {
+    .checkbox_input:checked + .checkbox_box,
+    .checkbox_input:indeterminate + .checkbox_box {
+      @include checkbox-checked-skin(var(--color-success));
+    }
+
+    &:has(.checkbox_input:checked) .card {
+      border-color: var(--color-success);
+      background: var(--color-badge-success-bg);
+    }
+  } @else if $name == danger {
+    .checkbox_input:checked + .checkbox_box,
+    .checkbox_input:indeterminate + .checkbox_box {
+      @include checkbox-checked-skin(var(--color-danger));
+    }
+
+    &:has(.checkbox_input:checked) .card {
+      border-color: var(--color-danger);
+      background: var(--color-badge-danger-bg);
+    }
+  } @else if $name == warning {
+    .checkbox_input:checked + .checkbox_box,
+    .checkbox_input:indeterminate + .checkbox_box {
+      @include checkbox-checked-skin(var(--color-warning), var(--color-warning));
+    }
+
+    &:has(.checkbox_input:checked) .card {
+      border-color: var(--color-warning);
+      background: var(--color-badge-warning-bg);
+    }
+  }
+}
+
+.checkbox {
+  display: inline-flex;
+  width: auto;
+  align-self: flex-start;
+  align-items: flex-start;
+  gap: var(--checkbox-gap);
+  max-width: 100%;
+  margin: 0;
+  font-size: var(--checkbox-font-size);
+  line-height: var(--checkbox-line-height);
+  color: var(--color-text);
+  user-select: none;
+  vertical-align: middle;
+
+  // label.checkbox_button — input 직접 자식(암묵적 연결), control 래퍼 없음
+  &:is(label) {
+    cursor: pointer;
+  }
+
+  @each $name in primary, success, danger, warning {
+    &.color_#{$name} {
+      @include checkbox-color-variant($name);
+    }
+  }
+
+  &:has(.checkbox_input:disabled) {
+    @include disabled-interactive-wrapper;
+
+    .checkbox_box {
+      background-color: var(--color-surface-disabled);
+      border-color: var(--color-border-disabled);
+    }
+
+    .checkbox_input:checked + .checkbox_box,
+    .checkbox_input:indeterminate + .checkbox_box {
+      background-color: var(--color-accent-disabled);
+      border-color: var(--color-accent-disabled);
+      color: var(--color-on-accent-disabled);
+    }
+  }
+
+  @include disabled-semantic-checked-box(".checkbox_input", ".checkbox_box");
+
+  &.is-error .checkbox_box {
+    border-color: var(--color-danger);
+  }
+
+  &.is-error .checkbox_input:focus-visible + .checkbox_box {
+    outline-color: var(--color-danger);
+  }
+
+  &_control {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: var(--checkbox-size);
+    height: var(--checkbox-size);
+    margin: 0;
+    margin-top: var(--checkbox-control-offset);
+    cursor: pointer;
+
+    &:has(.checkbox_input:disabled) {
+      cursor: not-allowed;
+    }
+  }
+
+  // 명시 레이블(label.checkbox_label)이 있으면 control은 span — 암묵 label 중복 방지
+
+  &_input {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+
+    &:focus-visible + .checkbox_box {
+      outline: var(--focus-outline-width) solid var(--color-accent);
+      outline-offset: var(--focus-outline-offset);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+
+    &:checked + .checkbox_box {
+      @include checkbox-checked-skin(var(--color-accent));
+    }
+
+    &:indeterminate + .checkbox_box {
+      @include checkbox-checked-skin(var(--color-accent));
+
+      &::after {
+        top: 50%;
+        left: 50%;
+        width: calc(var(--checkbox-size) * 0.55);
+        height: 0;
+        border-width: 0 0 2px 0;
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+  }
+
+  &_box {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--checkbox-size);
+    height: var(--checkbox-size);
+    pointer-events: none;
+    background-color: var(--color-bg);
+    border: var(--checkbox-border-width) solid var(--color-border);
+    border-radius: var(--checkbox-radius);
+    color: var(--color-on-accent);
+    transition:
+      background-color $transition-fast,
+      border-color $transition-fast,
+      color $transition-fast,
+      box-shadow $transition-fast;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: calc(var(--checkbox-size) * 0.28);
+      height: calc(var(--checkbox-size) * 0.5);
+      border: solid currentColor;
+      border-width: 0 2px 2px 0;
+      opacity: 0;
+      transform: translate(-55%, -65%) rotate(45deg) scale(0.5);
+      transform-origin: center;
+      transition:
+        opacity $transition-fast,
+        transform $transition-fast;
+    }
+  }
+
+  &_label {
+    flex: 0 1 auto;
+    min-width: 0;
+    margin: 0;
+    font-weight: var(--checkbox-label-weight);
+    cursor: pointer;
+
+    &:has(+ .checkbox_control .checkbox_input:disabled),
+    .checkbox:has(.checkbox_input:disabled) > & {
+      cursor: not-allowed;
+    }
+  }
+
+  &_hint {
+    display: block;
+    margin-top: var(--space-xs);
+    font-size: var(--checkbox-hint-size);
+    font-weight: 400;
+    color: var(--color-text-muted);
+  }
+
+  &_content {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  // ----- 너비
+
+  &_block {
+    width: 100%;
+    max-width: 100%;
+
+    .checkbox_label,
+    .checkbox_content {
+      flex: 1 1 auto;
+    }
+  }
+
+  // ----- 크기
+
+  &_sm {
+    --checkbox-size: var(--checkbox-size-sm);
+    --checkbox-font-size: var(--checkbox-font-size-sm);
+    --checkbox-gap: var(--checkbox-gap-sm);
+  }
+
+  &_lg {
+    --checkbox-size: var(--checkbox-size-lg);
+    --checkbox-font-size: var(--checkbox-font-size-lg);
+    --checkbox-gap: var(--checkbox-gap-lg);
+  }
+
+  // ----- 레이블 뒤 (레이블 → 체크박스, 마크업 순서가 기본과 반대)
+
+  &_label-end {
+    .checkbox_control {
+      flex-shrink: 0;
+    }
+
+    &.checkbox_block,
+    .checkbox_group_block > & {
+      width: 100%;
+      max-width: 100%;
+
+      .checkbox_control {
+        margin-left: auto;
+      }
+
+      .checkbox_label,
+      .checkbox_content {
+        flex: 1 1 auto;
+      }
+    }
+  }
+
+  // ----- 버튼형
+
+  &_button {
+    position: relative;
+    align-items: center;
+    padding: var(--checkbox-button-padding-y) var(--checkbox-button-padding-x);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: $radius-sm;
+    transition:
+      color $transition-fast,
+      background-color $transition-fast,
+      border-color $transition-fast,
+      box-shadow $transition-fast;
+
+    .checkbox_control {
+      display: none;
+    }
+
+    .checkbox_label {
+      font-weight: 500;
+    }
+
+    &:hover:not(:has(.checkbox_input:disabled)) {
+      border-color: var(--color-accent);
+      color: color-token(primary);
+    }
+
+    &:has(.checkbox_input:checked) {
+      border-color: var(--color-accent);
+      background: var(--color-accent-muted);
+      color: color-token(primary);
+    }
+
+    &:has(.checkbox_input:focus-visible) {
+      outline: var(--focus-outline-width) solid var(--color-accent);
+      outline-offset: var(--focus-outline-offset);
+    }
+
+    &:has(.checkbox_input:disabled) {
+      @include disabled-surface;
+    }
+  }
+
+  // ----- 카드형 — card 컴포넌트와 조합 (래퍼는 div, control은 label.checkbox_control)
+
+  &_card {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+
+    @each $name in primary, success, danger, warning {
+      &.color_#{$name} {
+        @include checkbox-card-color-variant($name);
+      }
+    }
+
+    &:has(.checkbox_input:disabled) {
+      @include disabled-surface;
+    }
+
+    .card {
+      width: 100%;
+      transition:
+        border-color $transition-fast,
+        background-color $transition-fast,
+        box-shadow $transition-fast;
+    }
+
+    .checkbox_control {
+      margin-top: 0;
+    }
+
+    &:hover:not(:has(.checkbox_input:disabled)) .card {
+      border-color: var(--color-accent);
+    }
+
+    &:has(.checkbox_input:checked) .card {
+      border-color: var(--color-accent);
+      background: var(--color-accent-muted);
+    }
+
+    &:has(.checkbox_input:focus-visible) .card {
+      outline: var(--focus-outline-width) solid var(--color-accent);
+      outline-offset: var(--focus-outline-offset);
+    }
+
+    // 카드 전체 클릭 — div.checkbox_card-clickable + JS 클릭 위임 (label은 phrasing content만 허용)
+    &-clickable {
+      cursor: pointer;
+
+      .card {
+        cursor: pointer;
+      }
+
+      &:has(.checkbox_input:disabled) .card {
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  // ----- 그룹
+
+  &_group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--checkbox-group-gap);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    width: auto;
+    max-width: 100%;
+
+    &_horizontal {
+      flex-flow: row wrap;
+      align-items: center;
+    }
+
+    &_compact {
+      --checkbox-group-gap: var(--space-sm);
+    }
+
+    &_block {
+      align-items: stretch;
+      width: 100%;
+
+      > .checkbox {
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+  }
+
+  &_group-legend {
+    display: block;
+    width: 100%;
+    margin-bottom: var(--space-xs);
+    padding: 0;
+    font-size: size-token(base);
+    font-weight: 500;
+    color: var(--color-text);
+  }
+}

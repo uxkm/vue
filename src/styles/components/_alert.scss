@@ -1,0 +1,152 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Alert — structure
+  --alert-padding-y: var(--space-md);
+  --alert-padding-x: var(--space-lg);
+  --alert-gap: var(--space-md);
+  --alert-font-size: var(--text-size-base);
+  --alert-line-height: 1.5;
+  --alert-title-weight: 600;
+  --alert-title-gap: var(--space-xs);
+  --alert-desc-opacity: 0.85;
+  --alert-icon-size: 1.25rem;
+  --alert-icon-offset: 0.1rem;
+  --alert-close-size: 1.25rem;
+  --alert-actions-gap: var(--space-sm);
+  --alert-actions-margin-top: var(--space-sm);
+
+
+  // ----- Alert — size sm · lg
+  --alert-padding-y-sm: var(--space-sm);
+  --alert-padding-x-sm: var(--space-md);
+  --alert-font-size-sm: var(--text-size-sm);
+  --alert-icon-size-sm: 1rem;
+  --alert-close-size-sm: 1rem;
+
+  --alert-padding-y-lg: var(--space-lg);
+  --alert-padding-x-lg: var(--space-xl);
+  --alert-font-size-lg: var(--text-size-base);
+  --alert-icon-size-lg: 1.5rem;
+  --alert-close-size-lg: 1.5rem;
+
+}
+
+// Alert — OOCSS: 구조(.alert) + 크기(.alert_*) + 변형(.alert_banner) + 공통 색상(.color_*)
+//
+//   <div class="alert color_info" role="alert">
+//     <svg class="alert_icon" …></svg>
+//     <div class="alert_body">
+//       <div class="alert_title">정보</div>
+//       <p class="alert_desc">변경 사항이 저장되었습니다.</p>
+//     </div>
+//   </div>
+
+.alert {
+  display: flex;
+  gap: var(--alert-gap);
+  padding: var(--alert-padding-y) var(--alert-padding-x);
+  font-size: var(--alert-font-size);
+  line-height: var(--alert-line-height);
+  border: 1px solid transparent;
+  border-radius: $radius-md;
+
+  @include alert-surface-colors();
+
+  &_sm {
+    padding: var(--alert-padding-y-sm) var(--alert-padding-x-sm);
+    font-size: var(--alert-font-size-sm);
+
+    .alert_icon {
+      @include square-size(var(--alert-icon-size-sm));
+    }
+
+    .alert_close {
+      @include square-size(var(--alert-close-size-sm));
+    }
+  }
+
+  &_lg {
+    padding: var(--alert-padding-y-lg) var(--alert-padding-x-lg);
+    font-size: var(--alert-font-size-lg);
+
+    .alert_icon {
+      @include square-size(var(--alert-icon-size-lg));
+    }
+
+    .alert_close {
+      @include square-size(var(--alert-close-size-lg));
+    }
+  }
+
+  &_banner {
+    border-radius: 0;
+    border-inline: none;
+  }
+
+  &_icon {
+    flex-shrink: 0;
+    margin-top: var(--alert-icon-offset);
+    @include square-size(var(--alert-icon-size));
+  }
+
+  &_body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &_title {
+    font-weight: var(--alert-title-weight);
+    margin-bottom: var(--alert-title-gap);
+  }
+
+  &_desc {
+    color: inherit;
+    opacity: var(--alert-desc-opacity);
+    margin: 0;
+
+    &:only-child {
+      opacity: 1;
+    }
+  }
+
+  &_actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--alert-actions-gap);
+    margin-top: var(--alert-actions-margin-top);
+  }
+
+  &_close {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    margin-top: calc(var(--alert-icon-offset) * -1);
+    padding: 0;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.7;
+    @include square-size(var(--alert-close-size));
+    @include focus-ring;
+
+    svg {
+      width: 0.75em;
+      height: 0.75em;
+    }
+
+    &:hover {
+      opacity: 1;
+      background: rgba(0, 0, 0, 0.08);
+    }
+  }
+}
+
+[hidden].alert {
+  display: none;
+}

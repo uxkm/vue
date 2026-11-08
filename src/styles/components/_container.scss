@@ -1,0 +1,35 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Container
+  --container-padding-x: var(--space-2xl);
+  --container-max-width: 72rem;
+  --container-max-width-sm: 36rem;
+  --container-max-width-md: 48rem;
+  --container-max-width-lg: 64rem;
+  --container-max-width-xl: 80rem;
+}
+
+// ----- Layout — container (.container_*)
+//
+//   <div class="container">…</div>
+//   <div class="container container_fluid">…</div>
+//   <div class="container container_sm">…</div>
+
+.container {
+  width: 100%;
+  max-width: var(--container-max-width);
+  margin-inline: auto;
+  padding-inline: var(--container-padding-x);
+
+  @each $size in sm, md, lg, xl {
+    &_#{$size} {
+      max-width: var(--container-max-width-#{$size});
+    }
+  }
+
+  // size 변형보다 뒤에 두어 fluid + size 조합 시 max-width 제한 해제
+  &_fluid {
+    max-width: none;
+  }
+}

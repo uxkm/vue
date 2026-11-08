@@ -1,0 +1,109 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Empty
+  --empty-gap: var(--space-sm);
+  --empty-padding-y: var(--space-xl);
+  --empty-padding-x: var(--space-md);
+  --empty-image-size: 4rem;
+  --empty-image-size-sm: 3rem;
+  --empty-image-size-lg: 5rem;
+  --empty-icon-color: var(--color-border);
+  --empty-desc-size: var(--text-size-sm);
+  --empty-desc-color: var(--color-text-muted);
+  --empty-desc-max-width: 20rem;
+  --empty-footer-gap: var(--space-sm);
+  --empty-footer-offset: var(--space-xs);
+
+}
+
+// Empty — OOCSS: 구조(.empty) + 크기(.empty_sm) + 변형(.empty_simple · .empty_block) + 파트(.empty_image · .empty_desc · .empty_footer)
+//
+//   <div class="empty" role="status">
+//     <div class="empty_image" aria-hidden="true">…</div>
+//     <p class="empty_desc">데이터가 없습니다</p>
+//     <div class="empty_footer">
+//       <button type="button" class="btn btn_filled color_primary btn_sm">새로 만들기</button>
+//     </div>
+//   </div>
+
+.empty {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--empty-gap);
+  padding: var(--empty-padding-y) var(--empty-padding-x);
+  max-width: 100%;
+  text-align: center;
+
+  &_image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: var(--empty-image-size);
+    height: var(--empty-image-size);
+    color: var(--empty-icon-color);
+
+    svg,
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    svg {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.5;
+    }
+  }
+
+  &_desc {
+    margin: 0;
+    max-width: var(--empty-desc-max-width);
+    font-size: var(--empty-desc-size);
+    line-height: 1.5;
+    color: var(--empty-desc-color);
+  }
+
+  &_footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--empty-footer-gap);
+    margin-top: var(--empty-footer-offset);
+  }
+
+  // ----- 크기
+
+  &_sm {
+    --empty-image-size: var(--empty-image-size-sm);
+    --empty-desc-size: var(--text-size-xs);
+    --empty-padding-y: var(--space-lg);
+    --empty-gap: var(--space-xs);
+  }
+
+  &_lg {
+    --empty-image-size: var(--empty-image-size-lg);
+    --empty-desc-size: var(--text-size-base);
+    --empty-padding-y: var(--space-2xl);
+    --empty-gap: var(--space-md);
+  }
+
+  // ----- 변형
+
+  &_simple {
+    .empty_image {
+      display: none;
+    }
+  }
+
+  &_block {
+    display: flex;
+    width: 100%;
+  }
+}

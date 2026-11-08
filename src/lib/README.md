@@ -4,7 +4,7 @@
 |------------|------|
 | `vue` / `vue-router` / `react-router-dom` | `next` + `@/lib/router` (`Link`/`to` 호환) |
 | `vuex` / `vuex-map-fields` | `zustand` (`@/lib/store`) |
-| `vue-i18n` | `i18next` + `react-i18next` (`@/lib/i18n`) |
+| `vue-i18n` | `i18next` + `react-i18next` (`@/lib/i18n`, `src/locales/`) |
 | `@fullcalendar/vue` | `@fullcalendar/react` (`@/lib/calendar`) |
 | `vue-awesome-swiper` / `vue-carousel` | `swiper` (`@/lib/swiper`) |
 | `vue-lottie` | `lottie-react` (`@/lib/lottie`) |

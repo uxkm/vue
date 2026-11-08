@@ -1,0 +1,182 @@
+// =============================================================================
+// Theme colors — WCAG 2.2 AA 기준
+// =============================================================================
+// 1.4.3 본문·UI 텍스트 4.5:1 · 채움 버튼 레이블 4.5:1 · 1.4.11 테두리(UI) 3:1
+// (색상 대비 SC는 2.1 AA와 동일 수치)
+// 채움 버튼 → --color-accent / --color-success / --color-danger / --color-warning
+// 배경 위 텍스트·링크 → --color-*-text · 채움 레이블 → --color-on-accent / --color-on-warning
+// 비활성 → --color-text-disabled (4.5:1) · --color-border-disabled (3:1) · --color-*-disabled 채움 쌍
+// 기본(첫 로드)은 라이트. data-theme 으로만 전환한다.
+// =============================================================================
+
+@mixin theme-light {
+  color-scheme: light;
+
+  --color-bg: #f4f6f9;
+  --color-surface: #ffffff;
+  --color-surface-raised: #eef1f6;
+  --color-border: #7d8fa6;
+  --color-border-subtle: #a8b3c4;
+  --color-text: #1a2332;
+  --color-text-muted: #4a5568;
+  --color-text-disabled: #697586;
+  --color-border-disabled: #7d8fa6;
+  --color-surface-disabled: #eef1f6;
+  --color-control-disabled: #7d8fa6;
+
+  --color-accent-disabled: #c8d5eb;
+  --color-on-accent-disabled: #3d5080;
+  --color-success-disabled: #c5ddd2;
+  --color-on-success-disabled: #2d5340;
+  --color-danger-disabled: #eccaca;
+  --color-on-danger-disabled: #7a3030;
+  --color-warning-disabled: #ecd4bc;
+  --color-on-warning-disabled: #6b4220;
+
+  --color-accent: #3d66c4;
+  --color-accent-hover: #3458ad;
+  --color-accent-text: #3d66c4;
+  --color-accent-text-hover: #2f4f9f;
+  --color-accent-muted: rgba(61, 102, 196, 0.12);
+  --color-on-accent: #ffffff;
+
+  --color-success: #276749;
+  --color-success-hover: #22543d;
+  --color-success-text: #276749;
+  --color-success-text-hover: #1f5636;
+
+  --color-danger: #c53030;
+  --color-danger-hover: #9b2c2c;
+  --color-danger-text: #c53030;
+  --color-danger-text-hover: #9b2c2c;
+
+  --color-warning: #c05621;
+  --color-warning-hover: #9c4221;
+  --color-warning-text: #7b341e;
+  --color-warning-text-hover: #9c4221;
+  --color-on-warning: #ffffff;
+
+  --color-header-bg: rgba(244, 246, 249, 0.88);
+  --color-overlay: rgba(15, 20, 25, 0.4);
+  --shadow-sm: 0 1px 3px rgba(15, 20, 25, 0.08);
+  --shadow-md: 0 8px 24px rgba(15, 20, 25, 0.1);
+
+  --color-alert-info-text: #234e96;
+  --color-alert-info-bg: rgba(61, 102, 196, 0.12);
+  --color-alert-info-border: rgba(61, 102, 196, 0.28);
+  --color-alert-success-text: #22543d;
+  --color-alert-success-bg: rgba(39, 103, 73, 0.12);
+  --color-alert-success-border: rgba(39, 103, 73, 0.28);
+  --color-alert-warning-text: #7b341e;
+  --color-alert-warning-bg: rgba(192, 86, 33, 0.12);
+  --color-alert-warning-border: rgba(192, 86, 33, 0.28);
+  --color-alert-error-text: #822727;
+  --color-alert-error-bg: rgba(197, 48, 48, 0.12);
+  --color-alert-error-border: rgba(197, 48, 48, 0.28);
+
+  --color-snackbar-info-bg: #e7eefb;
+  --color-snackbar-info-border: #7897c7;
+  --color-snackbar-success-bg: #e7f0eb;
+  --color-snackbar-success-border: #739b86;
+  --color-snackbar-warning-bg: #f8eee9;
+  --color-snackbar-warning-border: #bc8062;
+  --color-snackbar-error-bg: #f8e7e7;
+  --color-snackbar-error-border: #c77a7a;
+
+  --color-badge-success-bg: rgba(39, 103, 73, 0.12);
+  --color-badge-danger-bg: rgba(197, 48, 48, 0.12);
+  --color-badge-warning-bg: rgba(192, 86, 33, 0.12);
+  --color-input-error-ring: rgba(197, 48, 48, 0.25);
+  --color-input-success-ring: rgba(39, 103, 73, 0.25);
+}
+
+@mixin theme-dark {
+  color-scheme: dark;
+
+  --color-bg: #0f1419;
+  --color-surface: #1a2332;
+  --color-surface-raised: #212d3f;
+  --color-border: #637a96;
+  --color-border-subtle: #4f627d;
+  --color-text: #e7ecf3;
+  --color-text-muted: #a8b8cf;
+  --color-text-disabled: #9aa8bc;
+  --color-border-disabled: #637a96;
+  --color-surface-disabled: #212d3f;
+  --color-control-disabled: #637a96;
+
+  --color-accent-disabled: #2d4a75;
+  --color-on-accent-disabled: #9ec5ff;
+  --color-success-disabled: #2d4f3d;
+  --color-on-success-disabled: #86d9a3;
+  --color-danger-disabled: #5c3030;
+  --color-on-danger-disabled: #fca5a5;
+  --color-warning-disabled: #6b4220;
+  --color-on-warning-disabled: #f6ad55;
+
+  --color-accent: #386bc0;
+  --color-accent-hover: #4a7fd6;
+  --color-accent-text: #7aa3f5;
+  --color-accent-text-hover: #9bb8ff;
+  --color-accent-muted: rgba(122, 163, 245, 0.14);
+  --color-on-accent: #ffffff;
+
+  --color-success: #2f855a;
+  --color-success-hover: #38a169;
+  --color-success-text: #68d391;
+  --color-success-text-hover: #7ae89f;
+
+  --color-danger: #c53030;
+  --color-danger-hover: #e53e3e;
+  --color-danger-text: #f56565;
+  --color-danger-text-hover: #fc8181;
+
+  --color-warning: #dd6b20;
+  --color-warning-hover: #ed8936;
+  --color-warning-text: #f6ad55;
+  --color-warning-text-hover: #fbd38d;
+  --color-on-warning: #1a1200;
+
+  --color-header-bg: rgba(15, 20, 25, 0.85);
+  --color-overlay: rgba(0, 0, 0, 0.5);
+  --spin-overlay-bg: rgba(0, 0, 0, 0.72);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.25);
+
+  --color-alert-info-text: #9ec5ff;
+  --color-alert-info-bg: rgba(122, 163, 245, 0.14);
+  --color-alert-info-border: rgba(122, 163, 245, 0.32);
+  --color-alert-success-text: #86d9a3;
+  --color-alert-success-bg: rgba(47, 133, 90, 0.16);
+  --color-alert-success-border: rgba(47, 133, 90, 0.32);
+  --color-alert-warning-text: #f6ad55;
+  --color-alert-warning-bg: rgba(221, 107, 32, 0.16);
+  --color-alert-warning-border: rgba(221, 107, 32, 0.32);
+  --color-alert-error-text: #fca5a5;
+  --color-alert-error-bg: rgba(197, 48, 48, 0.16);
+  --color-alert-error-border: rgba(197, 48, 48, 0.32);
+
+  --color-snackbar-info-bg: #202e45;
+  --color-snackbar-info-border: #7393c2;
+  --color-snackbar-success-bg: #20372e;
+  --color-snackbar-success-border: #65a17f;
+  --color-snackbar-warning-bg: #3a2b22;
+  --color-snackbar-warning-border: #bc8358;
+  --color-snackbar-error-bg: #3b2528;
+  --color-snackbar-error-border: #c8787f;
+
+  --color-badge-success-bg: rgba(47, 133, 90, 0.18);
+  --color-badge-danger-bg: rgba(197, 48, 48, 0.18);
+  --color-badge-warning-bg: rgba(221, 107, 32, 0.18);
+  --color-input-error-ring: rgba(252, 129, 129, 0.28);
+  --color-input-success-ring: rgba(104, 211, 145, 0.28);
+}
+
+:root,
+[data-theme='light'] {
+  @include theme-light;
+}
+
+[data-theme='dark'] {
+  @include theme-dark;
+}

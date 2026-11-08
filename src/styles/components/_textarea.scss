@@ -1,0 +1,273 @@
+@use 'foundations/helpers' as *;
+@use "input";
+
+:root {
+  // ----- Textarea — 기본 최소 높이 (rows 미지정 시)
+  --textarea-min-height: 5rem;
+  --textarea-count-inset-x: 0.75rem;
+  --textarea-count-inset-y: 0.5rem;
+
+}
+
+// Textarea — OOCSS: 구조(.textarea) / 크기(.textarea_sm) / 리사이즈(.textarea_resize_*) 분리
+//   Input(.input)과 동일한 시각 스타일을 공유하되 textarea 전용 클래스명 사용
+//
+//   .textarea_wrap.textarea_clearable — 값이 있을 때 우상단 지우기 버튼
+//   .textarea_wrap.textarea_show-count — 우측 하단 글자 수 카운터 (0/200)
+//   <div class="textarea_wrap textarea_show-count">
+//     <textarea class="textarea" maxlength="200" aria-describedby="…-hint …-count"></textarea>
+//     <span class="textarea_count" id="…-count" role="status" aria-live="polite" aria-atomic="true">
+//       <span class="textarea_count_visual" aria-hidden="true">0/200</span>
+//       <span class="textarea_count_announcer">0자 입력, 최대 200자</span>
+//     </span>
+//   </div>
+//   <p class="form_field-hint" id="…-hint">200자 이내로 작성해 주세요.</p>
+
+.textarea_wrap {
+  position: relative;
+  width: 100%;
+  --textarea-clear-inset-y: 0.5rem;
+  --textarea-clear-inset-x: 0.75rem;
+
+  &_fit {
+    max-width: var(--input-max-width);
+  }
+
+  &:has(.textarea_sm) {
+    --textarea-clear-inset-y: 0.3rem;
+    --textarea-clear-inset-x: 0.6rem;
+  }
+
+  &:has(.textarea_lg) {
+    --textarea-clear-inset-y: 0.65rem;
+    --textarea-clear-inset-x: 0.9rem;
+  }
+
+  &.textarea_show-count {
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: $radius-sm;
+    transition:
+      border-color $transition-fast,
+      box-shadow $transition-fast,
+      background-color $transition-fast;
+
+    &:hover:has(.textarea:hover:not(:disabled):not(:read-only)) {
+      border-color: var(--color-accent);
+    }
+
+    &:focus-within {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px var(--color-accent-muted);
+    }
+
+    &:has(.textarea.is-error) {
+      border-color: var(--color-danger);
+    }
+
+    &:has(.textarea.is-error:focus) {
+      box-shadow: 0 0 0 3px var(--color-input-error-ring);
+    }
+
+    &:has(.textarea.is-success) {
+      border-color: var(--color-success);
+    }
+
+    &:has(.textarea.is-success:focus) {
+      box-shadow: 0 0 0 3px var(--color-input-success-ring);
+    }
+
+    &:has(.textarea:disabled) {
+      background-color: var(--color-surface-disabled);
+      border-color: var(--color-border-disabled);
+      color: var(--color-text-disabled);
+    }
+
+    &:has(.textarea:read-only) {
+      background-color: var(--color-surface);
+    }
+
+    .textarea {
+      display: block;
+      width: 100%;
+      min-height: var(--textarea-min-height);
+      border: none;
+      border-radius: 0;
+      background-color: transparent;
+      box-shadow: none;
+
+      &:hover:not(:disabled):not(:read-only),
+      &:focus {
+        border: none;
+        box-shadow: none;
+        outline: none;
+      }
+    }
+
+    .textarea_count {
+      display: block;
+      text-align: right;
+      padding: 0 var(--textarea-count-inset-x) var(--textarea-count-inset-y);
+    }
+  }
+
+  &.textarea_clearable.is-filled .textarea {
+    padding-right: calc(var(--input-clear-offset) + var(--input-clear-size) + var(--input-clear-offset));
+  }
+
+  &.textarea_clearable.is-filled:has(.textarea_sm) .textarea {
+    padding-right: calc(0.6rem + var(--input-clear-size) + var(--input-clear-offset));
+  }
+
+  &.textarea_clearable.is-filled:has(.textarea_lg) .textarea {
+    padding-right: calc(0.9rem + var(--input-clear-size) + var(--input-clear-offset));
+  }
+}
+
+.textarea_clearable:not(.textarea_wrap) {
+  position: relative;
+  display: block;
+  width: 100%;
+  --textarea-clear-inset-y: 0.5rem;
+  --textarea-clear-inset-x: 0.75rem;
+
+  &:has(> .textarea_sm) {
+    --textarea-clear-inset-y: 0.3rem;
+    --textarea-clear-inset-x: 0.6rem;
+  }
+
+  &:has(> .textarea_lg) {
+    --textarea-clear-inset-y: 0.65rem;
+    --textarea-clear-inset-x: 0.9rem;
+  }
+
+  &.is-filled .textarea {
+    padding-right: calc(var(--input-clear-offset) + var(--input-clear-size) + var(--input-clear-offset));
+  }
+
+  &.is-filled:has(> .textarea_sm) .textarea {
+    padding-right: calc(0.6rem + var(--input-clear-size) + var(--input-clear-offset));
+  }
+
+  &.is-filled:has(> .textarea_lg) .textarea {
+    padding-right: calc(0.9rem + var(--input-clear-size) + var(--input-clear-offset));
+  }
+}
+
+.textarea_clear {
+  position: absolute;
+  top: calc(var(--textarea-clear-inset-y, 0.5rem) + 0.75em);
+  right: var(--textarea-clear-inset-x, 0.75rem);
+  bottom: auto;
+  left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--input-clear-color);
+  cursor: pointer;
+  appearance: none;
+  line-height: 1;
+  transform: translateY(-50%);
+  @include focus-ring;
+  @include square-size(var(--input-clear-size));
+
+  &[hidden] {
+    display: none;
+  }
+
+  .icon {
+    width: var(--input-clear-icon-size);
+    height: var(--input-clear-icon-size);
+  }
+
+  &:hover:not(:disabled),
+  &:focus-visible {
+    color: var(--input-clear-hover-color);
+    background: transparent;
+    border-color: transparent;
+  }
+}
+
+.textarea_count {
+  position: relative;
+  font-size: size-token(sm);
+  line-height: 1;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+  user-select: none;
+
+  &.is-limit {
+    color: var(--color-danger-text);
+  }
+
+  &_visual {
+    font-variant-numeric: tabular-nums;
+  }
+
+  &_announcer {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+.textarea_show-count:has(.textarea_sm) .textarea_count {
+  padding-right: 0.6rem;
+  padding-bottom: 0.35rem;
+  font-size: size-token(xs);
+}
+
+.textarea_show-count:has(.textarea_lg) .textarea_count {
+  padding-right: 0.9rem;
+  padding-bottom: 0.6rem;
+  font-size: size-token(base);
+}
+
+.textarea {
+  @extend .input;
+  min-height: var(--textarea-min-height);
+  resize: none;
+
+  &_sm {
+    padding: 0.3rem 0.6rem;
+    font-size: size-token(sm);
+  }
+
+  &_lg {
+    padding: 0.65rem 0.9rem;
+    font-size: size-token(lg);
+  }
+
+  &_fit {
+    width: 100%;
+    max-width: var(--input-max-width);
+  }
+
+  &_resize_none {
+    resize: none;
+  }
+
+  &_resize_vertical {
+    resize: vertical;
+  }
+
+  &_resize_horizontal {
+    resize: horizontal;
+  }
+
+  &_resize_both {
+    resize: both;
+  }
+}

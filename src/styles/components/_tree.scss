@@ -1,0 +1,257 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Tree
+  --tree-indent: 1.25rem;
+  --tree-row-height: 2rem;
+  --tree-font-size: var(--text-size-sm);
+  --tree-toggle-size: 1.25rem;
+  --tree-gap: 2px;
+  --tree-line-color: var(--color-border);
+}
+
+// Tree — OOCSS: 구조(.tree) + 스킨(.tree_bordered · .tree_lines · .tree_compact) + 파트(.tree_item · .tree_row · .tree_toggle · .tree_label)
+//
+//   <ul class="tree" role="tree">
+//     <li class="tree_item" role="treeitem" aria-expanded="true">
+//       <div class="tree_row">…</div>
+//       <ul class="tree" role="group">…</ul>
+//     </li>
+//   </ul>
+
+.tree {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tree-gap);
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--tree-font-size);
+  box-sizing: border-box;
+
+  .tree {
+    margin-left: 0;
+    padding-left: var(--tree-indent);
+    margin-top: var(--tree-gap);
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  &_item {
+    min-width: 0;
+
+    &[aria-expanded="false"] > .tree {
+      display: none;
+    }
+  }
+
+  &_row {
+    display: flex;
+    align-items: center;
+    gap: $space-xs;
+    min-width: 0;
+    min-height: var(--tree-row-height);
+    padding-inline: $space-xs;
+    border-radius: $radius-sm;
+    color: var(--color-text);
+    transition: background-color $transition-fast;
+
+    &:hover:not(.is-disabled) {
+      background: var(--color-surface-raised);
+    }
+
+    &.is-selected {
+      background: var(--color-accent-muted);
+      color: color-token(primary);
+      font-weight: 500;
+    }
+
+    &.is-disabled {
+      @include disabled-state;
+    }
+  }
+
+  &_link {
+    display: flex;
+    align-items: center;
+    gap: inherit;
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    @include focus-ring;
+
+    &:hover {
+      color: inherit;
+    }
+  }
+
+  &_toggle {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: $radius-sm;
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    @include square-size(var(--tree-toggle-size));
+    @include focus-ring;
+
+    &::before {
+      content: "";
+      display: block;
+      width: 0;
+      height: 0;
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+      border-left: 5px solid currentColor;
+      transition: transform $transition-fast;
+    }
+
+    &[aria-expanded="true"]::before {
+      transform: rotate(90deg);
+    }
+  }
+
+  &_toggle-plus {
+    &::before {
+      content: "+";
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      border: 1px solid var(--color-border);
+      border-radius: $radius-sm;
+      font-size: size-token(xs);
+      font-weight: 600;
+      line-height: 1;
+      color: var(--color-text-muted);
+      background: var(--color-surface);
+      transition:
+        background-color $transition-fast,
+        border-color $transition-fast;
+    }
+
+    &[aria-expanded="true"]::before {
+      content: "−";
+      transform: none;
+    }
+
+    &:hover::before {
+      border-color: var(--color-accent);
+      color: color-token(primary);
+      background: var(--color-accent-muted);
+    }
+  }
+
+  &_toggle_placeholder {
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  &_label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: default;
+    user-select: none;
+  }
+
+  &_meta {
+    flex-shrink: 0;
+    font-size: size-token(xs);
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+
+  &_icon {
+    flex-shrink: 0;
+    color: var(--color-text-muted);
+
+    .icon {
+      @include square-size(1rem);
+    }
+  }
+
+  &_check {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    cursor: pointer;
+
+    input[type="checkbox"] {
+      margin: 0;
+      width: 0.875rem;
+      height: 0.875rem;
+      accent-color: var(--color-accent);
+      cursor: pointer;
+    }
+  }
+
+  // ----- 스킨
+
+  &_bordered {
+    padding: $space-sm;
+    border: 1px solid var(--color-border);
+    border-radius: $radius-md;
+    background: var(--color-surface);
+  }
+
+  &_compact {
+    --tree-row-height: 1.5rem;
+    --tree-gap: 0;
+    --tree-font-size: var(--text-size-xs);
+    --tree-toggle-size: 1rem;
+    --tree-indent: 1rem;
+  }
+
+  &_lines {
+    .tree_item > .tree > .tree_item {
+      position: relative;
+
+      &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: calc(var(--tree-toggle-size) / 2 - var(--tree-indent) - 0.5px);
+        border-left: 1px solid var(--tree-line-color);
+      }
+
+      &:last-child::before {
+        height: calc(var(--tree-row-height) / 2);
+        bottom: auto;
+      }
+
+      > .tree_row::before {
+        content: "";
+        position: absolute;
+        top: calc(var(--tree-row-height) / 2);
+        left: calc(var(--tree-toggle-size) / 2 - var(--tree-indent));
+        width: calc(var(--tree-indent) - var(--tree-toggle-size) / 2 + #{$space-xs});
+        border-top: 1px solid var(--tree-line-color);
+      }
+
+      > .tree_row {
+        position: relative;
+      }
+    }
+  }
+}

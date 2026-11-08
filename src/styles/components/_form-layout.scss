@@ -1,0 +1,156 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Form layout
+  --form-label-width: 7.5rem;
+  --form-label-width-sm: 5rem;
+  --form-label-width-lg: 10rem;
+  --form-field-gap: var(--space-lg);
+  --form-inline-field-min-width: 8rem;
+  --form-actions-gap: var(--space-sm);
+
+}
+
+// Form Layout — OOCSS: 구조(.form) / 레이아웃(.form_vertical · .form_horizontal · .form_inline)
+//
+//   .form_field-label · .form_field-control · .form_field-hint · .form_field-error
+//   → Input 컴포넌트와 공유 (_input.scss)
+
+.form {
+  width: 100%;
+
+  &_vertical {
+    .form_field + .form_field {
+      margin-top: var(--form-field-gap);
+    }
+
+    .grid .form_field + .form_field {
+      margin-top: 0;
+    }
+  }
+
+  &_horizontal {
+    .form_field {
+      display: grid;
+      grid-template-columns: var(--form-label-width) minmax(0, 1fr);
+      align-items: start;
+      gap: $space-xs $space-md;
+      max-width: none;
+    }
+
+    .form_field + .form_field {
+      margin-top: var(--form-field-gap);
+    }
+
+    .form_field-label {
+      margin-bottom: 0;
+      padding-top: 0.5rem;
+      text-align: right;
+    }
+
+    .form_field-control {
+      min-width: 0;
+    }
+
+    .form_field-control,
+    .input,
+    .input_group,
+    .textarea,
+    .textarea_wrap,
+    select.input {
+      grid-column: 2;
+    }
+
+    .form_field-hint,
+    .form_field-error {
+      grid-column: 2;
+      margin-top: 0;
+    }
+
+    &.form_label-align-start .form_field-label {
+      text-align: left;
+    }
+
+    @each $name in sm, lg {
+      &.form_label-width-#{$name} {
+        --form-label-width: var(--form-label-width-#{$name});
+      }
+    }
+  }
+
+  &_inline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: $space-md $space-lg;
+
+    .form_field {
+      flex: 0 1 auto;
+      width: auto;
+      margin-top: 0;
+      max-width: none;
+    }
+
+    .form_field + .form_field {
+      margin-top: 0;
+    }
+
+    .input,
+    .input_group,
+    select.input {
+      width: auto;
+      min-width: var(--form-inline-field-min-width);
+    }
+  }
+
+  &_fit {
+    width: 100%;
+    max-width: var(--input-max-width);
+
+    .form_field,
+    .input,
+    .input_group,
+    .textarea,
+    select.input {
+      max-width: 100%;
+    }
+
+    &.form_horizontal {
+      max-width: none;
+
+      .form_field,
+      .input,
+      .input_group,
+      .textarea,
+      select.input {
+        max-width: var(--input-max-width);
+      }
+    }
+
+    &.form_horizontal .form_field {
+      grid-template-columns: var(--form-label-width) minmax(0, var(--input-max-width));
+    }
+  }
+
+  &_compact {
+    --form-field-gap: var(--space-md);
+  }
+
+  &_actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--form-actions-gap);
+    margin-top: var(--form-field-gap);
+
+    .form_horizontal & {
+      padding-left: calc(var(--form-label-width) + #{$space-md});
+    }
+
+    .form_inline & {
+      flex: 0 0 auto;
+      width: auto;
+      margin-top: 0;
+    }
+  }
+}

@@ -1,0 +1,355 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Timeline
+  --timeline-gap: var(--space-lg);
+  --timeline-dot-size: 10px;
+  --timeline-dot-offset: 4px;
+  --timeline-line-width: 2px;
+  --timeline-content-gap: var(--space-xs);
+  --timeline-time-size: var(--text-size-xs);
+  --timeline-title-size: var(--text-size-base);
+  --timeline-desc-size: var(--text-size-sm);
+  --timeline-label-width: 4.5rem;
+
+}
+
+// Timeline — OOCSS: 구조(.timeline) + 스킨(.timeline_*) + 파트(.timeline_item · .timeline_dot · .timeline_content)
+//
+//   <ol class="timeline">
+//     <li class="timeline_item">
+//       <span class="timeline_dot color_primary"></span>
+//       <div class="timeline_content">…</div>
+//     </li>
+//   </ol>
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &_item {
+    position: relative;
+    display: flex;
+    gap: $space-md;
+    padding-bottom: var(--timeline-gap);
+
+    &:last-child {
+      padding-bottom: 0;
+
+      &::before {
+        display: none;
+      }
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: calc(var(--timeline-dot-size) / 2 - var(--timeline-line-width) / 2);
+      top: calc(var(--timeline-dot-offset) + var(--timeline-dot-size));
+      bottom: calc(-1 * var(--timeline-dot-offset));
+      width: var(--timeline-line-width);
+      background: var(--color-border-subtle);
+    }
+
+    &.is-pending {
+      .timeline_dot {
+        background: var(--color-surface);
+        border: 2px dashed var(--color-border);
+        box-sizing: border-box;
+      }
+
+      .timeline_title {
+        color: var(--color-text-muted);
+        font-weight: 500;
+      }
+    }
+
+    &.is-active {
+      .timeline_dot {
+        box-shadow: 0 0 0 3px var(--color-accent-muted);
+      }
+
+      .timeline_title {
+        color: color-token(primary);
+      }
+    }
+  }
+
+  &_dot {
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+    margin-top: var(--timeline-dot-offset);
+    border-radius: 50%;
+    background: var(--color-border);
+    @include square-size(var(--timeline-dot-size));
+
+    &:not(.icon_circle) {
+      &.color_primary {
+        background: var(--color-accent);
+      }
+
+      &.color_success {
+        background: var(--color-success);
+      }
+
+      &.color_warning {
+        background: var(--color-warning);
+      }
+
+      &.color_danger {
+        background: var(--color-danger);
+      }
+
+      &.color_info {
+        background: var(--color-accent);
+      }
+    }
+
+    &.timeline_dot-outline {
+      background: var(--color-surface);
+      border: 2px solid var(--color-border);
+      box-sizing: border-box;
+
+      &.color_primary {
+        border-color: var(--color-accent);
+        background: var(--color-accent-muted);
+      }
+
+      &.color_success {
+        border-color: var(--color-success);
+        background: var(--color-badge-success-bg);
+      }
+
+      &.color_warning {
+        border-color: var(--color-warning);
+        background: var(--color-badge-warning-bg);
+      }
+
+      &.color_danger {
+        border-color: var(--color-danger);
+        background: var(--color-badge-danger-bg);
+      }
+
+      &.color_info {
+        border-color: var(--color-accent);
+        background: var(--color-accent-muted);
+      }
+    }
+
+    &.icon_circle {
+      margin-top: 0;
+      border-radius: 50%;
+      background: var(--color-surface-raised);
+      @include square-size(var(--icon-circle-size));
+
+      &.icon_circle-sm {
+        @include square-size(var(--icon-circle-size-sm));
+      }
+    }
+  }
+
+  &_content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--timeline-content-gap);
+    flex: 1;
+    min-width: 0;
+  }
+
+  &_time {
+    font-size: var(--timeline-time-size);
+    color: var(--color-text-muted);
+  }
+
+  &_label {
+    flex-shrink: 0;
+    width: var(--timeline-label-width);
+    font-size: var(--timeline-time-size);
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-align: right;
+    padding-top: 2px;
+  }
+
+  &_title {
+    font-size: var(--timeline-title-size);
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  &_desc {
+    font-size: var(--timeline-desc-size);
+    color: var(--color-text-muted);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  &_meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-xs;
+    align-items: center;
+  }
+
+  // ----- Size
+
+  &_sm {
+    --timeline-gap: var(--space-md);
+    --timeline-dot-size: 8px;
+    --timeline-title-size: var(--text-size-sm);
+    --timeline-desc-size: var(--text-size-xs);
+  }
+
+  &_lg {
+    --timeline-gap: var(--space-xl);
+    --timeline-dot-size: 14px;
+    --timeline-title-size: var(--text-size-lg);
+    --timeline-desc-size: var(--text-size-base);
+  }
+
+  // ----- Card content
+
+  &_card {
+    .timeline_content {
+      padding: $space-md;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: $radius-lg;
+    }
+  }
+
+  // ----- Label column (date · period on the left)
+
+  &_label-col {
+    .timeline_item {
+      display: grid;
+      grid-template-columns: var(--timeline-label-width) var(--timeline-dot-size) 1fr;
+      column-gap: $space-md;
+      align-items: start;
+
+      &::before {
+        left: calc(
+          var(--timeline-label-width) + $space-md + var(--timeline-dot-size) / 2 -
+            var(--timeline-line-width) / 2
+        );
+      }
+
+      .timeline_dot {
+        margin-top: var(--timeline-dot-offset);
+      }
+    }
+  }
+
+  // ----- Alternate (zigzag on md+)
+
+  &_alternate {
+    @media (min-width: $breakpoint-md) {
+      position: relative;
+
+      &::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 0;
+        bottom: 0;
+        width: var(--timeline-line-width);
+        transform: translateX(-50%);
+        background: var(--color-border-subtle);
+      }
+
+      .timeline_item {
+        width: calc(50% - var(--timeline-gap));
+        padding-right: calc(var(--timeline-gap) + var(--timeline-dot-size));
+
+        &::before {
+          display: none;
+        }
+
+        .timeline_dot {
+          position: absolute;
+          right: calc(var(--timeline-gap) / -2 - var(--timeline-dot-size) / 2);
+          left: auto;
+        }
+
+        &:nth-child(even) {
+          align-self: flex-end;
+          padding-right: 0;
+          padding-left: calc(var(--timeline-gap) + var(--timeline-dot-size));
+
+          .timeline_dot {
+            left: calc(var(--timeline-gap) / -2 - var(--timeline-dot-size) / 2);
+            right: auto;
+          }
+        }
+      }
+    }
+  }
+
+  // ----- Horizontal (md+)
+
+  &_horizontal {
+    width: 100%;
+    overflow: visible;
+
+    @media (min-width: $breakpoint-md) {
+      flex-direction: row;
+      align-items: flex-start;
+
+      .timeline_item {
+        flex: 1;
+        flex-direction: column;
+        align-items: center;
+        padding-bottom: 0;
+        text-align: center;
+        overflow: visible;
+
+        &::before {
+          left: calc(50% + var(--timeline-dot-size) / 2);
+          top: calc(var(--timeline-dot-size) / 2 - var(--timeline-line-width) / 2);
+          bottom: auto;
+          right: auto;
+          width: calc(100% - var(--timeline-dot-size));
+          height: var(--timeline-line-width);
+        }
+
+        .timeline_dot {
+          margin-top: 0;
+        }
+
+        .timeline_content {
+          align-items: center;
+          padding-top: $space-sm;
+          padding-bottom: 0;
+        }
+      }
+    }
+  }
+
+  // Icon dot — larger connector offset
+
+  &_icon {
+    --timeline-dot-offset: 0;
+    --timeline-dot-size: var(--icon-circle-size);
+
+    .timeline_item::before {
+      top: var(--icon-circle-size);
+      bottom: 0;
+      left: calc(var(--icon-circle-size) / 2 - var(--timeline-line-width) / 2);
+    }
+
+    &.timeline_icon-sm {
+      --timeline-dot-size: var(--icon-circle-size-sm);
+
+      .timeline_item::before {
+        top: var(--icon-circle-size-sm);
+        left: calc(var(--icon-circle-size-sm) / 2 - var(--timeline-line-width) / 2);
+      }
+    }
+  }
+}

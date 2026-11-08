@@ -21,9 +21,17 @@ yarn-error.log*
 .env.local
 .env.*.local
 
+# Next.js local HTTPS certs (next dev --experimental-https)
+certificates/
+
+# SCSS → CSS 빌드 산출물 (npm run ui / build:styles)
+src/styles/css/
+
 # Cross-branch / framework caches
 .next/
 out/
+.nuxt/
+.output/
 .vite/
 node_modules/.vite/
 .cache/

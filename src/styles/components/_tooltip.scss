@@ -1,0 +1,590 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Tooltip — structure
+  --tooltip-max-width: 16rem;
+  --tooltip-padding-x: var(--space-sm);
+  --tooltip-padding-y: 0.35rem;
+  --tooltip-font-size: var(--text-size-xs);
+  --tooltip-offset: var(--space-xs);
+  --tooltip-offset-md: var(--space-xs);
+  --tooltip-offset-sm: 0.125rem;
+  --tooltip-offset-lg: var(--space-sm);
+  --tooltip-arrow-size: 6px;
+  --tooltip-inverse-bg: var(--color-text);
+  --tooltip-inverse-text: var(--color-surface);
+  --tooltip-close-size: 1.25rem;
+  --tooltip-close-icon-size: 0.75rem;
+  --z-tooltip: 120;
+
+
+  // ----- Tooltip — size sm · lg
+  --tooltip-max-width-sm: 12rem;
+  --tooltip-padding-x-sm: var(--space-xs);
+  --tooltip-padding-y-sm: 0.25rem;
+  --tooltip-font-size-sm: 0.6875rem;
+  --tooltip-arrow-size-sm: 5px;
+
+  --tooltip-max-width-lg: 20rem;
+  --tooltip-padding-x-lg: var(--space-md);
+  --tooltip-padding-y-lg: 0.5rem;
+  --tooltip-font-size-lg: var(--text-size-sm);
+  --tooltip-arrow-size-lg: 8px;
+
+}
+
+// Tooltip — OOCSS: 구조(.tooltip) + 스킨(.tooltip_placement-* · .tooltip_inverse) + 파트(.tooltip_trigger · .tooltip_bubble · .tooltip_arrow)
+//
+//   <span class="tooltip" data-tooltip>
+//     <button type="button" class="btn btn_outline tooltip_trigger" aria-describedby="tooltip-1">
+//       <span class="btn_label">마우스 오버</span>
+//     </button>
+//     <span class="tooltip_bubble" id="tooltip-1" role="tooltip" hidden>짧은 도움말</span>
+//   </span>
+//
+//   data-tooltip                  — 호버·포커스 트리거 (기본)
+//   data-tooltip-trigger="click"  — 클릭 트리거 (tooltip_close 기본 제공)
+//   data-tooltip-close            — 닫기 버튼
+//
+// 크기
+//   .tooltip_sm     — 작은 말풍선
+//   .tooltip_lg     — 큰 말풍선
+//
+// 간격 (트리거 ↔ 말풍선)
+//   .tooltip_offset-none · _sm · _lg  — 전 방향 동일
+//   .tooltip_offset-top-* · _right-* · _bottom-* · _left-*  — 방향별
+//
+// 화살표 기준
+//   (기본) content              — 말풍선·패딩 기준
+//   .tooltip_arrow-anchor-target — 화살표만 트리거 기준
+//   .tooltip_arrow-anchor-mixed  — 말풍선·화살표 독립 (panel-align + data-*)
+//
+// 말풍선 정렬 (교차축)
+//   .tooltip_panel-align-start · tooltip_panel-align-end
+//
+// 상태 클래스
+//   .is-open       — 말풍선 표시
+//   .is-disabled   — 트리거 비활성
+
+.tooltip {
+  --tooltip-offset: var(--tooltip-offset-md);
+  --tooltip-offset-top: var(--tooltip-offset);
+  --tooltip-offset-right: var(--tooltip-offset);
+  --tooltip-offset-bottom: var(--tooltip-offset);
+  --tooltip-offset-left: var(--tooltip-offset);
+  --tooltip-arrow-clearance: calc(var(--tooltip-arrow-size) / 2);
+
+  @include overlay-arrow-edge-tokens(tooltip, var(--radius-sm));
+
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
+
+  &[data-tooltip-trigger="click"] {
+    .tooltip_bubble {
+      pointer-events: auto;
+    }
+  }
+
+  &.is-open {
+    > .tooltip_trigger {
+      z-index: calc(var(--z-tooltip, 120) + 1);
+    }
+
+    > .tooltip_bubble {
+      display: block;
+    }
+  }
+
+  &.is-disabled {
+    @include disabled-state;
+  }
+
+  &_trigger {
+    position: relative;
+    display: inline-flex;
+  }
+
+  &_bubble {
+    position: absolute;
+    top: calc(
+      100% + var(--tooltip-offset-bottom) + var(--tooltip-arrow-clearance)
+    );
+    left: 50%;
+    z-index: var(--z-tooltip, 120);
+    display: none;
+    width: max-content;
+    max-width: var(--tooltip-max-width);
+    padding: var(--tooltip-padding-y) var(--tooltip-padding-x);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--tooltip-panel-radius);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+    color: var(--color-text);
+    font-size: var(--tooltip-font-size);
+    line-height: 1.4;
+    text-align: center;
+    white-space: normal;
+    pointer-events: none;
+    transform: translateX(-50%);
+    overflow: visible;
+
+    &-closable {
+      padding-right: calc(var(--tooltip-padding-x) + var(--tooltip-close-size) * 0.35);
+    }
+
+    &[hidden] {
+      display: none;
+    }
+
+    .tooltip.is-open > & {
+      display: block !important;
+
+      &[hidden] {
+        display: block !important;
+      }
+    }
+  }
+
+  &_arrow {
+    position: absolute;
+    width: var(--tooltip-arrow-size);
+    height: var(--tooltip-arrow-size);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-subtle);
+    pointer-events: none;
+  }
+
+  &_close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: var(--tooltip-close-size);
+    height: var(--tooltip-close-size);
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: $radius-sm;
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition:
+      color $transition-fast,
+      background-color $transition-fast;
+    @include focus-ring;
+
+    &:hover {
+      color: var(--color-text);
+      background: var(--color-surface-raised);
+    }
+  }
+
+  // Button ripple([data-ripple] position:relative)보다 우선 — 말풍선 우측 상단 고정
+  &_bubble > .btn.tooltip_close.tooltip_close-floating {
+    position: absolute;
+    top: var(--space-xs);
+    right: var(--space-xs);
+    z-index: 1;
+  }
+
+  &_close-icon {
+    width: var(--tooltip-close-icon-size);
+    height: var(--tooltip-close-icon-size);
+  }
+
+  &_inverse {
+    .tooltip_bubble {
+      border-color: transparent;
+      background: var(--tooltip-inverse-bg);
+      color: var(--tooltip-inverse-text);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tooltip_arrow {
+      background: var(--tooltip-inverse-bg);
+      border-color: transparent;
+    }
+
+    .tooltip_close {
+      color: var(--tooltip-inverse-text);
+      opacity: 0.75;
+
+      &:hover {
+        opacity: 1;
+        background: rgb(255 255 255 / 12%);
+      }
+    }
+  }
+
+  // ----- 크기
+
+  &_sm {
+    --tooltip-max-width: var(--tooltip-max-width-sm);
+    --tooltip-padding-x: var(--tooltip-padding-x-sm);
+    --tooltip-padding-y: var(--tooltip-padding-y-sm);
+    --tooltip-font-size: var(--tooltip-font-size-sm);
+    --tooltip-arrow-size: var(--tooltip-arrow-size-sm);
+    --tooltip-panel-radius: var(--radius-sm);
+  }
+
+  &_lg {
+    --tooltip-max-width: var(--tooltip-max-width-lg);
+    --tooltip-padding-x: var(--tooltip-padding-x-lg);
+    --tooltip-padding-y: var(--tooltip-padding-y-lg);
+    --tooltip-font-size: var(--tooltip-font-size-lg);
+    --tooltip-arrow-size: var(--tooltip-arrow-size-lg);
+    --tooltip-panel-radius: var(--radius-md);
+  }
+
+  // ----- 간격 (트리거 ↔ 말풍선)
+
+  &_offset-none {
+    --tooltip-offset: 0;
+  }
+
+  &_offset-sm {
+    --tooltip-offset: var(--tooltip-offset-sm);
+  }
+
+  &_offset-lg {
+    --tooltip-offset: var(--tooltip-offset-lg);
+  }
+
+  @include overlay-offset-side-classes(tooltip);
+
+  // ----- 배치 (기본: 트리거 아래 · 가운데 정렬)
+
+  &_placement-top {
+    .tooltip_bubble {
+      top: auto;
+      bottom: calc(
+        100% + var(--tooltip-offset-top) + var(--tooltip-arrow-clearance)
+      );
+    }
+  }
+
+  &_placement-end {
+    .tooltip_bubble {
+      left: auto;
+      right: 0;
+      transform: none;
+    }
+  }
+
+  &_placement-start {
+    .tooltip_bubble {
+      left: 0;
+      transform: none;
+    }
+  }
+
+  &_placement-top-start {
+    .tooltip_bubble {
+      top: auto;
+      bottom: calc(
+        100% + var(--tooltip-offset-top) + var(--tooltip-arrow-clearance)
+      );
+      left: 0;
+      transform: none;
+    }
+  }
+
+  &_placement-top-end {
+    .tooltip_bubble {
+      top: auto;
+      bottom: calc(
+        100% + var(--tooltip-offset-top) + var(--tooltip-arrow-clearance)
+      );
+      left: auto;
+      right: 0;
+      transform: none;
+    }
+  }
+
+  &_placement-left {
+    .tooltip_bubble {
+      top: 50%;
+      bottom: auto;
+      left: auto;
+      right: calc(
+        100% + var(--tooltip-offset-left) + var(--tooltip-arrow-clearance)
+      );
+      transform: translateY(-50%);
+    }
+  }
+
+  &_placement-right {
+    .tooltip_bubble {
+      top: 50%;
+      bottom: auto;
+      left: calc(
+        100% + var(--tooltip-offset-right) + var(--tooltip-arrow-clearance)
+      );
+      transform: translateY(-50%);
+    }
+  }
+
+  // ----- 말풍선 정렬 (교차축 · CSS — target · content)
+
+  &_panel-align-start:not(&_arrow-anchor-mixed) {
+    &:not(.tooltip_placement-left, .tooltip_placement-right, .tooltip_placement-top, .tooltip_placement-top-start, .tooltip_placement-top-end) {
+      .tooltip_bubble {
+        left: 0;
+        transform: none;
+      }
+    }
+  }
+
+  &_panel-align-end:not(&_arrow-anchor-mixed) {
+    &:not(.tooltip_placement-left, .tooltip_placement-right, .tooltip_placement-top, .tooltip_placement-top-start, .tooltip_placement-top-end) {
+      .tooltip_bubble {
+        left: auto;
+        right: 0;
+        transform: none;
+      }
+    }
+
+    &.tooltip_placement-left .tooltip_bubble,
+    &.tooltip_placement-right .tooltip_bubble {
+      top: auto;
+      bottom: 0;
+      transform: none;
+    }
+  }
+
+  &_panel-align-center:not(&_arrow-anchor-mixed) {
+    &.tooltip_placement-left .tooltip_bubble,
+    &.tooltip_placement-right .tooltip_bubble {
+      top: 50%;
+      bottom: auto;
+      transform: translateY(-50%);
+    }
+  }
+
+  // ----- 화살표 위치
+
+  &:not(.tooltip_placement-top, .tooltip_placement-top-start, .tooltip_placement-top-end, .tooltip_placement-left, .tooltip_placement-right) {
+    .tooltip_arrow {
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(45deg);
+      border-right: none;
+      border-bottom: none;
+    }
+  }
+
+  &_placement-start:not(.tooltip_placement-top, .tooltip_placement-top-start, .tooltip_placement-top-end, .tooltip_placement-left, .tooltip_placement-right) {
+    .tooltip_arrow {
+      left: max(var(--tooltip-padding-x), var(--tooltip-arrow-edge-inset));
+      transform: translateY(-50%) rotate(45deg);
+    }
+  }
+
+  &_placement-end:not(.tooltip_placement-top, .tooltip_placement-top-start, .tooltip_placement-top-end, .tooltip_placement-left, .tooltip_placement-right) {
+    .tooltip_arrow {
+      left: auto;
+      right: max(var(--tooltip-padding-x), var(--tooltip-arrow-edge-inset));
+      transform: translateY(-50%) rotate(45deg);
+    }
+  }
+
+  &_placement-top:not(.tooltip_placement-left, .tooltip_placement-right, .tooltip_placement-top-start, .tooltip_placement-top-end) {
+    .tooltip_arrow {
+      top: auto;
+      bottom: 0;
+      left: 50%;
+      transform: translate(-50%, 50%) rotate(45deg);
+      border-top: none;
+      border-left: none;
+    }
+  }
+
+  &_placement-top-start {
+    .tooltip_arrow {
+      top: auto;
+      bottom: 0;
+      left: max(var(--tooltip-padding-x), var(--tooltip-arrow-edge-inset));
+      transform: translateY(50%) rotate(45deg);
+      border-top: none;
+      border-left: none;
+    }
+  }
+
+  &_placement-top-end {
+    .tooltip_arrow {
+      top: auto;
+      bottom: 0;
+      left: auto;
+      right: max(var(--tooltip-padding-x), var(--tooltip-arrow-edge-inset));
+      transform: translateY(50%) rotate(45deg);
+      border-top: none;
+      border-left: none;
+    }
+  }
+
+  &_placement-left {
+    .tooltip_arrow {
+      top: clamp(
+        var(--tooltip-arrow-edge-inset),
+        50%,
+        calc(100% - var(--tooltip-arrow-edge-inset))
+      );
+      right: 0;
+      left: auto;
+      transform: translate(50%, -50%) rotate(45deg);
+      border-bottom: none;
+      border-left: none;
+    }
+  }
+
+  &_placement-right {
+    .tooltip_arrow {
+      top: clamp(
+        var(--tooltip-arrow-edge-inset),
+        50%,
+        calc(100% - var(--tooltip-arrow-edge-inset))
+      );
+      left: 0;
+      right: auto;
+      transform: translate(-50%, -50%) rotate(45deg);
+      border-top: none;
+      border-right: none;
+    }
+  }
+
+  // ----- 화살표 기준 — target · mixed (--tooltip-arrow-position)
+
+  &_arrow-anchor-mixed {
+    .tooltip_bubble {
+      left: 0;
+      right: auto;
+      transform: none;
+    }
+  }
+
+  &_arrow-anchor-target,
+  &_arrow-anchor-mixed {
+    &:not(.tooltip_placement-top, .tooltip_placement-top-start, .tooltip_placement-top-end, .tooltip_placement-left, .tooltip_placement-right) {
+      .tooltip_arrow {
+        left: clamp(
+          var(--tooltip-arrow-edge-inset),
+          var(--tooltip-arrow-position, 50%),
+          calc(100% - var(--tooltip-arrow-edge-inset))
+        );
+        right: auto;
+        transform: translate(-50%, -50%) rotate(45deg);
+        border-right: none;
+        border-bottom: none;
+      }
+    }
+
+    &.tooltip_placement-top:not(.tooltip_placement-left, .tooltip_placement-right, .tooltip_placement-top-start, .tooltip_placement-top-end),
+    &.tooltip_placement-top-start,
+    &.tooltip_placement-top-end {
+      .tooltip_arrow {
+        top: auto;
+        bottom: 0;
+        left: clamp(
+          var(--tooltip-arrow-edge-inset),
+          var(--tooltip-arrow-position, 50%),
+          calc(100% - var(--tooltip-arrow-edge-inset))
+        );
+        right: auto;
+        transform: translate(-50%, 50%) rotate(45deg);
+        border-top: none;
+        border-left: none;
+      }
+    }
+
+    &.tooltip_placement-left {
+      .tooltip_arrow {
+        top: clamp(
+          var(--tooltip-arrow-edge-inset),
+          var(--tooltip-arrow-position, 50%),
+          calc(100% - var(--tooltip-arrow-edge-inset))
+        );
+        right: 0;
+        left: auto;
+        transform: translate(50%, -50%) rotate(45deg);
+        border-bottom: none;
+        border-left: none;
+      }
+    }
+
+    &.tooltip_placement-right {
+      .tooltip_arrow {
+        top: clamp(
+          var(--tooltip-arrow-edge-inset),
+          var(--tooltip-arrow-position, 50%),
+          calc(100% - var(--tooltip-arrow-edge-inset))
+        );
+        left: 0;
+        right: auto;
+        transform: translate(-50%, -50%) rotate(45deg);
+        border-top: none;
+        border-right: none;
+      }
+    }
+  }
+
+  &_no-arrow {
+    --tooltip-arrow-clearance: 0px;
+
+    .tooltip_arrow {
+      display: none;
+    }
+  }
+
+  // ----- 데모 레이아웃
+
+  &_demo-stage {
+    position: relative;
+    flex: 1 1 100%;
+    width: 100%;
+    min-height: 12rem;
+    padding: var(--space-2xl) var(--space-xl);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: $radius-md;
+    overflow: visible;
+    background: var(--color-bg);
+  }
+
+  &_row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    align-items: center;
+  }
+
+  &_demo-placement {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-xl);
+    align-items: center;
+    justify-items: center;
+    width: 100%;
+    min-height: 14rem;
+    padding: var(--space-2xl) var(--space-xl);
+  }
+
+  &_demo-placement-cell-top {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  &_demo-placement-cell-left {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  &_demo-placement-cell-center {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  &_demo-placement-cell-right {
+    grid-column: 3;
+    grid-row: 2;
+  }
+}

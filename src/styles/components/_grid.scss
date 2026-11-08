@@ -1,0 +1,126 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Grid
+  --grid-columns: 12;
+  --grid-gap: var(--space-md);
+  --grid-gap-sm: var(--space-sm);
+  --grid-gap-lg: var(--space-lg);
+  --grid-auto-min: 10rem;
+}
+
+// ----- Layout — grid (.grid_*)
+//
+// [부모 .grid]  열 수 · 간격 · 비율 · 자식 일괄 span · auto 배치
+// [자식 .grid_col-span-*]  개별 열 비율 (혼합 레이아웃만)
+//
+//   <div class="grid grid_cols-3">…</div>
+//   <div class="grid grid_item-span-6">…</div>
+//   <div class="grid grid_ratio-2-1">…</div>
+//
+//   <div class="grid">
+//     <div class="grid_col-span-8">…</div>
+//     <div class="grid_col-span-4">…</div>
+//   </div>
+
+.grid {
+  display: grid;
+  gap: var(--grid-gap);
+  grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
+  width: 100%;
+
+  > * {
+    min-width: 0;
+  }
+
+  @for $i from 1 through 12 {
+    &_cols-#{$i} {
+      grid-template-columns: repeat(#{$i}, minmax(0, 1fr));
+    }
+
+    &_item-span-#{$i} {
+      > * {
+        grid-column: span #{$i};
+      }
+    }
+
+    &_col-span-#{$i} {
+      grid-column: span #{$i};
+      min-width: 0;
+    }
+  }
+
+  @each $name, $columns in (
+    "1-1": 1fr 1fr,
+    "2-1": 2fr 1fr,
+    "1-2": 1fr 2fr,
+    "3-1": 3fr 1fr,
+    "1-1-1": repeat(3, 1fr),
+    "1-2-1": 1fr 2fr 1fr
+  ) {
+    &_ratio-#{$name} {
+      grid-template-columns: $columns;
+    }
+  }
+
+  @each $name, $token in (sm: var(--grid-gap-sm), lg: var(--grid-gap-lg), none: 0) {
+    &_gap-#{$name} {
+      gap: $token;
+    }
+  }
+
+  &_auto-fit {
+    grid-template-columns: repeat(auto-fit, minmax(var(--grid-auto-min), 1fr));
+  }
+
+  &_auto-fill {
+    grid-template-columns: repeat(auto-fill, minmax(var(--grid-auto-min), 1fr));
+  }
+
+  &_equal-columns {
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+  }
+
+  @each $name, $value in (center: center, end: end) {
+    &_align-#{$name} {
+      align-items: $value;
+    }
+  }
+
+  @media (min-width: $breakpoint-md) {
+    @for $i from 1 through 12 {
+      &_cols-md-#{$i} {
+        grid-template-columns: repeat(#{$i}, minmax(0, 1fr));
+      }
+
+      &_item-span-md-#{$i} {
+        > * {
+          grid-column: span #{$i};
+        }
+      }
+
+      &_col-span-md-#{$i} {
+        grid-column: span #{$i};
+      }
+    }
+  }
+
+  @media (min-width: $breakpoint-lg) {
+    @for $i from 1 through 12 {
+      &_cols-lg-#{$i} {
+        grid-template-columns: repeat(#{$i}, minmax(0, 1fr));
+      }
+
+      &_item-span-lg-#{$i} {
+        > * {
+          grid-column: span #{$i};
+        }
+      }
+
+      &_col-span-lg-#{$i} {
+        grid-column: span #{$i};
+      }
+    }
+  }
+}

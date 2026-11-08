@@ -1,0 +1,178 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Breadcrumb — structure
+  --breadcrumb-font-size: var(--text-size-sm);
+  --breadcrumb-font-size-sm: var(--text-size-xs);
+  --breadcrumb-font-size-lg: var(--text-size-base);
+  --breadcrumb-line-height: 1.5;
+  --breadcrumb-gap: var(--space-xs);
+  --breadcrumb-icon-gap: 0.25rem;
+  --breadcrumb-link-font-weight: 500;
+  --breadcrumb-current-font-weight: 600;
+  --breadcrumb-link-max-width: 12rem;
+  --breadcrumb-separator-color: var(--color-text-muted);
+  --breadcrumb-icon-size: 1rem;
+  --breadcrumb-icon-padding: 0.15rem;
+  --breadcrumb-ellipsis-size: 1.5rem;
+
+}
+
+// Breadcrumb — OOCSS: 구조(.breadcrumb) + 변형(.breadcrumb_*) + 상태(.is-current)
+//
+//   <nav class="breadcrumb" aria-label="경로">
+//     <ol class="breadcrumb_list">
+//       <li class="breadcrumb_item">
+//         <a href="#" class="breadcrumb_link">홈</a>
+//       </li>
+//       <li class="breadcrumb_item">
+//         <a href="#" class="breadcrumb_link">컴포넌트</a>
+//       </li>
+//       <li class="breadcrumb_item is-current" aria-current="page">
+//         <span class="breadcrumb_current">Breadcrumb</span>
+//       </li>
+//     </ol>
+//   </nav>
+
+@mixin breadcrumb-separator($content) {
+  .breadcrumb_item + .breadcrumb_item::before {
+    content: $content;
+  }
+}
+
+.breadcrumb {
+  color: color-token(muted);
+  font-size: var(--breadcrumb-font-size);
+  line-height: var(--breadcrumb-line-height);
+
+  @include breadcrumb-separator("›");
+
+  &.breadcrumb_sep-slash {
+    @include breadcrumb-separator("/");
+  }
+
+  &.breadcrumb_sep-dot {
+    @include breadcrumb-separator("·");
+  }
+
+  &.breadcrumb_sm {
+    font-size: var(--breadcrumb-font-size-sm);
+  }
+
+  &.breadcrumb_lg {
+    font-size: var(--breadcrumb-font-size-lg);
+  }
+
+  &_list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--breadcrumb-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &_item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--breadcrumb-gap);
+    min-width: 0;
+
+    + .breadcrumb_item::before {
+      flex-shrink: 0;
+      color: var(--breadcrumb-separator-color);
+      font-weight: 400;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    &.is-current {
+      color: color-token(default);
+      font-weight: var(--breadcrumb-current-font-weight);
+    }
+  }
+
+  &_link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--breadcrumb-icon-gap);
+    max-width: var(--breadcrumb-link-max-width);
+    overflow: hidden;
+    color: inherit;
+    font-weight: var(--breadcrumb-link-font-weight);
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border-radius: $radius-sm;
+    transition: color var(--transition-fast);
+
+    &:hover:not(.is-disabled) {
+      color: color-token(primary);
+      text-decoration: underline;
+      text-underline-offset: var(--link-underline-offset);
+    }
+
+    @include focus-ring(var(--color-accent));
+
+    &.is-disabled,
+    &[aria-disabled="true"] {
+      @include disabled-state;
+    }
+  }
+
+  &_current {
+    display: inline-block;
+    max-width: var(--breadcrumb-link-max-width);
+    overflow: hidden;
+    color: color-token(default);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &_link-icon {
+    justify-content: center;
+    padding: var(--breadcrumb-icon-padding);
+    border-radius: $radius-sm;
+
+    &:hover:not(.is-disabled) {
+      text-decoration: none;
+      background: var(--color-surface-raised);
+    }
+  }
+
+  &_icon {
+    width: var(--breadcrumb-icon-size);
+    height: var(--breadcrumb-icon-size);
+    flex-shrink: 0;
+    pointer-events: none;
+  }
+
+  &_ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--breadcrumb-ellipsis-size);
+    height: var(--breadcrumb-ellipsis-size);
+    padding: 0;
+    color: inherit;
+    font-size: inherit;
+    line-height: 1;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    transition:
+      color var(--transition-fast),
+      background-color var(--transition-fast),
+      border-color var(--transition-fast);
+
+    &:hover {
+      color: color-token(primary);
+      background: var(--color-surface-raised);
+      border-color: var(--color-border);
+    }
+
+    @include focus-ring(var(--color-accent));
+  }
+}

@@ -1,0 +1,137 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Floating — structure
+  --floating-z-index: 30;
+  --floating-gap: var(--space-sm);
+  --floating-offset-bottom: var(--space-lg);
+  --floating-offset-right: var(--space-lg);
+}
+
+// Floating — OOCSS: 구조(.floating · .floating_item)
+//
+//   <div class="floating" data-floating data-placement="bottom-right" data-direction="column">
+//     <div class="floating_item" data-floating-item data-name="chat">…</div>
+//     <div class="floating_item" data-floating-item data-name="backTop">
+//       <div class="back_top is-visible" data-back-top>…</div>
+//     </div>
+//   </div>
+//
+//   data-floating    — Floating 활성화
+//   data-placement   — bottom-right | bottom-left | top-right | top-left
+//   data-direction   — column | column-reverse | row | row-reverse
+//   data-order       — name 순서(쉼표 구분, 선택)
+//
+// BackTop 이 안에 있으면 자체 fixed 를 끄고 Floating 스택 안에서만 배치된다.
+
+.floating {
+  position: fixed;
+  z-index: var(--floating-z-index);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--floating-gap);
+  pointer-events: none;
+
+  // 데모 래퍼 안에서는 컨테이너 기준 absolute
+  .floating_demo-wrap & {
+    position: absolute;
+  }
+
+  &_item {
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    flex: 0 0 auto;
+    width: auto;
+    max-width: 100%;
+    min-width: 0;
+
+    // 숨김 칸 · BackTop 만 있고 아직 안 보임 → flex gap 포함 영역 제거
+    &[hidden],
+    &.is-hidden,
+    &:has(> .back_top:only-child:not(.is-visible)) {
+      display: none;
+    }
+  }
+
+  // ----- Floating 안 BackTop: 고정 기준은 Floating
+
+  .back_top {
+    position: static;
+    bottom: auto;
+    right: auto;
+    left: auto;
+    top: auto;
+    z-index: auto;
+
+    // 스크롤 전·임계 미달 → 자리 유지하지 않음
+    &:not(.is-visible) {
+      display: none;
+    }
+  }
+
+  // 액션 버튼이 스택 폭을 밀어내지 않도록
+  .btn {
+    flex: 0 0 auto;
+    max-width: 100%;
+  }
+
+  // ----- 데모 레이아웃 (너비 100%)
+
+  &_demo-wrap {
+    position: relative;
+    width: 100%;
+    // absolute Floating 이 래퍼 밖으로 넘치지 않게(데모 시각)
+    overflow: hidden;
+  }
+
+  &_demo-preview {
+    min-height: 8rem;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: $radius-md;
+    background: var(--color-surface);
+  }
+
+  // 문서(window) 기준 안내 — Floating 자체는 뷰포트 fixed
+  &_demo-window {
+    width: 100%;
+    padding: var(--space-lg);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: $radius-md;
+    background: var(--color-surface);
+    font-size: var(--text-size-sm);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+
+    > p {
+      margin: 0;
+    }
+  }
+
+  &_demo-scroll {
+    width: 100%;
+    max-height: 16rem;
+    overflow-y: auto;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: $radius-md;
+    background: var(--color-surface);
+  }
+
+  &_demo-content {
+    min-height: calc(16rem + 18rem);
+    padding: var(--space-lg);
+
+    > p {
+      margin: 0 0 var(--space-md);
+      font-size: var(--text-size-sm);
+      color: var(--color-text-muted);
+      line-height: 1.6;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}

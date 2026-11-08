@@ -1,0 +1,62 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Space
+  --space-gap: var(--space-md);
+}
+
+// ----- Layout — space (.space_*)
+//
+//   <div class="space">…</div>
+//   <div class="space space_vertical">…</div>
+//   <div class="space space_gap-sm space_wrap">…</div>
+//
+// 자식 간 간격은 gap으로 제어합니다. 기본값은 --space-gap (md)입니다.
+
+.space {
+  display: inline-flex;
+  gap: var(--space-gap);
+  align-items: center;
+
+  &_block {
+    display: flex;
+    width: 100%;
+  }
+
+  &_vertical {
+    flex-direction: column;
+  }
+
+  &_wrap {
+    flex-wrap: wrap;
+  }
+
+  @each $size in xs, sm, lg, xl {
+    &_gap-#{$size} {
+      gap: var(--space-#{$size});
+    }
+  }
+
+  @each $name, $value in (
+    start: flex-start,
+    center: center,
+    end: flex-end,
+    baseline: baseline,
+    stretch: stretch
+  ) {
+    &_align-#{$name} {
+      align-items: $value;
+    }
+  }
+
+  @each $name, $value in (
+    start: flex-start,
+    center: center,
+    end: flex-end,
+    between: space-between
+  ) {
+    &_justify-#{$name} {
+      justify-content: $value;
+    }
+  }
+}

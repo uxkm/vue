@@ -10,6 +10,7 @@ export function useClickOutside (ref, handler, enabled = true) {
   useEffect(() => {
     if (!enabled) return undefined
 
+    /** 바깥을 눌렀는지. ref 안이면 무시하고, 밖이면 handler */
     const onPointer = (event) => {
       const el = ref && ref.current
       if (!el) return

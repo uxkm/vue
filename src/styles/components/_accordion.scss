@@ -1,0 +1,318 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Accordion — structure
+  --accordion-font-size: var(--text-size-sm);
+  --accordion-trigger-font-weight: 600;
+  --accordion-trigger-gap: var(--space-sm);
+  --accordion-trigger-padding-y: 0.875rem;
+  --accordion-trigger-padding-x: var(--space-lg);
+  --accordion-content-font-size: var(--text-size-sm);
+  --accordion-content-padding-y: var(--space-lg);
+  --accordion-content-padding-x: var(--space-lg);
+  --accordion-icon-size: 1rem;
+  --accordion-card-gap: 0;
+  --accordion-card-trigger-bg: var(--color-surface-raised);
+
+
+  // ----- Accordion — size sm · lg
+  --accordion-font-size-sm: var(--text-size-xs);
+  --accordion-trigger-padding-y-sm: 0.625rem;
+  --accordion-trigger-padding-x-sm: var(--space-md);
+  --accordion-content-padding-y-sm: var(--space-md);
+  --accordion-content-padding-x-sm: var(--space-md);
+  --accordion-icon-size-sm: 0.875rem;
+
+  --accordion-font-size-lg: var(--text-size-base);
+  --accordion-trigger-padding-y-lg: 1rem;
+  --accordion-trigger-padding-x-lg: var(--space-xl);
+  --accordion-content-padding-y-lg: var(--space-xl);
+  --accordion-content-padding-x-lg: var(--space-xl);
+  --accordion-icon-size-lg: 1.125rem;
+
+  // ----- Accordion — slide
+  --accordion-slide-duration: 0.28s;
+  --accordion-slide-easing: ease;
+
+}
+
+// Accordion — OOCSS: 구조(.accordion) + 스킨(.accordion_bordered · .accordion_flush · .accordion_card) + 파트(.accordion_item · .accordion_trigger · .accordion_panel)
+//
+//   <div class="accordion accordion_bordered" data-accordion data-effect="slide">
+//     <div class="accordion_item is-open">
+//       <div class="accordion_heading" role="heading" aria-level="3">
+//         <button type="button" class="accordion_trigger" id="acc-1"
+//           aria-expanded="true" aria-controls="acc-panel-1">
+//           <span class="accordion_label">제목</span>
+//           <svg class="accordion_icon" …></svg>
+//         </button>
+//       </div>
+//       <div class="accordion_panel" id="acc-panel-1" role="region" aria-labelledby="acc-1">
+//         <div class="accordion_content">…</div>
+//       </div>
+//     </div>
+//   </div>
+//
+//   data-effect="slide" — 펼침·접힘 높이 슬라이드 (JS height transition)
+
+.accordion {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  font-size: var(--accordion-font-size);
+  color: var(--color-text);
+
+  &_item {
+    min-width: 0;
+
+    &.is-disabled {
+      .accordion_trigger {
+        @include disabled-state;
+      }
+    }
+  }
+
+  &_heading {
+    margin: 0;
+    font: inherit;
+    font-weight: inherit;
+  }
+
+  &_trigger {
+    display: flex;
+    align-items: center;
+    gap: var(--accordion-trigger-gap);
+    width: 100%;
+    margin: 0;
+    padding: var(--accordion-trigger-padding-y) var(--accordion-trigger-padding-x);
+    border: none;
+    background: transparent;
+    color: var(--color-text);
+    font: inherit;
+    font-weight: var(--accordion-trigger-font-weight);
+    line-height: 1.4;
+    text-align: left;
+    cursor: pointer;
+    transition:
+      color $transition-fast,
+      background-color $transition-fast;
+    @include focus-ring;
+
+    &:hover:not(:disabled):not(.is-disabled) {
+      background: var(--color-surface-raised);
+    }
+
+    &[aria-expanded="true"] {
+      color: color-token(primary);
+    }
+
+    &.btn {
+      min-width: 0;
+      height: auto;
+      border-radius: 0;
+
+      &.btn_text {
+        color: inherit;
+        background: transparent;
+        border-color: transparent;
+
+        &:hover:not(.is-disabled):not(:disabled) {
+          color: inherit;
+          background: var(--color-surface-raised);
+          border-color: transparent;
+        }
+      }
+
+      .btn_label {
+        display: contents;
+      }
+    }
+  }
+
+  &_label {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &_leading {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: var(--accordion-icon-size);
+    height: var(--accordion-icon-size);
+    color: var(--color-text-muted);
+
+    .icon {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &_extra {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    flex-shrink: 0;
+    margin-left: auto;
+    color: var(--color-text-muted);
+    font-size: var(--text-size-xs);
+    font-weight: 400;
+  }
+
+  &_icon {
+    flex-shrink: 0;
+    --icon-custom-size: var(--accordion-icon-size);
+    width: var(--accordion-icon-size);
+    height: var(--accordion-icon-size);
+    color: var(--color-text-muted);
+    transition:
+      transform $transition-fast,
+      color $transition-fast;
+
+    .accordion_trigger[aria-expanded="true"] & {
+      transform: rotate(180deg);
+      color: color-token(primary);
+    }
+  }
+
+  &_panel {
+    min-width: 0;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  // ----- effect: slide — JS 가 height 0 ↔ scrollHeight 를 맞추고, CSS 가 transition
+  // data-effect="slide"
+
+  &[data-effect="slide"] {
+    .accordion_panel {
+      overflow: hidden;
+      transition: height var(--accordion-slide-duration) var(--accordion-slide-easing);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .accordion_panel {
+        transition: none !important;
+      }
+    }
+  }
+
+  &_content {
+    padding: var(--accordion-content-padding-y) var(--accordion-content-padding-x);
+    color: var(--color-text);
+    font-size: var(--accordion-content-font-size);
+    line-height: 1.6;
+
+    > :first-child {
+      margin-top: 0;
+    }
+
+    > :last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  // ----- 스킨: 테두리 (기본) — 항목이 한 덩어리로 붙음
+
+  &_bordered {
+    gap: 0;
+    border: 1px solid var(--color-border);
+    border-radius: $radius-md;
+    overflow: hidden;
+    background: var(--color-surface);
+
+    .accordion_item + .accordion_item {
+      border-top: 1px solid var(--color-border);
+    }
+
+    .accordion_trigger[aria-expanded="true"] {
+      background: var(--color-surface-raised);
+    }
+  }
+
+  // ----- 스킨: 플러시
+
+  &_flush {
+    gap: 0;
+
+    .accordion_item + .accordion_item {
+      border-top: 1px solid var(--color-border);
+    }
+  }
+
+  // ----- 스킨: 카드 — 항목 사이 간격 + 독립 카드 (FAQ 등)
+
+  &_card {
+    gap: var(--accordion-card-gap);
+
+    .accordion_item {
+      border: 1px solid var(--color-border);
+      border-radius: 0;
+      background: var(--color-surface);
+      overflow: hidden;
+
+      &:first-child {
+        border-radius: $radius-md $radius-md 0 0;
+      }
+
+      &:last-child {
+        border-radius: 0 0 $radius-md $radius-md;
+      }
+
+      &:only-child {
+        border-radius: $radius-md;
+      }
+
+      & + .accordion_item {
+        border-top: none;
+      }
+    }
+
+    // btn_text(transparent)보다 우선 — 헤더는 항상 raised 배경
+    .accordion_trigger.btn.btn_text {
+      background: var(--accordion-card-trigger-bg);
+
+      &:hover:not(.is-disabled):not(:disabled) {
+        background: var(--accordion-card-trigger-bg);
+      }
+
+      &[aria-expanded="true"] {
+        background: var(--accordion-card-trigger-bg);
+
+        &:hover:not(.is-disabled):not(:disabled) {
+          background: var(--accordion-card-trigger-bg);
+        }
+      }
+    }
+
+    // 제목·본문 구분선 없이 패널만 표시
+    .accordion_panel {
+      background: var(--color-surface);
+    }
+  }
+
+  // ----- 크기
+
+  &_sm {
+    --accordion-font-size: var(--accordion-font-size-sm);
+    --accordion-trigger-padding-y: var(--accordion-trigger-padding-y-sm);
+    --accordion-trigger-padding-x: var(--accordion-trigger-padding-x-sm);
+    --accordion-content-padding-y: var(--accordion-content-padding-y-sm);
+    --accordion-content-padding-x: var(--accordion-content-padding-x-sm);
+    --accordion-icon-size: var(--accordion-icon-size-sm);
+  }
+
+  &_lg {
+    --accordion-font-size: var(--accordion-font-size-lg);
+    --accordion-trigger-padding-y: var(--accordion-trigger-padding-y-lg);
+    --accordion-trigger-padding-x: var(--accordion-trigger-padding-x-lg);
+    --accordion-content-padding-y: var(--accordion-content-padding-y-lg);
+    --accordion-content-padding-x: var(--accordion-content-padding-x-lg);
+    --accordion-icon-size: var(--accordion-icon-size-lg);
+  }
+
+}

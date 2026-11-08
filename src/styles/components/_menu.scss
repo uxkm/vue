@@ -1,0 +1,271 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Menu — structure
+  --menu-width: 16rem;
+  --menu-padding: var(--space-sm);
+  --menu-gap: 2px;
+  --menu-font-size: var(--text-size-sm);
+  --menu-item-padding-y: 0.5rem;
+  --menu-item-padding-x: 0.75rem;
+  --menu-link-font-weight: 500;
+  --menu-icon-size: 1rem;
+  --menu-arrow-size: 0.875rem;
+  --menu-submenu-indent: 1.75rem;
+  --menu-divider-margin-y: var(--space-xs);
+  --menu-group-padding-y: var(--space-sm);
+  --menu-group-font-size: 0.6875rem;
+
+}
+
+// Menu — OOCSS: 구조(.menu) + 스킨(.menu_horizontal · .menu_bordered · .menu_compact) + 파트(.menu_list · .menu_link · .menu_submenu)
+//
+//   <nav class="menu menu_vertical menu_bordered" aria-label="주요 메뉴">
+//     <ul class="menu_list">
+//       <li class="menu_item">
+//         <a href="#" class="menu_link is-active" aria-current="page">대시보드</a>
+//       </li>
+//       <li class="menu_item menu_item-submenu" aria-expanded="true">
+//         <button type="button" class="menu_link" aria-expanded="true" aria-controls="sub-1">…</button>
+//         <ul class="menu_submenu" id="sub-1">…</ul>
+//       </li>
+//     </ul>
+//   </nav>
+//
+// 상태 클래스
+//   .is-active  — 선택된 항목 (aria-current="page"와 함께)
+//   .is-disabled — 비활성 항목
+
+.menu {
+  width: 100%;
+  max-width: var(--menu-width);
+  font-size: var(--menu-font-size);
+  color: var(--color-text);
+
+  &_list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--menu-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &_item {
+    min-width: 0;
+
+    &.menu_item-submenu[aria-expanded="false"] > .menu_submenu {
+      display: none;
+    }
+
+    &.is-disabled > .menu_link {
+      @include disabled-state;
+    }
+  }
+
+  &_link {
+    display: flex;
+    align-items: center;
+    gap: var(--menu-gap);
+    width: 100%;
+    margin: 0;
+    padding: var(--menu-item-padding-y) var(--menu-item-padding-x);
+    border: none;
+    border-radius: $radius-sm;
+    background: transparent;
+    color: var(--color-text-muted);
+    font: inherit;
+    font-weight: var(--menu-link-font-weight);
+    line-height: 1.4;
+    text-align: left;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      color $transition-fast,
+      background-color $transition-fast;
+    @include focus-ring;
+
+    &:hover:not(.is-disabled) {
+      color: var(--color-text);
+      background: var(--color-surface-raised);
+      text-decoration: none;
+    }
+
+    &.is-active,
+    &[aria-current="page"] {
+      color: color-token(primary);
+      background: var(--color-accent-muted);
+      font-weight: 600;
+    }
+
+    &.is-disabled {
+      @include disabled-state;
+    }
+  }
+
+  &_icon {
+    flex-shrink: 0;
+    width: var(--menu-icon-size);
+    height: var(--menu-icon-size);
+    color: var(--color-text-muted);
+
+    .menu_link.is-active &,
+    .menu_link[aria-current="page"] & {
+      color: color-token(primary);
+    }
+  }
+
+  &_label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &_arrow {
+    flex-shrink: 0;
+    width: var(--menu-arrow-size);
+    height: var(--menu-arrow-size);
+    margin-left: auto;
+    color: var(--color-text-muted);
+    // chevron 기본이 오른쪽(→) → 접힘 아래(90deg), 펼침 위(270deg, 시계방향 180)
+    transform: rotate(90deg);
+    transition: transform $transition-fast;
+
+    .menu_item-submenu[aria-expanded="true"] > .menu_link & {
+      transform: rotate(270deg);
+    }
+  }
+
+  &_extra {
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  &_submenu {
+    display: flex;
+    flex-direction: column;
+    gap: var(--menu-gap);
+    margin: 0;
+    padding: var(--menu-gap) 0 0 var(--menu-submenu-indent);
+    list-style: none;
+  }
+
+  &_divider {
+    height: 1px;
+    margin: var(--menu-divider-margin-y) var(--menu-item-padding-x);
+    padding: 0;
+    border: none;
+    background: var(--color-border-subtle);
+  }
+
+  &_group {
+    padding: 0;
+
+    &-title {
+      display: block;
+      padding: var(--menu-group-padding-y) var(--menu-item-padding-x);
+      font-size: var(--menu-group-font-size);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      user-select: none;
+    }
+  }
+
+  // ----- 스킨
+
+  &_bordered {
+    padding: var(--menu-padding);
+    border: 1px solid var(--color-border);
+    border-radius: $radius-md;
+    background: var(--color-surface);
+  }
+
+  &_compact {
+    --menu-item-padding-y: 0.35rem;
+    --menu-item-padding-x: 0.65rem;
+    --menu-font-size: var(--text-size-sm);
+    --menu-icon-size: 0.875rem;
+  }
+
+  &_dark {
+    background: var(--color-surface);
+    border-color: var(--color-border-subtle);
+  }
+
+  // ----- 수평
+
+  &_horizontal {
+    max-width: none;
+
+    > .menu_list {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: $space-xs;
+
+      > .menu_item > .menu_link {
+        width: auto;
+      }
+    }
+
+    .menu_submenu {
+      padding-left: 0;
+    }
+
+    .menu_item-submenu {
+      position: relative;
+
+      > .menu_submenu {
+        position: absolute;
+        top: calc(100% + #{$space-xs});
+        left: 0;
+        z-index: 10;
+        min-width: 10rem;
+        padding: $space-xs;
+        border: 1px solid var(--color-border);
+        border-radius: $radius-md;
+        background: var(--color-surface);
+        box-shadow: 0 4px 16px rgb(0 0 0 / 8%);
+      }
+    }
+
+    .menu_divider {
+      width: 1px;
+      height: 1.25rem;
+      margin: 0 $space-xs;
+    }
+
+    .menu_group-title {
+      padding-inline: $space-sm;
+    }
+  }
+
+  // ----- 데모 레이아웃
+
+  &_demo-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xl);
+    align-items: flex-start;
+  }
+
+  &_demo-sidebar {
+    flex: 0 0 var(--menu-width);
+    min-width: 12rem;
+  }
+
+  &_demo-content {
+    flex: 1 1 12rem;
+    min-width: 0;
+    padding: var(--space-lg);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: $radius-md;
+    background: var(--color-surface-raised);
+    color: var(--color-text-muted);
+    font-size: var(--text-size-sm);
+  }
+}

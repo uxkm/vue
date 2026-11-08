@@ -1,0 +1,205 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Skeleton
+  --skeleton-bg: var(--color-surface-raised);
+  --skeleton-shine: color-mix(in srgb, var(--color-surface) 65%, transparent);
+  --skeleton-radius: var(--radius-sm);
+  --skeleton-radius-round: 50%;
+  --skeleton-text-height: 0.875rem;
+  --skeleton-text-height-sm: 0.75rem;
+  --skeleton-text-height-lg: 1rem;
+  --skeleton-title-height: 1.125rem;
+  --skeleton-title-height-sm: 1rem;
+  --skeleton-title-height-lg: 1.25rem;
+  --skeleton-title-width: 40%;
+  --skeleton-avatar-size: var(--avatar-size);
+  --skeleton-button-height: 2rem;
+  --skeleton-button-height-sm: 1.75rem;
+  --skeleton-button-height-lg: 2.25rem;
+  --skeleton-button-width: 5rem;
+  --skeleton-button-width-sm: 4rem;
+  --skeleton-button-width-lg: 6rem;
+  --skeleton-block-height: 4rem;
+  --skeleton-image-ratio: 16 / 9;
+  --skeleton-width-sm: 35%;
+  --skeleton-width-md: 65%;
+  --skeleton-width-lg: 85%;
+  --skeleton-gap: var(--space-sm);
+  --skeleton-gap-sm: 0.375rem;
+  --skeleton-duration: 1.4s;
+
+}
+
+// Skeleton — OOCSS: 구조(.skeleton) + 형태(.skeleton_*) + 크기(.skeleton_*)
+//
+//   <div class="skeleton_group" role="status" aria-busy="true" aria-label="콘텐츠 로딩 중">
+//     <span class="skeleton skeleton_title" aria-hidden="true"></span>
+//     <span class="skeleton skeleton_text" aria-hidden="true"></span>
+//   </div>
+
+@keyframes skeleton-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.skeleton {
+  display: block;
+  flex-shrink: 0;
+  background: var(--skeleton-bg);
+  border-radius: var(--skeleton-radius);
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--skeleton-shine) 50%,
+      transparent 100%
+    );
+    transform: translateX(-100%);
+    animation: skeleton-shimmer var(--skeleton-duration) ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::after {
+      animation: none;
+    }
+  }
+
+  // ----- 형태
+
+  &_text {
+    height: var(--skeleton-text-height);
+    width: 100%;
+  }
+
+  &_title {
+    height: var(--skeleton-title-height);
+    width: var(--skeleton-title-width);
+  }
+
+  &_circle {
+    border-radius: var(--skeleton-radius-round);
+    @include square-size(var(--skeleton-avatar-size));
+  }
+
+  &_button {
+    height: var(--skeleton-button-height);
+    width: var(--skeleton-button-width);
+    border-radius: var(--radius-sm);
+  }
+
+  &_image {
+    width: 100%;
+    aspect-ratio: var(--skeleton-image-ratio);
+    border-radius: var(--skeleton-radius);
+  }
+
+  &_block {
+    width: 100%;
+    height: var(--skeleton-block-height);
+  }
+
+  // ----- 너비
+
+  &_w-sm {
+    width: var(--skeleton-width-sm);
+  }
+
+  &_w-md {
+    width: var(--skeleton-width-md);
+  }
+
+  &_w-lg {
+    width: var(--skeleton-width-lg);
+  }
+
+  // ----- 크기
+
+  &_sm {
+    --skeleton-text-height: var(--skeleton-text-height-sm);
+    --skeleton-title-height: var(--skeleton-title-height-sm);
+    --skeleton-avatar-size: var(--avatar-size-sm);
+    --skeleton-button-height: var(--skeleton-button-height-sm);
+    --skeleton-button-width: var(--skeleton-button-width-sm);
+  }
+
+  &_lg {
+    --skeleton-text-height: var(--skeleton-text-height-lg);
+    --skeleton-title-height: var(--skeleton-title-height-lg);
+    --skeleton-avatar-size: var(--avatar-size-lg);
+    --skeleton-button-height: var(--skeleton-button-height-lg);
+    --skeleton-button-width: var(--skeleton-button-width-lg);
+  }
+
+  // ----- 레이아웃
+
+  &_group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--skeleton-gap);
+    width: 100%;
+  }
+
+  &_row {
+    display: flex;
+    align-items: center;
+    gap: var(--skeleton-gap);
+    width: 100%;
+  }
+
+  &_row-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--skeleton-gap-sm);
+    min-width: 0;
+  }
+
+  // ----- 상태
+
+  &_static::after {
+    animation: none;
+  }
+}
+
+// PageLoading / AutoSkeleton — 측정한 뼈대를 절대 좌표로 겹침
+.page-loading {
+  width: 100%;
+
+  &[aria-busy='true'] {
+    min-height: 160px;
+  }
+}
+
+.auto-skeleton {
+  position: relative;
+  width: 100%;
+
+  &.is-loading {
+    min-height: 160px;
+  }
+
+  &__bones {
+    position: relative;
+    width: 100%;
+    min-height: inherit;
+  }
+
+  // .skeleton 의 position:relative 를 덮어 측정 좌표(left/top)를 맞춤
+  &__bone {
+    position: absolute;
+    display: block;
+    pointer-events: none;
+  }
+}

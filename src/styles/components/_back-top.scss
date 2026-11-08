@@ -1,0 +1,242 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Back Top — structure
+  --back-top-z-index: 20;
+  --back-top-size-sm: 2rem;
+  --back-top-size: 2.5rem;
+  --back-top-size-lg: 3rem;
+  --back-top-icon-size-sm: 1rem;
+  --back-top-icon-size: 1.25rem;
+  --back-top-icon-size-lg: 1.5rem;
+  --back-top-offset-bottom: var(--space-lg);
+  --back-top-offset-right: var(--space-lg);
+  --back-top-bg: var(--color-surface);
+  --back-top-bg-hover: var(--color-surface-raised);
+  --back-top-border: var(--color-border-subtle);
+  --back-top-border-hover: var(--color-accent);
+  --back-top-shadow: 0 2px 8px rgb(0 0 0 / 0.12);
+  --back-top-shadow-hover: 0 4px 12px rgb(0 0 0 / 0.16);
+  --back-top-color: var(--color-text);
+  --back-top-color-hover: var(--color-accent-text-hover);
+
+}
+
+// Back Top — OOCSS: 구조(.back_top · .back_top_btn) + 크기·스킨 변형
+//
+//   <div class="back_top is-visible" data-back-top data-target="container" data-visibility-height="200">
+//     <button type="button" class="back_top_btn back_top_primary" aria-label="맨 위로">
+//       <svg class="back_top_icon">…</svg>
+//       <span class="back_top_label">맨 위로</span>
+//     </button>
+//   </div>
+//
+//   data-back-top           — Back Top 활성화
+//   data-target             — window(문서 뷰포트) | container(내부 스크롤)
+//   data-visibility-height  — 표시 임계값(px, 기본 200)
+
+.back_top {
+  position: fixed;
+  z-index: var(--back-top-z-index);
+  bottom: var(--back-top-offset-bottom);
+  right: var(--back-top-offset-right);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(0.5rem);
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease,
+    transform 0.2s ease;
+  pointer-events: none;
+
+  &.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  // 데모 래퍼 안에서는 컨테이너 우하단에 절대 배치
+  .back_top_demo-wrap & {
+    position: absolute;
+  }
+
+  // Floating 안에서는 Floating 이 고정 기준 — 자체 fixed/오프셋 해제
+  // 숨김 시 자리도 비움(스택에 빈 영역이 남지 않음)
+  &.is-in-floating,
+  .floating & {
+    position: static;
+    bottom: auto;
+    right: auto;
+    left: auto;
+    top: auto;
+    z-index: auto;
+
+    &:not(.is-visible) {
+      display: none;
+    }
+  }
+
+  &_btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+    width: var(--back-top-size);
+    height: var(--back-top-size);
+    padding: 0;
+    color: var(--back-top-color);
+    background: var(--back-top-bg);
+    border: 1px solid var(--back-top-border);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--back-top-shadow);
+    cursor: pointer;
+
+    @include btn-transition;
+    @include focus-ring;
+
+    &:hover {
+      color: var(--back-top-color-hover);
+      background: var(--back-top-bg-hover);
+      border-color: var(--back-top-border-hover);
+      box-shadow: var(--back-top-shadow-hover);
+    }
+
+    &:active {
+      transform: scale(0.96);
+    }
+
+    &:has(.back_top_label) {
+      width: auto;
+      padding-inline: var(--space-md);
+    }
+  }
+
+  &_icon {
+    width: var(--back-top-icon-size);
+    height: var(--back-top-icon-size);
+    flex-shrink: 0;
+    // chevron-down → 위쪽 화살
+    transform: rotate(180deg);
+  }
+
+  &_label {
+    font-size: var(--text-size-xs);
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  // ----- 크기 (버튼에 붙음: back_top_btn back_top_sm)
+
+  &_sm.back_top_btn,
+  &_btn.back_top_sm {
+    width: var(--back-top-size-sm);
+    height: var(--back-top-size-sm);
+
+    &:has(.back_top_label) {
+      width: auto;
+    }
+
+    .back_top_icon {
+      width: var(--back-top-icon-size-sm);
+      height: var(--back-top-icon-size-sm);
+    }
+  }
+
+  &_lg.back_top_btn,
+  &_btn.back_top_lg {
+    width: var(--back-top-size-lg);
+    height: var(--back-top-size-lg);
+
+    &:has(.back_top_label) {
+      width: auto;
+    }
+
+    .back_top_icon {
+      width: var(--back-top-icon-size-lg);
+      height: var(--back-top-icon-size-lg);
+    }
+  }
+
+  // ----- 스킨: 고스트
+
+  &_ghost.back_top_btn,
+  &_btn.back_top_ghost {
+    color: var(--color-text);
+    background: transparent;
+    border-color: var(--color-border);
+    box-shadow: none;
+
+    &:hover {
+      color: var(--color-accent-text-hover);
+      background: var(--color-surface-raised);
+      border-color: var(--color-accent);
+      box-shadow: none;
+    }
+  }
+
+  // ----- 스킨: 채움(primary)
+
+  &_primary.back_top_btn,
+  &_btn.back_top_primary {
+    color: var(--color-on-accent);
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+
+    &:hover {
+      color: var(--color-on-accent);
+      background: var(--color-accent-hover);
+      border-color: var(--color-accent-hover);
+    }
+  }
+
+  // ----- 데모 레이아웃 (너비 100%)
+
+  &_demo-wrap {
+    position: relative;
+    width: 100%;
+  }
+
+  // 문서(window) 기준 안내 — BackTop 자체는 뷰포트 fixed
+  &_demo-window {
+    width: 100%;
+    padding: var(--space-lg);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: $radius-md;
+    background: var(--color-surface);
+    font-size: var(--text-size-sm);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+
+    > p {
+      margin: 0;
+    }
+  }
+
+  &_demo-scroll {
+    width: 100%;
+    max-height: 16rem;
+    overflow-y: auto;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: $radius-md;
+    background: var(--color-surface);
+  }
+
+  &_demo-content {
+    // 뷰포트(16rem)보다 충분히 길게 — visibility-height 스크롤 가능
+    min-height: calc(16rem + 18rem);
+    padding: var(--space-lg);
+
+    > p {
+      margin: 0 0 var(--space-md);
+      font-size: var(--text-size-sm);
+      color: var(--color-text-muted);
+      line-height: 1.6;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}

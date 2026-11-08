@@ -1,0 +1,331 @@
+@use 'foundations/helpers' as *;
+
+:root {
+  // ----- Tag — structure
+  --tag-padding-y: 0.15rem;
+  --tag-padding-x: 0.5rem;
+  --tag-font-size: var(--text-size-xs);
+  --tag-font-weight: 600;
+  --tag-line-height: 1.4;
+  --tag-gap: var(--space-xs);
+  --tag-close-size: 0.875rem;
+
+
+  // ----- Tag — size sm · lg
+  --tag-padding-y-sm: 0.05rem;
+  --tag-padding-x-sm: 0.35rem;
+  --tag-font-size-sm: 0.6875rem;
+  --tag-close-size-sm: 0.75rem;
+
+  --tag-padding-y-lg: 0.25rem;
+  --tag-padding-x-lg: 0.65rem;
+  --tag-font-size-lg: var(--text-size-sm);
+  --tag-close-size-lg: 1rem;
+  --tag-icon-size: 0.875em;
+  --tag-icon-size-sm: 0.8125em;
+  --tag-icon-size-lg: 1em;
+  --tag-add-border-style: dashed;
+
+}
+
+// Tag — OOCSS: 구조(.tag) + 크기(.tag_*) + 변형(.tag_outline · .tag_solid · .tag_round · .tag_checkable · .tag_add) + 공통 색상(.color_*)
+//
+//   <span class="tag color_primary">React</span>
+//   <span class="tag color_primary tag_solid">Solid</span>
+//   <span class="tag color_primary tag_outline">Outline</span>
+//   <button type="button" class="tag tag_checkable is-selected">선택됨</button>
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--tag-gap);
+  width: fit-content;
+  max-width: 100%;
+  padding: var(--tag-padding-y) var(--tag-padding-x);
+  font-size: var(--tag-font-size);
+  font-weight: var(--tag-font-weight);
+  line-height: var(--tag-line-height);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  vertical-align: middle;
+  border: 1px solid transparent;
+
+  &.color_default {
+    color: color-token(muted);
+    background: var(--color-surface-raised);
+    border-color: var(--color-border);
+  }
+
+  @include surface-soft-colors();
+
+  &.tag_outline {
+    background: transparent;
+    @include outline-border-colors();
+  }
+
+  &.tag_solid {
+    @each $name in default, primary, success, danger, warning, info {
+      &.color_#{$name} {
+        @include surface-filled($name);
+      }
+    }
+  }
+
+  &.tag_round {
+    border-radius: var(--radius-pill);
+  }
+
+  &.tag_borderless {
+    border-color: transparent;
+  }
+
+  &.is-disabled {
+    @include disabled-state;
+    background: var(--color-surface-disabled);
+    border-color: var(--color-border-disabled);
+
+    &.tag_solid {
+      &.color_primary {
+        @include disabled-filled(var(--color-accent-disabled), var(--color-on-accent-disabled));
+      }
+
+      &.color_success {
+        @include disabled-filled(var(--color-success-disabled), var(--color-on-success-disabled));
+      }
+
+      &.color_danger {
+        @include disabled-filled(var(--color-danger-disabled), var(--color-on-danger-disabled));
+      }
+
+      &.color_warning {
+        @include disabled-filled(var(--color-warning-disabled), var(--color-on-warning-disabled));
+      }
+
+      &.color_default {
+        @include disabled-surface;
+      }
+    }
+
+    &.tag_checkable.is-selected {
+      &.color_primary {
+        @include disabled-filled(var(--color-accent-disabled), var(--color-on-accent-disabled));
+      }
+
+      &.color_success {
+        @include disabled-filled(var(--color-success-disabled), var(--color-on-success-disabled));
+      }
+
+      &.color_danger {
+        @include disabled-filled(var(--color-danger-disabled), var(--color-on-danger-disabled));
+      }
+
+      &.color_warning {
+        @include disabled-filled(var(--color-warning-disabled), var(--color-on-warning-disabled));
+      }
+    }
+  }
+
+  &_icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    @include square-size(var(--tag-icon-size));
+
+    .icon,
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &_sm {
+    padding: var(--tag-padding-y-sm) var(--tag-padding-x-sm);
+    font-size: var(--tag-font-size-sm);
+
+    .tag_close {
+      @include square-size(var(--tag-close-size-sm));
+    }
+
+    .tag_icon {
+      @include square-size(var(--tag-icon-size-sm));
+    }
+  }
+
+  &_lg {
+    padding: var(--tag-padding-y-lg) var(--tag-padding-x-lg);
+    font-size: var(--tag-font-size-lg);
+
+    .tag_close {
+      @include square-size(var(--tag-close-size-lg));
+    }
+
+    .tag_icon {
+      @include square-size(var(--tag-icon-size-lg));
+    }
+  }
+
+  &_close {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.7;
+    @include square-size(var(--tag-close-size));
+    @include focus-ring;
+
+    svg {
+      width: 0.75em;
+      height: 0.75em;
+    }
+
+    &:hover {
+      opacity: 1;
+      background: rgba(0, 0, 0, 0.08);
+    }
+
+    .tag_solid & {
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+    }
+  }
+
+  // closable + checkable/add/href — span 래퍼 안의 본문 컨트롤
+  &_control {
+    display: inline-flex;
+    align-items: center;
+    gap: inherit;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    line-height: inherit;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:disabled,
+    &[aria-disabled='true'] {
+      cursor: default;
+    }
+  }
+
+  // 필터·토글용 선택 태그
+  &_checkable {
+    cursor: pointer;
+    transition:
+      color $transition-fast,
+      background-color $transition-fast,
+      border-color $transition-fast;
+
+    &.color_default {
+      color: color-token(muted);
+      background: var(--color-surface);
+      border-color: var(--color-border);
+    }
+
+    &:hover:not(.is-disabled):not(.is-selected) {
+      border-color: var(--color-accent);
+      color: color-token(primary);
+    }
+
+    &.is-selected {
+      &.color_default {
+        color: color-token(primary);
+        background: var(--color-accent-muted);
+        border-color: var(--color-accent);
+      }
+
+      &.color_primary {
+        @include surface-filled(primary);
+      }
+
+      &.color_success {
+        @include surface-filled(success);
+      }
+
+      &.color_danger {
+        @include surface-filled(danger);
+      }
+
+      &.color_warning {
+        @include surface-filled(warning);
+      }
+    }
+  }
+
+  // 새 태그 추가 버튼
+  &_add {
+    color: color-token(muted);
+    background: transparent;
+    border-style: var(--tag-add-border-style);
+    border-color: var(--color-border);
+    cursor: pointer;
+    transition:
+      color $transition-fast,
+      border-color $transition-fast,
+      background-color $transition-fast;
+
+    &:hover:not(.is-disabled) {
+      color: color-token(primary);
+      border-color: var(--color-accent);
+      background: var(--color-accent-muted);
+    }
+  }
+
+  &_group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
+  &_group-tight {
+    gap: var(--space-xs);
+  }
+}
+
+a.tag,
+button.tag {
+  margin: 0;
+  font-family: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  @include focus-ring;
+}
+
+a.tag {
+  &:hover:not(.is-disabled) {
+    opacity: 0.88;
+  }
+}
+
+// 코드 하이라이터(Prism 등) HTML tag 토큰 — 컴포넌트 .tag 스킨과 클래스명 충돌 방지
+pre code :where(.tag),
+.typo_pre code :where(.tag) {
+  display: inline;
+  align-items: unset;
+  gap: 0;
+  width: auto;
+  max-width: none;
+  padding: 0;
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  border: none;
+  border-radius: 0;
+  background: none;
+  color: inherit;
+  white-space: inherit;
+  vertical-align: baseline;
+}
