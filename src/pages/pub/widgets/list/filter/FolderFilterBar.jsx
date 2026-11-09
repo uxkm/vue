@@ -3,7 +3,7 @@
  * - 화면명 필터 트리거 버튼과, 선택된 폴더의 하위 리프 바로가기 목록
  */
 import { cx } from '@/utils/cx'
-import { toAppHref } from './PathLinkCell'
+import { toAppHref } from '../table/PathLinkCell'
 
 export default function FolderFilterBar ({
   active,

@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { DEFAULT_LOCALE } from './i18n'
 
-/** Vuex 대체 — 앱 전역 상태 */
+/** 앱 전역 상태 (zustand) */
 export const useAppStore = create((set) => ({
   /** 현재 언어. 기본은 원문(ko) */
   locale: DEFAULT_LOCALE,

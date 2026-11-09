@@ -1,16 +1,14 @@
 'use client'
 
 import { useRef, useState } from 'react'
+import { BackTop, Button, Floating, Icon, Space } from '@/comp'
 import {
-  BackTop,
-  Button,
   DemoBlock,
-  Floating,
   GuideApiDocs,
   GuideLayout,
-  Icon,
-  Space
-} from '@/comp'
+  ensurePageModule,
+  wrapPageExample
+} from '@/pages/pub/widgets/guide'
 import { floatingApiSections } from '@/pages/pub/data/guide/floatingApiSections'
 
 const DEMO_PARAS = Array.from({ length: 12 }, (_, index) => (
@@ -154,9 +152,7 @@ const SECTIONS = [
         BackTop이 안에 있으면 고정 기준은 Floating이며, Top 버튼은 스택 <strong>하단</strong>에 둡니다.
       </>
     ),
-    code: `import { BackTop, Button, Floating, Icon } from '@/comp'
-
-${FLOAT_ACTION_CODE}
+    code: wrapPageExample(`${FLOAT_ACTION_CODE}
 
 <div className="floating_demo-wrap floating_demo-preview">
   <Floating
@@ -173,7 +169,11 @@ ${FLOAT_ACTION_CODE}
       <BackTop label="맨 위로" />
     </Floating.Item>
   </Floating>
-</div>`,
+</div>`, {
+      name: 'FloatingExample',
+      reactImports: [],
+      compImports: ['BackTop', 'Button', 'Floating', 'Icon']
+    }),
     preview: (
       <div className="floating_demo-wrap floating_demo-preview">
         <Floating placement="bottom-right" offsetBottom={16} offsetRight={16} gap={10} style={{ position: 'absolute' }}>
@@ -201,14 +201,14 @@ ${FLOAT_ACTION_CODE}
         <code>data-in-floating</code>으로 자체 fixed는 해제되고, 스택 위치 기준은 Floating입니다.
       </>
     ),
-    code: `import { useRef, useState } from 'react'
+    code: ensurePageModule(`import { useRef, useState } from 'react'
 import { BackTop, Button, Floating, Icon } from '@/comp'
 
 const DEMO_PARAS = ${DEMO_PARAS_CODE}
 
 ${FLOAT_ACTION_CODE}
 
-function ScrollFloatingDemo () {
+function FloatingScrollExample () {
   const scrollerRef = useRef(null)
   const [visible, setVisible] = useState(false)
 
@@ -242,7 +242,7 @@ function ScrollFloatingDemo () {
       </Floating>
     </div>
   )
-}`,
+}`, 'FloatingScrollExample'),
     preview: <ScrollFloatingDemo />
   },
   {
@@ -254,12 +254,12 @@ function ScrollFloatingDemo () {
         이 가이드를 스크롤해 확인하세요. 내부 컨테이너 데모와 대비됩니다.
       </>
     ),
-    code: `import { useState } from 'react'
+    code: ensurePageModule(`import { useState } from 'react'
 import { BackTop, Button, Floating, Icon } from '@/comp'
 
 ${FLOAT_ACTION_CODE}
 
-function WindowFloatingDemo () {
+function FloatingWindowExample () {
   const [visible, setVisible] = useState(false)
 
   return (
@@ -288,7 +288,7 @@ function WindowFloatingDemo () {
       </Floating>
     </div>
   )
-}`,
+}`, 'FloatingWindowExample'),
     preview: <WindowFloatingDemo />
   },
   {
@@ -301,7 +301,7 @@ function WindowFloatingDemo () {
         아이템별 <code>order</code> 숫자(CSS order)도 지원합니다.
       </>
     ),
-    code: `import { useRef, useState } from 'react'
+    code: ensurePageModule(`import { useRef, useState } from 'react'
 import { BackTop, Button, Floating, Icon, Space } from '@/comp'
 
 const DEMO_PARAS = ${DEMO_PARAS_CODE}
@@ -351,16 +351,20 @@ function ScrollFloatingDemo ({ order, showHelp = false }) {
   )
 }
 
-<Space vertical block size={24}>
-  <ScrollFloatingDemo
-    showHelp
-    order={['chat', 'help', 'backTop']}
-  />
-  <ScrollFloatingDemo
-    showHelp
-    order={['backTop', 'help', 'chat']}
-  />
-</Space>`,
+export default function FloatingOrderExample () {
+  return (
+    <Space vertical block size={24}>
+      <ScrollFloatingDemo
+        showHelp
+        order={['chat', 'help', 'backTop']}
+      />
+      <ScrollFloatingDemo
+        showHelp
+        order={['backTop', 'help', 'chat']}
+      />
+    </Space>
+  )
+}`),
     preview: (
       <Space vertical block size={24}>
         <ScrollFloatingDemo
@@ -383,14 +387,14 @@ function ScrollFloatingDemo ({ order, showHelp = false }) {
         <code>column-reverse</code>면 시각적 상하가 뒤집힙니다.
       </>
     ),
-    code: `import { useRef, useState } from 'react'
+    code: ensurePageModule(`import { useRef, useState } from 'react'
 import { BackTop, Button, Floating, Icon } from '@/comp'
 
 const DEMO_PARAS = ${DEMO_PARAS_CODE}
 
 ${FLOAT_ACTION_CODE}
 
-function DirectionFloatingDemo () {
+function FloatingDirectionExample () {
   const scrollerRef = useRef(null)
   const [visible, setVisible] = useState(false)
 
@@ -427,7 +431,7 @@ function DirectionFloatingDemo () {
       </Floating>
     </div>
   )
-}`,
+}`, 'FloatingDirectionExample'),
     preview: (
       <ScrollFloatingDemo
         direction="column-reverse"
@@ -523,6 +527,7 @@ export default function FloatingGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName={section.title === 'HTML 마크업' ? 'floating.html' : 'FloatingExample.jsx'}
         >
           {section.preview}
         </DemoBlock>

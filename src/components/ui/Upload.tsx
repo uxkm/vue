@@ -28,7 +28,10 @@ export interface UploadFileItem {
 
 /** 업로드가 받는 값 */
 export interface UploadProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'onChange' | 'type' | 'value' | 'defaultValue'> {
+  extends Omit<
+    InputHTMLAttributes<HTMLInputElement>,
+    'size' | 'onChange' | 'type' | 'value' | 'defaultValue' | 'title' | 'onError' | 'onSelect'
+  > {
   inputId?: string
   variant?: 'button' | 'drag' | 'list' | 'picture-card' | 'avatar' | 'dropzone' | 'cards'
   size?: 'sm' | 'md' | 'lg'
@@ -42,7 +45,14 @@ export interface UploadProps
   maxFiles?: number
   files?: UploadFileItem[]
   defaultFiles?: UploadFileItem[]
-  onChange?: (files: File[]) => void
+  /**
+   * 목록이 바뀔 때 호출. files 와 같은 UploadFileItem[] 을 넘긴다(제어 왕복 가능).
+   */
+  onChange?: (files: UploadFileItem[]) => void
+  /** 새로 선택한 File[] 만 전달(추가 시점) */
+  onSelect?: (files: File[]) => void
+  /** 항목 삭제 직 호출. 삭제될 항목과 인덱스 */
+  onRemove?: (item: UploadFileItem, index: number) => void
   onError?: (message: string) => void
   buttonLabel?: ReactNode
   title?: ReactNode
@@ -152,6 +162,8 @@ export function Upload ({
   files: controlledFiles,
   defaultFiles = [],
   onChange,
+  onSelect,
+  onRemove,
   onError,
   buttonLabel = '파일 선택',
   title = '파일을 끌어다 놓거나 선택하세요',
@@ -168,21 +180,51 @@ export function Upload ({
 }: UploadProps) {
   const generatedId = useId().replace(/:/g, '')
   const resolvedInputId = inputId || id || `upload-${generatedId}`
-  const variantAlias = { dropzone: 'drag', cards: 'picture-card' } as const
-  const resolvedVariant =
-    variantAlias[variant as keyof typeof variantAlias] ?? variant
+  type ResolvedVariant = 'button' | 'drag' | 'list' | 'picture-card' | 'avatar'
+  const resolvedVariant: ResolvedVariant =
+    variant === 'dropzone'
+      ? 'drag'
+      : variant === 'cards'
+        ? 'picture-card'
+        : (variant as ResolvedVariant)
   const inputRef = useRef<HTMLInputElement>(null)
   const createdUrls = useRef<string[]>([])
   const [innerFiles, setInnerFiles] = useState<UploadFileItem[]>(defaultFiles)
   const [message, setMessage] = useState('')
   const [dragActive, setDragActive] = useState(false)
-  const files = controlledFiles ?? innerFiles
+  const controlled = controlledFiles !== undefined
+  const files = controlled ? controlledFiles : innerFiles
+  const filesRef = useRef(files)
+  filesRef.current = files
+  /** avatar 미리보기: 제어 files 의 url 을 우선하고, 없으면 avatarSrc */
+  const avatarPreview = files[0]?.url || avatarSrc
+
+  const pruneStaleUrls = () => {
+    const active = new Set(
+      filesRef.current.map((item) => item.url).filter((url): url is string => Boolean(url))
+    )
+    const kept: string[] = []
+    const stale: string[] = []
+    createdUrls.current.forEach((url) => {
+      if (active.has(url)) kept.push(url)
+      else stale.push(url)
+    })
+    createdUrls.current = kept
+    if (stale.length) revokeUploadObjectUrls(stale)
+  }
+
+  // files 에 더 이상 없는 object URL 만 해제(제어 부모가 삭제를 거부해도 미리보기가 깨지지 않음)
+  useEffect(() => {
+    pruneStaleUrls()
+  }, [files])
 
   useEffect(() => () => revokeUploadObjectUrls(createdUrls.current), [])
 
   const update = (next: UploadFileItem[]) => {
-    if (controlledFiles === undefined) setInnerFiles(next)
-    onChange?.(next.map((item) => item.file ?? (item as unknown as File)))
+    if (!controlled) setInnerFiles(next)
+    onChange?.(next)
+    // 제어 모드에서 부모가 반영하지 않으면 다음 프레임에 미반영 object URL 회수
+    if (controlled) requestAnimationFrame(pruneStaleUrls)
   }
 
   const addFiles = (list: FileList | File[] | null) => {
@@ -207,7 +249,8 @@ export function Upload ({
       onError?.(nextMessage)
       return
     }
-    const added = incoming.slice(0, available).map((file) => {
+    const selected = incoming.slice(0, available)
+    const added = selected.map((file) => {
       const preview = file.type.startsWith('image/') ? URL.createObjectURL(file) : ''
       if (preview) createdUrls.current.push(preview)
       return {
@@ -220,16 +263,16 @@ export function Upload ({
       } satisfies UploadFileItem
     })
     setMessage('')
+    onSelect?.(selected)
     update(multiple ? [...files, ...added] : added)
     if (inputRef.current) inputRef.current.value = ''
   }
 
   const remove = (index: number) => {
     const item = files[index]
-    if (item?.url && createdUrls.current.includes(item.url)) {
-      URL.revokeObjectURL(item.url)
-      createdUrls.current = createdUrls.current.filter((url) => url !== item.url)
-    }
+    if (!item) return
+    onRemove?.(item, index)
+    // object URL 해제는 files sync effect 가 담당(부모가 삭제를 거부하면 유지)
     update(files.filter((_, itemIndex) => itemIndex !== index))
   }
 
@@ -355,8 +398,8 @@ export function Upload ({
         {input}
         {trigger ?? (
           <span className="avatar avatar_xl">
-            {avatarSrc
-              ? <img className="avatar_image" src={avatarSrc} alt={avatarAlt} />
+            {avatarPreview
+              ? <img className="avatar_image" src={avatarPreview} alt={avatarAlt} />
               : userIcon}
           </span>
         )}

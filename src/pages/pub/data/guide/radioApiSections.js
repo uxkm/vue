@@ -23,10 +23,16 @@ const props = [
     description: '라디오 그룹 이름과 제출 값입니다.'
   },
   {
-    name: 'checked · defaultChecked',
+    name: 'checked',
+    type: 'boolean',
+    default: '—',
+    description: '넘기면(checked !== undefined) 제어 모드입니다. 부모가 선택 상태를 관리합니다. onChange 유무와는 무관합니다.'
+  },
+  {
+    name: 'defaultChecked',
     type: 'boolean',
     default: 'false',
-    description: '제어 및 비제어 선택 상태입니다.'
+    description: '비제어 초기 선택 상태입니다. checked를 넘기지 않을 때 씁니다.'
   },
   {
     name: 'disabled · labelEnd · button',
@@ -59,7 +65,7 @@ const events = [
     name: 'onChange',
     type: '(event) => void',
     default: '—',
-    description: '선택 상태 변경 콜백입니다.'
+    description: '선택 상태 변경 콜백입니다. 제어 모드에서는 e.target.checked(또는 value)로 부모 state를 갱신합니다.'
   }
 ]
 

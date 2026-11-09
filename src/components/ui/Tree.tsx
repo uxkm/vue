@@ -2,11 +2,13 @@
  * 트리.
  * Tree · TreeNode로 계층 노드를 접고 펼치며 선택·메타를 표시한다.
  */
+'use client'
+
 import {
-  useEffect,
   useState,
   type HTMLAttributes,
   type LiHTMLAttributes,
+  type MouseEvent,
   type ReactNode
 } from 'react'
 import { cx } from '@/utils/cx'
@@ -55,10 +57,16 @@ export function Tree ({
 }
 
 /** TreeNode props */
-export interface TreeNodeProps extends LiHTMLAttributes<HTMLLIElement> {
+export interface TreeNodeProps extends Omit<LiHTMLAttributes<HTMLLIElement>, 'onSelect' | 'prefix'> {
+  /** 노드 식별 값. onSelect 에 전달 */
+  value?: string
   label?: ReactNode
   expanded?: boolean
+  /** 비제어 초기 펼침 */
+  defaultExpanded?: boolean
   selected?: boolean
+  /** 비제어 초기 선택 */
+  defaultSelected?: boolean
   disabled?: boolean
   expandable?: boolean
   plusToggle?: boolean
@@ -71,6 +79,10 @@ export interface TreeNodeProps extends LiHTMLAttributes<HTMLLIElement> {
   metaSlot?: ReactNode
   children?: ReactNode
   onExpandedChange?: (expanded: boolean) => void
+  /** 선택 상태가 바뀔 때 호출(다음 선택 여부) */
+  onSelectedChange?: (selected: boolean, event: MouseEvent<HTMLElement>) => void
+  /** 노드 선택 시 호출. 페이지에서 선택 상태를 제어한다 */
+  onSelect?: (value: string | undefined, event: MouseEvent<HTMLElement>) => void
 }
 
 /**
@@ -78,9 +90,12 @@ export interface TreeNodeProps extends LiHTMLAttributes<HTMLLIElement> {
  * 토글 · 아이콘 · 라벨 · 메타와 자식 그룹을 구성한다.
  */
 export function TreeNode ({
+  value,
   label,
   expanded,
-  selected = false,
+  defaultExpanded,
+  selected: selectedProp,
+  defaultSelected = false,
   disabled = false,
   expandable = false,
   plusToggle = false,
@@ -94,26 +109,38 @@ export function TreeNode ({
   children,
   className,
   onExpandedChange,
+  onSelectedChange,
+  onSelect,
   ...rest
 }: TreeNodeProps) {
   const hasChildren = Boolean(children)
   const showToggle = expandable || hasChildren
-  const [isExpanded, setIsExpanded] = useState(expanded !== false)
-
-  useEffect(() => {
-    if (expanded !== undefined) setIsExpanded(expanded !== false)
-  }, [expanded])
+  const controlledExpand = expanded !== undefined
+  const [innerExpanded, setInnerExpanded] = useState(
+    () => defaultExpanded ?? expanded ?? true
+  )
+  const isExpanded = controlledExpand ? expanded !== false : innerExpanded
+  const selectedControlled = selectedProp !== undefined
+  const [innerSelected, setInnerSelected] = useState(defaultSelected)
+  const selected = selectedControlled ? !!selectedProp : innerSelected
 
   const toggle = () => {
-    setIsExpanded((current) => {
-      const next = !current
-      onExpandedChange?.(next)
-      return next
-    })
+    const next = !isExpanded
+    if (!controlledExpand) setInnerExpanded(next)
+    onExpandedChange?.(next)
+  }
+
+  const handleSelect = (event: MouseEvent<HTMLElement>) => {
+    if (disabled) return
+    const next = !selected
+    if (!selectedControlled) setInnerSelected(next)
+    onSelectedChange?.(next, event)
+    onSelect?.(value, event)
   }
 
   const labelContent = labelSlot ?? <span className="tree_label">{label}</span>
   const metaContent = metaSlot ?? meta
+  const selectable = link || onSelect != null || onSelectedChange != null
 
   return (
     <li
@@ -121,6 +148,7 @@ export function TreeNode ({
       className={cx('tree_item', className)}
       role="treeitem"
       aria-expanded={showToggle ? isExpanded : undefined}
+      aria-selected={selected || undefined}
     >
       <div className={cx('tree_row', selected && 'is-selected', disabled && 'is-disabled')}>
         {showToggle
@@ -145,15 +173,18 @@ export function TreeNode ({
             </span>
             )
           : null}
-        {link
+        {selectable
           ? (
-            <button type="button" className="tree_link" disabled={disabled || undefined}>
+            <button
+              type="button"
+              className="tree_link"
+              disabled={disabled || undefined}
+              onClick={handleSelect}
+            >
               {labelContent}
             </button>
             )
-          : (
-              labelContent
-            )}
+          : labelContent}
         {metaContent != null && metaContent !== ''
           ? (
             <span className="tree_meta">{metaContent}</span>

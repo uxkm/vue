@@ -110,7 +110,7 @@ const props = [
     name: 'placeholder',
     type: 'boolean',
     default: 'false',
-    description: '셀렉트 미선택 placeholder 스타일.'
+    description: '셀렉트 미선택 placeholder 스타일(btn_select-placeholder).'
   },
   {
     name: 'selectText',
@@ -267,7 +267,8 @@ const classes = [
   { name: 'btn_block · btn_grow · btn_grow-2 · btn_fit', type: 'class', default: '—', description: '너비 레이아웃' },
   { name: 'btn_icon · btn_label · btn_spinner', type: 'class', default: '—', description: '내부 파트' },
   { name: 'btn_row · btn_group · btn_stack', type: 'class', default: '—', description: '버튼 묶음' },
-  { name: 'is-disabled · is-loading · is-open · is-error · is-placeholder', type: 'class', default: '—', description: '상태' },
+  { name: 'is-disabled · is-loading · is-open · is-error', type: 'class', default: '—', description: '상태' },
+  { name: 'btn_select-placeholder', type: 'class', default: '—', description: '셀렉트 미선택 placeholder' },
   { name: 'color_*', type: 'class', default: '—', description: '공통 색상 유틸리티' }
 ]
 

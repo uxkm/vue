@@ -1,4 +1,4 @@
-/** vuedraggable / vue-drag-drop → @dnd-kit */
+/** @dnd-kit 드래그앤드롭 래퍼 */
 export {
   DndContext,
   closestCenter,

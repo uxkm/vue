@@ -56,7 +56,7 @@ interface NormalizedItem {
 }
 
 /** Collapse(그룹) props */
-export interface CollapseProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
+export interface CollapseProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'> {
   /** 열린 칸 value 목록(제어). 여러 칸을 동시에 열 수 있다 */
   value?: CollapseValue[]
   /** 비제어 초기 열린 칸 */
@@ -334,19 +334,20 @@ export function Collapse ({
     return normalizedItems[0] ? [normalizedItems[0].value] : []
   })
   const openValues = isControlled ? (value || []) : innerValue
-  const openSet = new Set(openValues.map(String))
+  // 원본 타입 보존(1 과 '1' 충돌 방지)
+  const openSet = new Set<CollapseValue>(openValues)
 
-  const panelMap = new Map<string, { content: ReactNode, className: string }>()
+  const panelMap = new Map<CollapseValue, { content: ReactNode, className: string }>()
   for (const item of normalizedItems) {
     if (hasNodes(item.content)) {
-      panelMap.set(String(item.value), {
+      panelMap.set(item.value, {
         content: item.content,
         className: item.panelClassName
       })
     }
   }
   for (const panel of compound.panels) {
-    panelMap.set(String(panel.value), {
+    panelMap.set(panel.value, {
       content: panel.content,
       className: panel.className
     })
@@ -367,9 +368,8 @@ export function Collapse ({
   const toggle = (next: CollapseValue) => {
     const item = normalizedItems.find((entry) => entry.value === next)
     if (item?.disabled) return
-    const key = String(next)
-    if (openSet.has(key)) {
-      setOpenValues(openValues.filter((entry) => String(entry) !== key))
+    if (openSet.has(next)) {
+      setOpenValues(openValues.filter((entry) => entry !== next))
       return
     }
     setOpenValues([...openValues, next])
@@ -392,10 +392,10 @@ export function Collapse ({
       data-effect={slide ? 'slide' : undefined}
     >
       {normalizedItems.map((item, index) => {
-        const open = openSet.has(String(item.value))
+        const open = openSet.has(item.value)
         const triggerId = `${uid}-trigger-${index}`
         const bodyId = `${uid}-body-${index}`
-        const mapped = panelMap.get(String(item.value))
+        const mapped = panelMap.get(item.value)
         const panelBody = renderPanel
           ? renderPanel(item, { open })
           : hasMultiPanel

@@ -68,6 +68,8 @@ interface NormalizedTab {
 /** 탭이 받는 값. value 와 onChange */
 export interface TabsProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange' | 'onInput'> {
   value?: TabValue
+  /** 비제어 초기 활성 탭. 생략 시 첫 사용 가능 탭 */
+  defaultValue?: TabValue
   tabs?: TabItem[]
   /** line(기본) · card · pill → tabs_line · tabs_card · tabs_pill */
   variant?: 'line' | 'card' | 'pill'
@@ -109,9 +111,9 @@ export interface TabsProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChang
   renderTab?: (tab: NormalizedTab, state: TabRenderState) => ReactNode
   /** 패널 본문을 커스텀 렌더. 멀티 패널일 때 항목마다 호출 */
   renderPanel?: (tab: NormalizedTab, state: { active: boolean }) => ReactNode
-  /** Vue `input` + `change` 대응 — (value) */
+  /** 활성 탭 변경 — (value) */
   onChange?: (value: TabValue) => void
-  /** Vue `input` 이벤트 호환 */
+  /** onChange 와 동일 시그니처 (하위 호환) */
   onInput?: (value: TabValue) => void
   onClose?: (value: TabValue) => void
   /**
@@ -247,7 +249,8 @@ TabPanel.tabsType = PANEL_TYPE
  * tabs 배열 · Tab/TabPanel · renderTab/renderPanel 로 메뉴와 패널을 커스텀한다.
  */
 export function Tabs ({
-  value = '',
+  value: valueProp,
+  defaultValue,
   tabs = [],
   variant = 'line',
   size = 'md',
@@ -281,23 +284,25 @@ export function Tabs ({
     prev: false,
     next: false
   })
+  const valueControlled = valueProp !== undefined
+  const [innerValue, setInnerValue] = useState<TabValue | undefined>(defaultValue)
 
   const compound = parseCompoundChildren(children)
   const propTabs = (tabs || []).map(normalizeItem)
   const normalizedTabs = propTabs.length ? propTabs : compound.tabs
 
-  /** 패널 소스: 항목 content · TabPanel · 나머지 children(단일 패널) */
-  const panelMap = new Map<string, { content: ReactNode, className: string }>()
+  /** 패널 소스: 항목 content · TabPanel · 나머지 children(단일 패널). 원본 타입 보존 */
+  const panelMap = new Map<TabValue, { content: ReactNode, className: string }>()
   for (const tab of normalizedTabs) {
     if (hasNodes(tab.content)) {
-      panelMap.set(String(tab.value), {
+      panelMap.set(tab.value, {
         content: tab.content,
         className: tab.panelClassName
       })
     }
   }
   for (const panel of compound.panels) {
-    panelMap.set(String(panel.value), {
+    panelMap.set(panel.value, {
       content: panel.content,
       className: panel.className
     })
@@ -314,6 +319,10 @@ export function Tabs ({
   const isScrollable = (scrollable && layout === 'auto') || (layout === 'scroll' && vertical)
 
   const enabledTabs = normalizedTabs.filter((tab) => !tab.disabled)
+  const fallbackValue = enabledTabs[0]?.value ?? normalizedTabs[0]?.value ?? ''
+  const value = valueControlled
+    ? valueProp
+    : (innerValue !== undefined ? innerValue : fallbackValue)
   const activeEnabledIndex = enabledTabs.findIndex((tab) => tab.value === value)
   const canSelectPrev = navSelect && activeEnabledIndex > 0
   const canSelectNext =
@@ -329,6 +338,7 @@ export function Tabs ({
   /** 다른 탭을 고르면 onInput·onChange */
   const handleSelect = (next: TabValue) => {
     if (next === value) return
+    if (!valueControlled) setInnerValue(next)
     onInput?.(next)
     onChange?.(next)
   }
@@ -642,7 +652,7 @@ export function Tabs ({
           {hasMultiPanel
             ? normalizedTabs.map((tab, index) => {
               const active = tab.value === value
-              const mapped = panelMap.get(String(tab.value))
+              const mapped = panelMap.get(tab.value)
               const panelBody = renderPanel
                 ? renderPanel(tab, { active })
                 : mapped?.content

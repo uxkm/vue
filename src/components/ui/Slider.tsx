@@ -3,7 +3,6 @@
  * label · showValue · stepper · size · ripple을 공통 클래스로 표현한다.
  */
 import {
-  useEffect,
   useId,
   useState,
   type CSSProperties,
@@ -90,19 +89,20 @@ export function Slider ({
   const inputId = id || generatedId
   const numericMin = Number(min)
   const numericMax = Number(max)
+  const controlled = value !== undefined
   const [innerValue, setInnerValue] = useState(() =>
-    clamp(value ?? defaultValue, numericMin, numericMax)
+    clamp(defaultValue, numericMin, numericMax)
   )
-  const currentValue = clamp(innerValue, numericMin, numericMax)
+  const currentValue = clamp(
+    controlled ? Number(value) : innerValue,
+    numericMin,
+    numericMax
+  )
   const resolvedSize = VALID_SIZES.has(size) ? size : 'md'
   const progress =
     numericMax === numericMin
       ? 0
       : ((currentValue - numericMin) / (numericMax - numericMin)) * 100
-
-  useEffect(() => {
-    if (value !== undefined) setInnerValue(clamp(value, numericMin, numericMax))
-  }, [value, numericMin, numericMax])
 
   const classes = cx(
     'slider',
@@ -130,7 +130,7 @@ export function Slider ({
 
   const update = (next: number | string) => {
     const normalized = clamp(Number(next), numericMin, numericMax)
-    setInnerValue(normalized)
+    if (!controlled) setInnerValue(normalized)
     onChange?.(normalized)
   }
 

@@ -71,13 +71,13 @@ const monthProps = [
     name: 'days',
     type: 'CalendarDayData[]',
     default: '샘플 월',
-    description: '직접 제공하는 날짜 셀 데이터'
+    description: '직접 제공하는 날짜 셀 데이터. selected 를 함께 넘기면 셀의 selected 플래그를 덮어써 제어할 수 있습니다.'
   },
   {
-    name: 'selected · today',
-    type: 'number',
-    default: '15 · 12',
-    description: '선택일과 오늘 날짜'
+    name: 'selected · defaultSelected · today',
+    type: 'number | null · number',
+    default: '— · days 없을 때 15 · 12',
+    description: '선택일(null 이면 미선택)과 오늘 날짜. selected 를 넘기면 제어하고, 생략하면 defaultSelected 와 내부 상태로 클릭 선택이 갱신됩니다. days 와 함께 써도 제어·비제어 선택이 셀에 반영됩니다.'
   },
   {
     name: 'disabled · events',
@@ -102,21 +102,27 @@ const monthProps = [
     type: 'boolean',
     default: 'false',
     description: '주간·주말·읽기 전용 처리'
+  },
+  {
+    name: 'onSelect',
+    type: '(day: CalendarDayData, index: number) => void',
+    default: '—',
+    description: '날짜 셀 클릭 시 호출됩니다. 페이지에서 selected 상태를 제어합니다. otherMonth · disabled 셀은 호출되지 않습니다.'
   }
 ]
 
 const subProps = [
   {
-    name: 'CalendarHeader · title · showNav',
-    type: 'string · boolean',
-    default: '— · true',
-    description: '월 제목과 이전·다음 탐색'
+    name: 'CalendarHeader · title · showNav · onPrev · onNext',
+    type: 'string · boolean · () => void',
+    default: '— · true · —',
+    description: '월 제목과 이전·다음 탐색. onPrev · onNext 로 페이지에서 월을 제어합니다.'
   },
   {
-    name: 'CalendarNav · label',
-    type: 'string',
+    name: 'CalendarNav · label · onPrev · onNext',
+    type: 'string · () => void',
     default: '—',
-    description: '주간 탐색 라벨'
+    description: '주간 탐색 라벨과 이전·다음 콜백입니다.'
   },
   {
     name: 'CalendarWeekdays · labels',
@@ -125,22 +131,22 @@ const subProps = [
     description: '요일 라벨'
   },
   {
-    name: 'CalendarFooter · children',
-    type: 'ReactNode',
-    default: '기본 액션',
-    description: '하단 액션'
+    name: 'CalendarFooter · onToday · onClear · onConfirm',
+    type: '() => void',
+    default: '—',
+    description: '오늘 · 초기화 · 확인 클릭을 페이지에서 제어합니다. children 이 있으면 기본 버튼을 대체합니다.'
   },
   {
-    name: 'CalendarWheel · title · toolbar · footer',
-    type: 'string · boolean',
-    default: '— · true · false',
-    description: '휠 선택기 구조'
+    name: 'CalendarWheel · onCancel · onConfirm',
+    type: '() => void',
+    default: '—',
+    description: '휠 툴바 취소·완료 클릭 콜백입니다.'
   },
   {
-    name: 'CalendarWheelColumn · items · selected',
-    type: 'string[] · string',
-    default: '[] · —',
-    description: '휠 열 항목과 선택 값'
+    name: 'CalendarWheelColumn · items · selected · defaultSelected · onChange',
+    type: 'array · value · (value) => void',
+    default: '[] · — · —',
+    description: '휠 열 항목과 선택 값입니다. selected 를 넘기면 제어 모드이고, onChange 로 페이지가 값을 관리합니다.'
   }
 ]
 

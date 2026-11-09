@@ -17,10 +17,10 @@ const props = [
     description: "단계 목록입니다. { key?, title, desc?, icon?, status?, disabled? }. status 가 없으면 current 로 finish · process · wait 를 계산합니다."
   },
   {
-    name: 'current',
+    name: 'current · defaultCurrent',
     type: 'number',
-    default: '0',
-    description: '현재 단계 인덱스(0부터)입니다. 그보다 작은 인덱스는 완료(is-finished), 같으면 진행(is-active), 크면 대기(is-wait)입니다.'
+    default: '— · 0',
+    description: '현재 단계 인덱스(0부터)입니다. current 를 넘기면 제어하고, 생략하면 defaultCurrent 와 내부 상태로 동작합니다(navigable 클릭 시 갱신).'
   },
   {
     name: 'direction',

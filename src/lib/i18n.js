@@ -69,7 +69,7 @@ export async function bootstrapLocale () {
   return locale
 }
 
-/** SSR 호환 no-op (이전 i18n 핀 대체) */
+/** SSR 호환 no-op */
 export function pinLocaleForSSR () {
   /* no-op */
 }

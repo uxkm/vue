@@ -111,7 +111,7 @@ const props = [
     name: 'onClick',
     type: '(event) => void',
     default: '—',
-    description: 'button일 때 클릭 핸들러.'
+    description: '클릭 핸들러. plain(래퍼 없음)이면 자동으로 button 으로 감쌉니다. circle · square 래퍼에서도 동작합니다.'
   }
 ]
 

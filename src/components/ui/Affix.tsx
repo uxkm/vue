@@ -42,7 +42,12 @@ export interface AffixProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChan
   label?: ReactNode
   /** skin=bar 일 때 오른쪽 액션 */
   actions?: ReactNode
-  /** 고정 상태가 바뀔 때 */
+  /**
+   * 고정 여부(제어). 넘기면 스크롤 측정 대신 페이지가 고정 표시를 관리한다.
+   * 생략 시 offset · target 기준으로 자동 고정.
+   */
+  fixed?: boolean
+  /** 고정 상태가 바뀔 때(스크롤 기반 측정값) */
   onChange?: (fixed: boolean) => void
   /** 타깃 안 콘텐츠. 있으면 label·actions 대신 쓴다 */
   children?: ReactNode
@@ -91,6 +96,7 @@ export function Affix ({
   skin = 'bar',
   label,
   actions,
+  fixed: fixedProp,
   onChange,
   children,
   className,
@@ -101,7 +107,9 @@ export function Affix ({
   const rootRef = useRef<HTMLDivElement>(null)
   const targetRef = useRef<HTMLDivElement>(null)
   const placeholderRef = useRef<HTMLDivElement>(null)
-  const [fixed, setFixed] = useState(false)
+  const controlled = fixedProp !== undefined
+  const [innerFixed, setInnerFixed] = useState(false)
+  const fixed = controlled ? fixedProp : innerFixed
   const [fixedStyle, setFixedStyle] = useState<CSSProperties>({})
   const [targetMode, setTargetMode] = useState<'window' | 'container'>('window')
   const fixedRef = useRef(false)
@@ -149,7 +157,10 @@ export function Affix ({
       nextStyle.bottom = 'auto'
     }
 
-    if (nextFixed) {
+    // 제어 모드면 렌더 고정은 prop, 스타일·placeholder 만 측정값을 따른다.
+    const renderFixed = controlled ? Boolean(fixedProp) : nextFixed
+
+    if (renderFixed) {
       placeholder.hidden = false
       placeholder.style.height = `${height}px`
       setFixedStyle(nextStyle)
@@ -161,12 +172,12 @@ export function Affix ({
 
     if (fixedRef.current !== nextFixed) {
       fixedRef.current = nextFixed
-      setFixed(nextFixed)
+      if (!controlled) setInnerFixed(nextFixed)
       onChange?.(nextFixed)
-    } else if (nextFixed) {
+    } else if (renderFixed) {
       setFixedStyle(nextStyle)
     }
-  }, [offsetTop, offsetBottom, position, target, onChange])
+  }, [offsetTop, offsetBottom, position, target, onChange, controlled, fixedProp])
 
   useLayoutEffect(() => {
     update()

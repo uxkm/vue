@@ -1,15 +1,8 @@
 'use client'
 
-import {
-  Card,
-  CardBody,
-  CardDeck,
-  CardHeader,
-  DemoBlock,
-  GuideApiDocs,
-  GuideLayout,
-  Radio
-} from '@/comp'
+import { useState } from 'react'
+import { Card, CardBody, CardDeck, CardHeader, Radio } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { radioApiSections } from '@/pages/pub/data/guide/radioApiSections'
 
 /** 카드 전체 클릭 → 내부 radio input */
@@ -17,6 +10,44 @@ function onClickableCardClick (event) {
   if (event.target.closest('.radio_control')) return
   const input = event.currentTarget.querySelector('.radio_input')
   if (input instanceof HTMLInputElement && !input.disabled) input.click()
+}
+
+/** checked · onChange 로 부모가 선택 상태를 관리하는 예시 */
+function ControlledDemo () {
+  const [pay, setPay] = useState('card')
+
+  return (
+    <div className="form_field">
+      <span className="form_field-label" id="radio-pay-label">결제 수단</span>
+      <fieldset className="radio_group" aria-labelledby="radio-pay-label">
+        <Radio
+          name="radio-pay"
+          value="card"
+          checked={pay === 'card'}
+          onChange={(e) => setPay(e.target.value)}
+        >
+          <span className="radio_content">
+            <span className="radio_label">신용카드</span>
+            <span className="radio_hint">Visa · Mastercard · 국내 카드</span>
+          </span>
+        </Radio>
+        <Radio
+          name="radio-pay"
+          value="bank"
+          checked={pay === 'bank'}
+          onChange={(e) => setPay(e.target.value)}
+        >
+          <span className="radio_content">
+            <span className="radio_label">계좌이체</span>
+            <span className="radio_hint">등록된 계좌로 결제합니다.</span>
+          </span>
+        </Radio>
+      </fieldset>
+      <p className="form_field-hint">
+        선택: <code>{pay}</code>
+      </p>
+    </div>
+  )
 }
 
 function PlanCard ({
@@ -78,12 +109,16 @@ const SECTIONS = [
         보이는 레이블이 없으면 <code>label.radio_control</code>로 암묵 연결합니다.
       </>
     ),
-    code: `<Radio name="radio-type-basic" checked label="기본 — radio" />
+    code: wrapPageExample(`<Radio name="radio-type-basic" checked label="기본 — radio" />
 <Radio name="radio-type-label-end" labelEnd label="레이블 뒤 — radio_label-end" />
 <fieldset className="radio_group radio_group_horizontal">
   <Radio button name="radio-type-btn" checked value="a" label="버튼형" />
   …
-</fieldset>`,
+</fieldset>`, {
+  name: 'RadioExample1',
+  reactImports: [],
+  compImports: ['Radio']
+}),
     preview: (
       <div className="demo-stack">
         <Radio name="radio-type-basic" checked label="기본 — radio" />
@@ -104,13 +139,17 @@ const SECTIONS = [
         전체 너비는 <code>radio_block</code> · <code>radio_group_block</code>을 씁니다.
       </>
     ),
-    code: `<Radio name="…" labelEnd checked label="신용카드" />
+    code: wrapPageExample(`<Radio name="…" labelEnd checked label="신용카드" />
 <Radio name="…" labelEnd>
   <span className="radio_content">
     <span className="radio_label">계좌이체</span>
     <span className="radio_hint">등록된 계좌로 결제합니다.</span>
   </span>
-</Radio>`,
+</Radio>`, {
+  name: 'RadioExample2',
+  reactImports: [],
+  compImports: ['Radio']
+}),
     preview: (
       <div className="demo-stack">
         <Radio name="radio-label-end-pay" labelEnd checked label="신용카드" />
@@ -137,40 +176,31 @@ const SECTIONS = [
     title: '기본',
     description: (
       <>
-        레이블과 보조 설명(<code>radio_hint</code>)을 함께 사용할 수 있습니다.
+        <code>checked !== undefined</code>이면 제어 모드입니다(<code>onChange</code> 유무와 무관).
+        부모 <code>useState</code>로 선택 값을 관리하고, 레이블·보조 설명(<code>radio_hint</code>)을 함께 쓸 수 있습니다.
       </>
     ),
-    code: `<div className="form_field">
-  <span className="form_field-label" id="radio-pay-label">결제 수단</span>
-  <fieldset className="radio_group" aria-labelledby="radio-pay-label">
-    <Radio name="radio-pay" checked value="card">
-      <span className="radio_content">
-        <span className="radio_label">신용카드</span>
-        <span className="radio_hint">Visa · Mastercard · 국내 카드</span>
-      </span>
-    </Radio>
-    …
-  </fieldset>
-</div>`,
-    preview: (
-      <div className="form_field">
-        <span className="form_field-label" id="radio-pay-label">결제 수단</span>
-        <fieldset className="radio_group" aria-labelledby="radio-pay-label">
-          <Radio name="radio-pay" checked value="card">
-            <span className="radio_content">
-              <span className="radio_label">신용카드</span>
-              <span className="radio_hint">Visa · Mastercard · 국내 카드</span>
-            </span>
-          </Radio>
-          <Radio name="radio-pay" value="bank">
-            <span className="radio_content">
-              <span className="radio_label">계좌이체</span>
-              <span className="radio_hint">등록된 계좌로 결제합니다.</span>
-            </span>
-          </Radio>
-        </fieldset>
-      </div>
-    )
+    code: wrapPageExample(`const [pay, setPay] = useState('card')
+
+<Radio
+  name="radio-pay"
+  value="card"
+  checked={pay === 'card'}
+  onChange={(e) => setPay(e.target.value)}
+  label="신용카드"
+/>
+<Radio
+  name="radio-pay"
+  value="bank"
+  checked={pay === 'bank'}
+  onChange={(e) => setPay(e.target.value)}
+  label="계좌이체"
+/>`, {
+      name: 'RadioExample',
+      reactImports: ['useState'],
+      compImports: ['Radio']
+    }),
+    preview: <ControlledDemo />
   },
   {
     title: '단독 사용',
@@ -179,11 +209,15 @@ const SECTIONS = [
         레이블 없이 라디오만 사용할 수 있습니다. <code>ariaLabel</code>로 접근 가능한 이름을 지정합니다.
       </>
     ),
-    code: `<div className="radio_group radio_group_horizontal">
+    code: wrapPageExample(`<div className="radio_group radio_group_horizontal">
   <Radio name="radio-standalone" ariaLabel="항목 선택" />
   <Radio name="radio-standalone" checked ariaLabel="선택됨" />
   <Radio name="radio-standalone-disabled" disabled ariaLabel="비활성" />
-</div>`,
+</div>`, {
+  name: 'RadioExample3',
+  reactImports: [],
+  compImports: ['Radio']
+}),
     preview: (
       <div className="radio_group radio_group_horizontal">
         <Radio name="radio-standalone" ariaLabel="항목 선택" />
@@ -199,11 +233,15 @@ const SECTIONS = [
         <code>radio_sm</code> · 기본 · <code>radio_lg</code>로 박스·텍스트 크기를 조절합니다.
       </>
     ),
-    code: `<div className="radio_group radio_group_horizontal">
+    code: wrapPageExample(`<div className="radio_group radio_group_horizontal">
   <Radio className="radio_sm" name="radio-size" checked label="Small — radio_sm" />
   <Radio name="radio-size" label="Medium — 기본" />
   <Radio className="radio_lg" name="radio-size" label="Large — radio_lg" />
-</div>`,
+</div>`, {
+  name: 'RadioSizeExample',
+  reactImports: [],
+  compImports: ['Radio']
+}),
     preview: (
       <div className="radio_group radio_group_horizontal">
         <Radio className="radio_sm" name="radio-size" checked label="Small — radio_sm" />
@@ -219,9 +257,13 @@ const SECTIONS = [
         기본은 인라인(콘텐츠) 너비입니다. <code>radio_block</code> · <code>radio_group_block</code>으로 전체 너비를 사용합니다.
       </>
     ),
-    code: `<Radio name="…" checked label="기본 — 인라인 너비" />
+    code: wrapPageExample(`<Radio name="…" checked label="기본 — 인라인 너비" />
 <Radio name="…" className="radio_block" checked label="radio_block — 전체 너비" />
-<fieldset className="radio_group radio_group_block">…</fieldset>`,
+<fieldset className="radio_group radio_group_block">…</fieldset>`, {
+  name: 'RadioExample5',
+  reactImports: [],
+  compImports: ['Radio']
+}),
     preview: (
       <div className="demo-stack">
         <Radio name="radio-width-inline" checked label="기본 — 인라인 너비" />
@@ -244,8 +286,12 @@ const SECTIONS = [
         <code>color_primary</code> · <code>color_success</code> · <code>color_danger</code> · <code>color_warning</code>으로 선택 색을 지정합니다.
       </>
     ),
-    code: `<Radio className="color_primary" name="…" checked label="Primary" />
-…`,
+    code: wrapPageExample(`<Radio className="color_primary" name="…" checked label="Primary" />
+…`, {
+  name: 'RadioColorExample',
+  reactImports: [],
+  compImports: ['Radio']
+}),
     preview: (
       <div className="demo-stack">
         <Radio className="color_primary" name="radio-color-primary" checked label="Primary" />
@@ -258,9 +304,13 @@ const SECTIONS = [
   {
     title: '상태',
     description: <>선택·미선택·비활성 상태를 지원합니다.</>,
-    code: `<Radio name="radio-state" label="미선택" />
+    code: wrapPageExample(`<Radio name="radio-state" label="미선택" />
 <Radio name="radio-state" checked label="선택됨" />
-<Radio name="radio-state-disabled" disabled label="비활성" />`,
+<Radio name="radio-state-disabled" disabled label="비활성" />`, {
+  name: 'RadioStateExample',
+  reactImports: [],
+  compImports: ['Radio']
+}),
     preview: (
       <div className="demo-stack">
         <Radio name="radio-state" label="미선택" />
@@ -277,11 +327,15 @@ const SECTIONS = [
         <code>radio_group</code>으로 묶습니다. <code>radio_group_horizontal</code> · <code>radio_group_compact</code> 변형이 있습니다.
       </>
     ),
-    code: `<fieldset className="radio_group">
+    code: wrapPageExample(`<fieldset className="radio_group">
   <legend className="radio_group-legend">배송 방법 (세로)</legend>
   <Radio name="radio-group-ship" checked value="standard" label="일반 배송" />
   …
-</fieldset>`,
+</fieldset>`, {
+  name: 'RadioGroupExample',
+  reactImports: [],
+  compImports: ['Radio']
+}),
     preview: (
       <div className="demo-stack">
         <fieldset className="radio_group">
@@ -306,10 +360,14 @@ const SECTIONS = [
         <code>button</code>은 태그·필터 UI에 적합합니다. 크기·색상 변형과 함께 사용할 수 있습니다.
       </>
     ),
-    code: `<fieldset className="radio_group radio_group_horizontal">
+    code: wrapPageExample(`<fieldset className="radio_group radio_group_horizontal">
   <Radio button name="radio-btn-filter" checked value="all" label="전체" />
   …
-</fieldset>`,
+</fieldset>`, {
+  name: 'RadioExample9',
+  reactImports: [],
+  compImports: ['Radio']
+}),
     preview: (
       <div className="demo-stack">
         <fieldset className="radio_group radio_group_horizontal">
@@ -354,7 +412,7 @@ const SECTIONS = [
         <code>div.radio_card</code> + card 조합입니다. 카드 전체 클릭은 <code>radio_card-clickable</code>을 씁니다.
       </>
     ),
-    code: `<div className="radio_card">
+    code: wrapPageExample(`<div className="radio_card">
   <Card compact className="card_shadow">
     <CardHeader extra={<Radio id="…" name="…" value="basic" checked aria-labelledby="…" />}>
       <h3 className="card_title" id="…">Basic</h3>
@@ -362,7 +420,11 @@ const SECTIONS = [
     </CardHeader>
     <CardBody id="…">개인 프로젝트에 적합합니다.</CardBody>
   </Card>
-</div>`,
+</div>`, {
+  name: 'RadioExample10',
+  reactImports: [],
+  compImports: ['Card', 'CardBody', 'CardHeader', 'Radio']
+}),
     preview: (
       <div className="demo-stack">
         <fieldset className="radio_group">
@@ -510,7 +572,7 @@ const SECTIONS = [
         <code>form_vertical</code> · <code>form_horizontal</code>과 함께 사용합니다.
       </>
     ),
-    code: `<form className="form form_vertical form_fit">
+    code: wrapPageExample(`<form className="form form_vertical form_fit">
   <div className="form_field">
     <span className="form_field-label" id="…">수신 채널</span>
     <fieldset className="radio_group" aria-labelledby="…">
@@ -518,7 +580,11 @@ const SECTIONS = [
       <Radio name="radio-form-channel" value="sms" label="SMS" />
     </fieldset>
   </div>
-</form>`,
+</form>`, {
+  name: 'RadioFormExample',
+  reactImports: [],
+  compImports: ['Radio']
+}),
     preview: (
       <div className="demo-stack">
         <form className="form form_vertical form_fit" onSubmit={(event) => event.preventDefault()}>
@@ -560,7 +626,7 @@ export default function RadioGuide () {
     <GuideLayout
       category="폼"
       title="Radio"
-      description="단일 선택이 가능한 라디오. label · button · labelEnd · 카드형을 조합하고 같은 name으로 그룹을 이룹니다."
+      description="단일 선택이 가능한 라디오. checked · onChange로 제어하고 label · button · labelEnd · 카드형을 조합합니다."
     >
       {SECTIONS.map((section) => (
         <DemoBlock
@@ -568,6 +634,7 @@ export default function RadioGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName="RadioExample.jsx"
         >
           {section.preview}
         </DemoBlock>

@@ -1,6 +1,7 @@
 'use client'
 
-import { DemoBlock, GuideApiDocs, GuideLayout, Typography } from '@/comp'
+import { Typography } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { typographyApiSections } from '@/pages/pub/data/guide/typographyApiSections'
 
 const SECTIONS = [
@@ -11,11 +12,15 @@ const SECTIONS = [
         <code>level</code> 1~5로 h1~h5와 <code>typo_title-*</code>를 맞춥니다.
       </>
     ),
-    code: `<Typography level={1}>Heading 1</Typography>
+    code: wrapPageExample(`<Typography level={1}>Heading 1</Typography>
 <Typography level={2}>Heading 2</Typography>
 <Typography level={3}>Heading 3</Typography>
 <Typography level={4}>Heading 4</Typography>
-<Typography level={5}>Heading 5</Typography>`,
+<Typography level={5}>Heading 5</Typography>`, {
+      name: 'TypographyExample',
+      reactImports: [],
+      compImports: ['Typography']
+    }),
     preview: (
       <div className="typo_stack">
         <Typography level={1}>Heading 1</Typography>
@@ -28,12 +33,16 @@ const SECTIONS = [
   },
   {
     title: '본문 variant',
-    code: `<Typography>기본 본문 텍스트입니다.</Typography>
+    code: wrapPageExample(`<Typography>기본 본문 텍스트입니다.</Typography>
 <Typography variant="paragraph">단락(paragraph)입니다.</Typography>
 <Typography variant="lead">Lead 문단입니다.</Typography>
 <Typography variant="caption">Caption 텍스트</Typography>
 <Typography variant="label">Label 텍스트</Typography>
-<Typography variant="overline">Overline</Typography>`,
+<Typography variant="overline">Overline</Typography>`, {
+      name: 'TypographyVariantExample',
+      reactImports: [],
+      compImports: ['Typography']
+    }),
     preview: (
       <div className="typo_stack">
         <Typography>기본 본문 텍스트입니다.</Typography>
@@ -47,12 +56,16 @@ const SECTIONS = [
   },
   {
     title: '인라인 강조',
-    code: `<Typography variant="strong">Strong</Typography>
+    code: wrapPageExample(`<Typography variant="strong">Strong</Typography>
 <Typography variant="italic">Italic</Typography>
 <Typography variant="underline">Underline</Typography>
 <Typography variant="delete">Delete</Typography>
 <Typography variant="mark">Mark</Typography>
-<Typography>H<sub>2</sub>O · x<sup>2</sup> · <Typography tag="span" variant="small">small</Typography></Typography>`,
+<Typography>H<sub>2</sub>O · x<sup>2</sup> · <Typography tag="span" variant="small">small</Typography></Typography>`, {
+      name: 'TypographyInlineExample',
+      reactImports: [],
+      compImports: ['Typography']
+    }),
     preview: (
       <div className="demo-row" style={{ flexWrap: 'wrap', gap: 12 }}>
         <Typography variant="strong">Strong</Typography>
@@ -70,12 +83,16 @@ const SECTIONS = [
   },
   {
     title: '코드 · 인용',
-    code: `<Typography variant="code">const a = 1</Typography>
+    code: wrapPageExample(`<Typography variant="code">const a = 1</Typography>
 <Typography variant="kbd">Ctrl</Typography>
 <Typography variant="pre">npm run dev</Typography>
 <Typography variant="blockquote" cite="https://guide.uxkm.io">
   인용문 예시입니다.
-</Typography>`,
+</Typography>`, {
+      name: 'TypographyCodeExample',
+      reactImports: [],
+      compImports: ['Typography']
+    }),
     preview: (
       <div className="typo_stack">
         <Typography>
@@ -91,7 +108,7 @@ const SECTIONS = [
   },
   {
     title: '색상 · 크기',
-    code: `<Typography color="primary">Primary</Typography>
+    code: wrapPageExample(`<Typography color="primary">Primary</Typography>
 <Typography color="muted">Muted</Typography>
 <Typography color="success">Success</Typography>
 <Typography color="warning">Warning</Typography>
@@ -99,7 +116,11 @@ const SECTIONS = [
 <Typography size="xs" color="muted">xs</Typography>
 <Typography size="sm" color="muted">sm</Typography>
 <Typography size="lg">lg</Typography>
-<Typography size="xl">xl</Typography>`,
+<Typography size="xl">xl</Typography>`, {
+      name: 'TypographyColorExample',
+      reactImports: [],
+      compImports: ['Typography']
+    }),
     preview: (
       <div className="typo_stack">
         <div className="demo-row">
@@ -122,9 +143,13 @@ const SECTIONS = [
   },
   {
     title: '말줄임',
-    code: `<Typography ellipsis={1}>한 줄 말줄임 …</Typography>
+    code: wrapPageExample(`<Typography ellipsis={1}>한 줄 말줄임 …</Typography>
 <Typography ellipsis={2}>두 줄 말줄임 …</Typography>
-<Typography ellipsis={3}>세 줄 말줄임 …</Typography>`,
+<Typography ellipsis={3}>세 줄 말줄임 …</Typography>`, {
+      name: 'TypographyEllipsisExample',
+      reactImports: [],
+      compImports: ['Typography']
+    }),
     preview: (
       <div className="typo_stack" style={{ maxWidth: 320 }}>
         <Typography ellipsis={1}>
@@ -141,11 +166,15 @@ const SECTIONS = [
   },
   {
     title: '인라인 링크',
-    code: `<Typography>
+    code: wrapPageExample(`<Typography>
   본문 중간의{' '}
   <Typography tag="a" variant="link" href="#/guide/link">인라인 링크</Typography>
   {' '}예시입니다.
-</Typography>`,
+</Typography>`, {
+      name: 'TypographyLinkExample',
+      reactImports: [],
+      compImports: ['Typography']
+    }),
     preview: (
       <Typography>
         본문 중간의{' '}
@@ -173,6 +202,7 @@ export default function TypographyGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName="TypographyExample.jsx"
         >
           {section.preview}
         </DemoBlock>

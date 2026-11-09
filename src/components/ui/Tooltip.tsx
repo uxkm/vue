@@ -2,7 +2,16 @@
  * 툴팁.
  * 대상 위·아래·좌·우에 짧은 도움말을 띄운다. 말풍선 화살표·방향을 지원한다.
  */
-import { useState, type CSSProperties, type HTMLAttributes, type ReactNode } from 'react'
+'use client'
+
+import {
+  useState,
+  type CSSProperties,
+  type FocusEvent,
+  type HTMLAttributes,
+  type MouseEvent,
+  type ReactNode
+} from 'react'
 import { cx } from '@/utils/cx'
 
 /** 툴팁 방향 */
@@ -20,12 +29,19 @@ export interface TooltipProps extends Omit<HTMLAttributes<HTMLSpanElement>, 'con
    * --tooltip-arrow-position 이 적용된다. 예: '25%' · 50
    */
   arrowPosition?: string | number
+  /** 넘기면 열림 상태를 페이지가 제어한다 */
+  open?: boolean
+  /** 비제어 초기 열림 */
+  defaultOpen?: boolean
+  /** 열림 상태가 바뀔 때 호출 */
+  onOpenChange?: (open: boolean) => void
   style?: CSSProperties
 }
 
 /**
  * 대상 위에 잠깐 뜨는 도움말.
- * content 문구, placement 방향, arrow 화살표. 포인터를 올리면 보인다.
+ * content 문구, placement 방향, arrow 화살표.
+ * open · onOpenChange 로 페이지에서 표시를 제어한다.
  */
 export function Tooltip ({
   content,
@@ -33,12 +49,36 @@ export function Tooltip ({
   trigger,
   arrow = true,
   arrowPosition,
+  open,
+  defaultOpen = false,
   className,
   style,
   children,
+  onOpenChange,
+  onMouseEnter,
+  onMouseLeave,
+  onFocus,
+  onBlur,
   ...rest
 }: TooltipProps) {
-  const [open, setOpen] = useState(false)
+  const controlled = open !== undefined
+  const [innerOpen, setInnerOpen] = useState(defaultOpen)
+  const [hovered, setHovered] = useState(false)
+  const [focused, setFocused] = useState(false)
+  const shown = controlled ? open : innerOpen
+
+  const setShown = (next: boolean) => {
+    if (!controlled) setInnerOpen(next)
+    onOpenChange?.(next)
+  }
+
+  /** hover · focus 중 하나라도 있으면 열림 유지 */
+  const syncPointerOpen = (nextHovered: boolean, nextFocused: boolean) => {
+    setHovered(nextHovered)
+    setFocused(nextFocused)
+    setShown(nextHovered || nextFocused)
+  }
+
   const arrowPos = arrowPosition == null || arrowPosition === ''
     ? null
     : (typeof arrowPosition === 'number' ? `${arrowPosition}%` : String(arrowPosition))
@@ -48,7 +88,7 @@ export function Tooltip ({
       {...rest}
       className={cx(
         'tooltip',
-        open && 'is-open',
+        shown && 'is-open',
         placement !== 'bottom' && 'tooltip_placement-' + placement,
         !arrow && 'tooltip_no-arrow',
         arrowPos && 'tooltip_arrow-anchor-mixed',
@@ -58,10 +98,22 @@ export function Tooltip ({
         ...style,
         ...(arrowPos ? { ['--tooltip-arrow-position' as string]: arrowPos } : null)
       }}
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
-      onFocus={() => setOpen(true)}
-      onBlur={() => setOpen(false)}
+      onMouseEnter={(event: MouseEvent<HTMLSpanElement>) => {
+        syncPointerOpen(true, focused)
+        onMouseEnter?.(event)
+      }}
+      onMouseLeave={(event: MouseEvent<HTMLSpanElement>) => {
+        syncPointerOpen(false, focused)
+        onMouseLeave?.(event)
+      }}
+      onFocus={(event: FocusEvent<HTMLSpanElement>) => {
+        syncPointerOpen(hovered, true)
+        onFocus?.(event)
+      }}
+      onBlur={(event: FocusEvent<HTMLSpanElement>) => {
+        syncPointerOpen(hovered, false)
+        onBlur?.(event)
+      }}
     >
       <span className="tooltip_trigger">{trigger ?? children}</span>
       <span className="tooltip_bubble" role="tooltip">

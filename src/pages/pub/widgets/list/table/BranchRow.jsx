@@ -4,14 +4,14 @@
  * - 리프는 LeafRow 로 렌더
  */
 import { cx } from '@/utils/cx'
-import { folderLabel } from './labels'
+import { folderLabel } from '../lib/labels'
 import { ellipsisAttr } from './useEllipsisTooltip.jsx'
 import {
   countLeaves,
   groupExpandKey,
   groupLabel,
   isGroupNode
-} from './tree'
+} from '../lib/tree'
 import LeafRow, { leafRowKey } from './LeafRow'
 
 export default function BranchRow ({

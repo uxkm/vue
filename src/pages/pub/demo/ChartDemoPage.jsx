@@ -2,7 +2,8 @@
 
 import { useEffect, useRef } from 'react'
 import { Link } from '@/lib/router'
-import { GuideLayout, AppHeaderLink } from '@/comp'
+import { AppHeaderLink } from '@/comp'
+import { GuideLayout } from '@/pages/pub/widgets/guide'
 import { am5, am5xy, am5percent, am5themes_Animated } from '@/lib/charts'
 
 /** 막대 차트 데이터. category 축 이름, value 값 */

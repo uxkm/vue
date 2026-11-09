@@ -1,13 +1,8 @@
 'use client'
 
-import {
-  DemoBlock,
-  GuideApiDocs,
-  GuideLayout,
-  Icon,
-  Menu,
-  Space
-} from '@/comp'
+import { useState } from 'react'
+import { Icon, Menu, Space } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { menuApiSections } from '@/pages/pub/data/guide/menuApiSections'
 
 const VERTICAL_ITEMS = [
@@ -69,6 +64,40 @@ const SUBMENU_ITEMS = [
   }
 ]
 
+/** selectedKey · onSelect 로 페이지에서 선택을 제어하는 예시 */
+function ControlledSelectDemo () {
+  const [selectedKey, setSelectedKey] = useState('dash')
+  const [openKeys, setOpenKeys] = useState(['project'])
+
+  return (
+    <div className="menu_demo-row">
+      <div className="menu_demo-sidebar">
+        <Menu
+          bordered
+          items={SUBMENU_ITEMS.map((item) => ({
+            ...item,
+            active: undefined,
+            href: undefined,
+            children: item.children?.map((child) => ({
+              ...child,
+              href: undefined
+            }))
+          }))}
+          selectedKey={selectedKey}
+          onSelect={(key) => setSelectedKey(key)}
+          openKeys={openKeys}
+          onOpenChange={setOpenKeys}
+        />
+      </div>
+      <div className="menu_demo-content">
+        선택: <code>{selectedKey}</code>
+        <br />
+        열림: <code>{openKeys.join(', ') || '—'}</code>
+      </div>
+    </div>
+  )
+}
+
 const SECTIONS = [
   {
     title: '기본 사용',
@@ -79,19 +108,48 @@ const SECTIONS = [
         <code>bordered</code>를 켜면 테두리 패널이 됩니다.
       </>
     ),
-    code: `<Menu
+    code: wrapPageExample(`<Menu
   bordered
   items={[
     { key: 'dash', label: '대시보드', href: '#', active: true },
     { key: 'project', label: '프로젝트', href: '#' },
     { key: 'settings', label: '설정', href: '#' }
   ]}
-/>`,
+/>`, {
+  name: 'MenuBasicExample',
+  reactImports: [],
+  compImports: ['Menu']
+}),
     preview: (
       <div className="menu_demo-sidebar">
         <Menu bordered items={VERTICAL_ITEMS} />
       </div>
     )
+  },
+  {
+    title: '제어 선택',
+    description: (
+      <>
+        <code>selectedKey</code> · <code>onSelect</code>로 선택이 활성화된 항목을 페이지에서 관리하고,
+        <code>openKeys</code> · <code>onOpenChange</code>로 서브메뉴 펼침을 제어합니다.
+      </>
+    ),
+    code: wrapPageExample(`const [selectedKey, setSelectedKey] = useState('dash')
+const [openKeys, setOpenKeys] = useState(['project'])
+
+<Menu
+  bordered
+  items={items}
+  selectedKey={selectedKey}
+  onSelect={(key, item, event) => setSelectedKey(key)}
+  openKeys={openKeys}
+  onOpenChange={setOpenKeys}
+/>`, {
+      name: 'MenuExample',
+      reactImports: ['useState'],
+      compImports: ['Menu']
+    }),
+    preview: <ControlledSelectDemo />
   },
   {
     title: '가로',
@@ -101,7 +159,11 @@ const SECTIONS = [
         서브메뉴는 절대 위치 드롭다운으로 펼쳐집니다.
       </>
     ),
-    code: `<Menu direction="horizontal" items={items} label="상단 메뉴" />`,
+    code: wrapPageExample(`<Menu direction="horizontal" items={items} label="상단 메뉴" />`, {
+  name: 'MenuExample2',
+  reactImports: [],
+  compImports: ['Menu']
+}),
     preview: (
       <Menu direction="horizontal" items={HORIZONTAL_ITEMS} label="상단 메뉴" />
     )
@@ -114,13 +176,17 @@ const SECTIONS = [
         라벨은 <code>menu_label</code>로 말줄임됩니다.
       </>
     ),
-    code: `<Menu
+    code: wrapPageExample(`<Menu
   bordered
   items={[
     { key: 'dash', label: '대시보드', icon: <Icon name="home" size="100%" />, active: true },
     { key: 'inbox', label: '수신함', icon: <Icon name="inbox" size="100%" />, extra: '3' }
   ]}
-/>`,
+/>`, {
+  name: 'MenuIconExample',
+  reactImports: [],
+  compImports: ['Icon', 'Menu']
+}),
     preview: (
       <div className="menu_demo-sidebar">
         <Menu bordered items={ICON_ITEMS} />
@@ -136,7 +202,7 @@ const SECTIONS = [
         <code>disabled</code>는 클릭을 막습니다.
       </>
     ),
-    code: `<Menu
+    code: wrapPageExample(`<Menu
   bordered
   items={[
     { key: 'dash', label: '대시보드', active: true },
@@ -157,7 +223,11 @@ const SECTIONS = [
       children: [{ key: 'members', label: '멤버' }]
     }
   ]}
-/>`,
+/>`, {
+  name: 'MenuGroupExample',
+  reactImports: [],
+  compImports: ['Menu']
+}),
     preview: (
       <div className="menu_demo-row">
         <div className="menu_demo-sidebar">
@@ -175,8 +245,12 @@ const SECTIONS = [
         <code>bordered</code>와 함께 쓰면 사이드바 패널에 잘 맞습니다.
       </>
     ),
-    code: `<Menu bordered compact items={items} />
-<Menu bordered dark items={items} />`,
+    code: wrapPageExample(`<Menu bordered compact items={items} />
+<Menu bordered dark items={items} />`, {
+  name: 'MenuVariantExample',
+  reactImports: [],
+  compImports: ['Menu']
+}),
     preview: (
       <Space size={24} align="start" wrap>
         <div className="menu_demo-sidebar">
@@ -236,7 +310,11 @@ const SECTIONS = [
         <code>aria-controls</code>로 하위 목록과 연결됩니다.
       </>
     ),
-    code: `<Menu label="사이드 메뉴" bordered items={[{ key: 'home', label: '홈', active: true }]} />`,
+    code: wrapPageExample(`<Menu label="사이드 메뉴" bordered items={[{ key: 'home', label: '홈', active: true }]} />`, {
+  name: 'MenuA11yExample',
+  reactImports: [],
+  compImports: ['Menu']
+}),
     preview: (
       <div className="menu_demo-sidebar">
         <Menu
@@ -258,7 +336,7 @@ export default function MenuGuide () {
     <GuideLayout
       category="네비게이션"
       title="Menu"
-      description="내비게이션 메뉴. items · direction · bordered로 구성하며 서브메뉴 · 그룹 · compact · dark를 지원합니다."
+      description="내비게이션 메뉴. items · selectedKey · onSelect · openKeys로 구성·제어하며 서브메뉴 · 그룹 · compact · dark를 지원합니다."
     >
       {SECTIONS.map((section) => (
         <DemoBlock
@@ -266,6 +344,7 @@ export default function MenuGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName={section.title === 'HTML 마크업' ? 'menu.html' : 'MenuExample.jsx'}
         >
           {section.preview}
         </DemoBlock>

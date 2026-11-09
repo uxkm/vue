@@ -1,13 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  Button,
-  DemoBlock,
-  GuideApiDocs,
-  GuideLayout,
-  Popover
-} from '@/comp'
+import { Button, Popover } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { popoverApiSections } from '@/pages/pub/data/guide/popoverApiSections'
 
 /** 배치 변형 — 값과 붙일 클래스 (기본은 트리거 아래 · 왼쪽 정렬) */
@@ -227,7 +222,11 @@ const SECTIONS = [
         <code>open</code>을 넘기지 않으면 내부 상태로 동작합니다(비제어). <code>trigger</code>가 없으면 <code>자세히</code>가 표시됩니다.
       </>
     ),
-    code: `<Popover trigger="자세히" title="안내" content="추가 설명이 이 영역에 표시됩니다." />`,
+    code: wrapPageExample(`<Popover trigger="자세히" title="안내" content="추가 설명이 이 영역에 표시됩니다." />`, {
+  name: 'PopoverBasicExample',
+  reactImports: [],
+  compImports: ['Popover']
+}),
     preview: <BasicDemo />
   },
   {
@@ -238,7 +237,7 @@ const SECTIONS = [
         부모에서 <code>open</code>을 직접 바꿉니다.
       </>
     ),
-    code: `const [open, setOpen] = useState(false)
+    code: wrapPageExample(`const [open, setOpen] = useState(false)
 
 <Popover
   open={open}
@@ -247,7 +246,11 @@ const SECTIONS = [
   content="open 이 부모 상태를 따릅니다."
   onOpenChange={setOpen}
 />
-<Button variant="outline" label="바깥 버튼으로 토글" onClick={() => setOpen((prev) => !prev)} />`,
+<Button variant="outline" label="바깥 버튼으로 토글" onClick={() => setOpen((prev) => !prev)} />`, {
+      name: 'PopoverExample',
+      reactImports: ['useState'],
+      compImports: ['Popover', 'Button']
+    }),
     preview: <ControlledDemo />
   },
   {
@@ -258,9 +261,13 @@ const SECTIONS = [
         <code>closeOnOutsideClick</code>(기본 <code>true</code>)이면 패널·트리거 밖을 누를 때 닫힙니다. 둘 다 <code>false</code>로 끌 수 있습니다.
       </>
     ),
-    code: `<Popover closable title="닫기 있음" content="× 로 닫기" trigger="닫기 버튼" />
+    code: wrapPageExample(`<Popover closable title="닫기 있음" content="× 로 닫기" trigger="닫기 버튼" />
 <Popover closeOnOutsideClick title="outside" content="바깥 클릭으로 닫기" trigger="바깥 클릭 닫기" />
-<Popover closable={false} closeOnOutsideClick={false} title="유지" content="트리거로만 토글" trigger="바깥 클릭 유지" />`,
+<Popover closable={false} closeOnOutsideClick={false} title="유지" content="트리거로만 토글" trigger="바깥 클릭 유지" />`, {
+  name: 'PopoverExample2',
+  reactImports: [],
+  compImports: ['Popover']
+}),
     preview: <DismissDemo />
   },
   {
@@ -272,12 +279,16 @@ const SECTIONS = [
         버튼을 눌러 배치를 바꿔도 팝오버가 닫히는 동안 마지막 배치가 유지됩니다.
       </>
     ),
-    code: `<Popover className="popover_placement-end" trigger="bottom-end" title="제목" content="내용" />
+    code: wrapPageExample(`<Popover className="popover_placement-end" trigger="bottom-end" title="제목" content="내용" />
 <Popover className="popover_placement-bottom-center" trigger="bottom-center" title="제목" content="내용" />
 <Popover className="popover_placement-top" trigger="top" title="제목" content="내용" />
 <Popover className="popover_placement-top-center" trigger="top-center" title="제목" content="내용" />
 <Popover className="popover_placement-left" trigger="left" title="제목" content="내용" />
-<Popover className="popover_placement-right" trigger="right" title="제목" content="내용" />`,
+<Popover className="popover_placement-right" trigger="right" title="제목" content="내용" />`, {
+  name: 'PopoverExample3',
+  reactImports: [],
+  compImports: ['Popover']
+}),
     preview: <PlacementDemo />
   },
   {
@@ -288,10 +299,14 @@ const SECTIONS = [
         방향은 배치 클래스, 가장자리 위치는 <code>popover_placement-end</code> · <code>arrowPosition</code> 등으로 맞춥니다.
       </>
     ),
-    code: `<Popover open arrow title="화살표 있음" content="기본" trigger="있음" />
+    code: wrapPageExample(`<Popover open arrow title="화살표 있음" content="기본" trigger="있음" />
 <Popover open arrow={false} title="화살표 없음" content="no-arrow" trigger="없음" />
 <Popover open className="popover_placement-top" title="위" content="top" trigger="위" />
-<Popover open arrowPosition="30%" title="커스텀" content="30%" trigger="30%" />`,
+<Popover open arrowPosition="30%" title="커스텀" content="30%" trigger="30%" />`, {
+  name: 'PopoverExample4',
+  reactImports: [],
+  compImports: ['Popover']
+}),
     preview: <ArrowDemo />
   },
   {
@@ -302,11 +317,15 @@ const SECTIONS = [
         본문은 <code>content</code>로 전달하며, 없으면 <code>children</code>이 본문이 됩니다.
       </>
     ),
-    code: `<Popover open trigger="제목 있음" title="안내" content="본문 내용입니다." />
+    code: wrapPageExample(`<Popover open trigger="제목 있음" title="안내" content="본문 내용입니다." />
 <Popover open trigger="제목 없음" content="본문만 있는 팝오버입니다." />
 <Popover open trigger="children 본문" title="children">
   <strong>children</strong> 으로 본문을 전달합니다.
-</Popover>`,
+</Popover>`, {
+  name: 'PopoverExample5',
+  reactImports: [],
+  compImports: ['Popover']
+}),
     preview: (
       <div className="demo-stack">
         <div className="popover_demo-stage">
@@ -331,9 +350,13 @@ const SECTIONS = [
         패널의 최소·최대 너비, 여백, 글자 크기 토큰이 함께 바뀝니다.
       </>
     ),
-    code: `<Popover className="popover_sm" trigger="Small" title="popover_sm" content="작은 패널" />
+    code: wrapPageExample(`<Popover className="popover_sm" trigger="Small" title="popover_sm" content="작은 패널" />
 <Popover trigger="Medium" title="기본 크기" content="기본 패널" />
-<Popover className="popover_lg" trigger="Large" title="popover_lg" content="큰 패널" />`,
+<Popover className="popover_lg" trigger="Large" title="popover_lg" content="큰 패널" />`, {
+  name: 'PopoverSizeExample',
+  reactImports: [],
+  compImports: ['Popover']
+}),
     preview: <SizeDemo />
   },
   {
@@ -344,9 +367,13 @@ const SECTIONS = [
         교차축 정렬은 <code>popover_panel-align-center</code> · <code>popover_panel-align-end</code>입니다.
       </>
     ),
-    code: `<Popover open className="popover_offset-lg" trigger="간격 크게" title="offset-lg" content="트리거와 거리가 멉니다." />
+    code: wrapPageExample(`<Popover open className="popover_offset-lg" trigger="간격 크게" title="offset-lg" content="트리거와 거리가 멉니다." />
 <Popover open className="popover_panel-align-center" trigger="가운데 정렬" title="align-center" content="패널이 트리거 가운데에 맞춰집니다." />
-<Popover open className="popover_panel-align-end" trigger="끝 정렬" title="align-end" content="패널이 트리거 오른쪽 끝에 맞춰집니다." />`,
+<Popover open className="popover_panel-align-end" trigger="끝 정렬" title="align-end" content="패널이 트리거 오른쪽 끝에 맞춰집니다." />`, {
+  name: 'PopoverExample7',
+  reactImports: [],
+  compImports: ['Popover']
+}),
     preview: (
       <div className="demo-stack">
         <div className="popover_demo-stage">
@@ -369,7 +396,11 @@ const SECTIONS = [
         <code>aria-label</code> 등 네이티브 div 속성은 루트로 전달됩니다.
       </>
     ),
-    code: `<Popover trigger="도움말" aria-label="도움말 팝오버" title="도움말" content="내용" />`,
+    code: wrapPageExample(`<Popover trigger="도움말" aria-label="도움말 팝오버" title="도움말" content="내용" />`, {
+  name: 'PopoverA11yExample',
+  reactImports: [],
+  compImports: ['Popover']
+}),
     preview: (
       <div className="popover_demo-stage">
         <Popover open trigger="도움말" aria-label="도움말 팝오버" title="도움말" content="내용" />
@@ -395,6 +426,7 @@ export default function PopoverGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName="PopoverExample.jsx"
         >
           {section.preview}
         </DemoBlock>

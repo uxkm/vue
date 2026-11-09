@@ -1,7 +1,6 @@
 # 컴포넌트 구조
 
-57개 컴포넌트 분류(레이아웃 · 기본 요소 · 데이터 표시 · 폼 · 피드백 · 네비게이션 · 기타)를 Vue 2 프로젝트에 맞춰 폴더로 구성합니다.  
-본 저장소는 **Vue 2.6** 기준으로 컴포넌트 API/클래스 계약을 맞춥니다.
+디자인 시스템 컴포넌트를 역할별로 나눕니다. React(`.tsx`) + 공개 입구 `index.js` 기준입니다.
 
 ```
 src/components/
@@ -19,7 +18,7 @@ src/components/
 import { Button, Container, Input } from '@/comp'
 ```
 
-```vue
+```jsx
 <Button variant="filled" color="primary" size="md" label="확인" />
 ```
 

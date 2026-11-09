@@ -1,15 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  Button,
-  DemoBlock,
-  Dropdown,
-  GuideApiDocs,
-  GuideLayout,
-  Icon,
-  Space
-} from '@/comp'
+import { Button, Dropdown, Icon, Space } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { dropdownApiSections } from '@/pages/pub/data/guide/dropdownApiSections'
 
 const BASIC_ITEMS = [
@@ -50,9 +43,16 @@ const REGION_ITEMS = [
   { key: 'etc', label: '기타', disabled: true }
 ]
 
+/** 페이지에서 메뉴 클릭을 제어하는 핸들러 예시 */
+function handleMenuSelect (key) {
+  // 실제 페이지에서는 라우팅·모달·로그아웃 등을 여기서 처리
+  return key
+}
+
 /** open · onOpenChange 로 부모가 상태를 관리하는 예시 */
 function ControlledDemo () {
   const [open, setOpen] = useState(false)
+  const [lastKey, setLastKey] = useState(null)
 
   return (
     <div className="dropdown_demo-stage">
@@ -62,6 +62,7 @@ function ControlledDemo () {
           label={open ? '닫기' : '열기'}
           items={BASIC_ITEMS}
           onOpenChange={setOpen}
+          onSelect={(key) => setLastKey(handleMenuSelect(key))}
         />
         <Button
           variant="outline"
@@ -70,6 +71,49 @@ function ControlledDemo () {
         />
         <span>
           open: <code>{String(open)}</code>
+        </span>
+        <span>
+          선택: <code>{lastKey ?? '—'}</code>
+        </span>
+      </div>
+    </div>
+  )
+}
+
+/** onSelect 로 페이지에서 메뉴 클릭 액션을 제어하는 예시 */
+function MenuSelectDemo () {
+  const [lastKey, setLastKey] = useState(null)
+
+  return (
+    <div className="dropdown_demo-stage">
+      <div className="dropdown_row">
+        <Dropdown
+          label="계정"
+          items={BASIC_ITEMS}
+          onSelect={(key) => setLastKey(handleMenuSelect(key))}
+        />
+        <span>
+          선택: <code>{lastKey ?? '—'}</code>
+        </span>
+      </div>
+    </div>
+  )
+}
+
+/** 기본 사용 — onSelect 로 페이지 액션 제어 */
+function BasicDemo () {
+  const [lastKey, setLastKey] = useState(null)
+
+  return (
+    <div className="dropdown_demo-stage">
+      <div className="dropdown_row">
+        <Dropdown
+          label="메뉴"
+          items={BASIC_ITEMS}
+          onSelect={(key) => setLastKey(handleMenuSelect(key))}
+        />
+        <span>
+          선택: <code>{lastKey ?? '—'}</code>
         </span>
       </div>
     </div>
@@ -246,6 +290,7 @@ function PlacementDemo () {
           placement={placement}
           label={placement}
           items={BASIC_ITEMS}
+          onSelect={handleMenuSelect}
         />
       </div>
     </div>
@@ -288,6 +333,7 @@ function OffsetDemo () {
           }
           label={offset === 'custom' ? '커스텀' : `offset=${offset}`}
           items={BASIC_ITEMS}
+          onSelect={handleMenuSelect}
         />
       </div>
     </div>
@@ -299,33 +345,94 @@ const SECTIONS = [
     title: '기본 사용',
     description: (
       <>
-        트리거를 누르면 <code>is-open</code>이 붙고 메뉴가 펼쳐집니다. 항목을 고르거나 바깥을 누르면 닫힙니다.
+        트리거를 누르면 <code>is-open</code>이 붙고 메뉴가 펼쳐집니다.
+        <code>onSelect</code>로 페이지에서 메뉴 클릭 액션을 제어하고, 항목을 고르거나 바깥을 누르면 닫힙니다.
       </>
     ),
-    code: `<Dropdown
+    code: wrapPageExample(`const [lastKey, setLastKey] = useState(null)
+
+const handleSelect = (key, item) => {
+  // 실제 페이지에서 라우팅·모달·로그아웃 등을 제어
+  if (key === 'logout') signOut()
+  else if (key === 'profile') navigate('/profile')
+  else if (key === 'settings') navigate('/settings')
+  setLastKey(key)
+}
+
+<Dropdown
   label="메뉴"
   items={[
     { key: 'profile', label: '프로필' },
     { key: 'settings', label: '설정' },
     { key: 'logout', label: '로그아웃' }
   ]}
-/>`,
-    preview: (
-      <div className="dropdown_demo-stage">
-        <Dropdown label="메뉴" items={BASIC_ITEMS} />
-      </div>
-    )
+  onSelect={handleSelect}
+/>`, {
+      name: 'DropdownExample',
+      reactImports: ['useState'],
+      compImports: ['Dropdown']
+    }),
+    preview: <BasicDemo />
   },
   {
     title: '제어 모드',
     description: (
       <>
-        <code>open</code> · <code>onOpenChange</code>로 부모가 열림 상태를 관리합니다.
+        <code>open</code> · <code>onOpenChange</code>로 부모가 열림 상태를 관리하고,
+        <code>onSelect</code>로 메뉴 클릭 액션을 페이지에서 제어합니다.
       </>
     ),
-    code: `const [open, setOpen] = useState(false)
-<Dropdown open={open} onOpenChange={setOpen} label="열기" items={items} />`,
+    code: wrapPageExample(`const [open, setOpen] = useState(false)
+
+<Dropdown
+  open={open}
+  onOpenChange={setOpen}
+  label="열기"
+  items={items}
+  onSelect={(key, item) => {
+    // 페이지에서 메뉴 액션 제어
+    if (key === 'logout') signOut()
+    else navigate(\`/\${key}\`)
+  }}
+/>`, {
+      name: 'DropdownExample',
+      reactImports: ['useState'],
+      compImports: ['Dropdown']
+    }),
     preview: <ControlledDemo />
+  },
+  {
+    title: '메뉴 클릭 제어',
+    description: (
+      <>
+        <code>onSelect</code>로 페이지에서 메뉴 항목 클릭을 제어합니다.
+        라우팅·모달·로그아웃 같은 액션을 부모가 처리하며, <code>onChange</code>와 달리 셀렉트 모드로 바뀌지 않습니다.
+        항목별 <code>items[].onSelect</code>도 함께 쓸 수 있습니다.
+      </>
+    ),
+    code: wrapPageExample(`const [lastKey, setLastKey] = useState(null)
+
+const handleSelect = (key, item) => {
+  // 실제 페이지에서 사용자가 메뉴 액션을 제어
+  if (key === 'logout') signOut()
+  else navigate(\`/\${key}\`)
+  setLastKey(key)
+}
+
+<Dropdown
+  label="계정"
+  items={[
+    { key: 'profile', label: '프로필' },
+    { key: 'settings', label: '설정' },
+    { key: 'logout', label: '로그아웃' }
+  ]}
+  onSelect={handleSelect}
+/>`, {
+      name: 'DropdownExample',
+      reactImports: ['useState'],
+      compImports: ['Dropdown']
+    }),
+    preview: <MenuSelectDemo />
   },
   {
     title: '선택(셀렉트 역할)',
@@ -338,7 +445,7 @@ const SECTIONS = [
         패널 위치는 <code>placement</code>, 트리거↔패널 간격은 <code>offset</code>으로 바꿉니다.
       </>
     ),
-    code: `const [locale, setLocale] = useState('ko')
+    code: wrapPageExample(`const [locale, setLocale] = useState('ko')
 const [region, setRegion] = useState(null)
 
 {/* 제어 · value / onChange */}
@@ -377,7 +484,11 @@ const [region, setRegion] = useState(null)
   defaultValue="en"
   placeholder="언어 선택"
   items={localeItems}
-/>`,
+/>`, {
+      name: 'DropdownExample',
+      reactImports: ['useState'],
+      compImports: ['Dropdown']
+    }),
     preview: <SelectableDemo />
   },
   {
@@ -391,10 +502,34 @@ const [region, setRegion] = useState(null)
         <code>left</code>/<code>right</code> 기본은 세로 center이고, <code>-top</code>/<code>-bottom</code>은 트리거 상·하 정렬입니다.
       </>
     ),
-    code: `<Dropdown placement="left" label="메뉴" items={items} />
-<Dropdown placement="left-top" label="메뉴" items={items} />
-<Dropdown placement="left-bottom" label="메뉴" items={items} />
-<Dropdown placement="right-top" label="메뉴" items={items} />`,
+    code: wrapPageExample(`<Dropdown
+  placement="left"
+  label="메뉴"
+  items={items}
+  onSelect={handleSelect}
+/>
+<Dropdown
+  placement="left-top"
+  label="메뉴"
+  items={items}
+  onSelect={handleSelect}
+/>
+<Dropdown
+  placement="left-bottom"
+  label="메뉴"
+  items={items}
+  onSelect={handleSelect}
+/>
+<Dropdown
+  placement="right-top"
+  label="메뉴"
+  items={items}
+  onSelect={handleSelect}
+/>`, {
+  name: 'DropdownExample1',
+  reactImports: [],
+  compImports: ['Dropdown']
+}),
     preview: <PlacementDemo />
   },
   {
@@ -407,13 +542,28 @@ const [region, setRegion] = useState(null)
         임의 값은 <code>style</code>의 <code>--dropdown-offset</code>으로 덮어씁니다.
       </>
     ),
-    code: `<Dropdown offset="none" label="붙임" items={items} />
-<Dropdown offset="lg" label="넓게" items={items} />
+    code: wrapPageExample(`<Dropdown
+  offset="none"
+  label="붙임"
+  items={items}
+  onSelect={handleSelect}
+/>
+<Dropdown
+  offset="lg"
+  label="넓게"
+  items={items}
+  onSelect={handleSelect}
+/>
 <Dropdown
   label="커스텀"
   style={{ '--dropdown-offset': '1.5rem' }}
   items={items}
-/>`,
+  onSelect={handleSelect}
+/>`, {
+  name: 'DropdownExample2',
+  reactImports: [],
+  compImports: ['Dropdown']
+}),
     preview: <OffsetDemo />
   },
   {
@@ -424,17 +574,30 @@ const [region, setRegion] = useState(null)
         위험 항목은 <code>menu_link.color_danger</code>입니다.
       </>
     ),
-    code: `<Dropdown
+    code: wrapPageExample(`<Dropdown
   label="더보기"
   items={[
     { key: 'home', label: '홈', icon: <Icon name="home" /> },
     { key: 'div', type: 'divider' },
     { key: 'danger', label: '삭제', danger: true }
   ]}
-/>`,
+  onSelect={(key) => {
+    // 페이지에서 메뉴 액션 제어
+    if (key === 'danger') confirmDelete()
+    else navigate(\`/\${key}\`)
+  }}
+/>`, {
+  name: 'DropdownIconExample',
+  reactImports: [],
+  compImports: ['Dropdown', 'Icon']
+}),
     preview: (
       <div className="dropdown_demo-stage">
-        <Dropdown label="더보기" items={ICON_ITEMS} />
+        <Dropdown
+          label="더보기"
+          items={ICON_ITEMS}
+          onSelect={handleMenuSelect}
+        />
       </div>
     )
   },
@@ -446,13 +609,38 @@ const [region, setRegion] = useState(null)
         <code>maxVisibleItems</code>는 목록 스크롤입니다.
       </>
     ),
-    code: `<Dropdown block label="전체 너비" items={items} />
-<Dropdown fit triggerVariant="select" label="선택" items={items} />
-<Dropdown maxVisibleItems={5} label="스크롤" items={manyItems} />`,
+    code: wrapPageExample(`<Dropdown
+  block
+  label="전체 너비"
+  items={items}
+  onSelect={handleSelect}
+/>
+<Dropdown
+  fit
+  triggerVariant="select"
+  value={value}
+  items={items}
+  onChange={setValue}
+/>
+<Dropdown
+  maxVisibleItems={5}
+  label="스크롤"
+  items={manyItems}
+  onSelect={handleSelect}
+/>`, {
+  name: 'DropdownBlockExample',
+  reactImports: [],
+  compImports: ['Dropdown']
+}),
     preview: (
       <Space vertical block size={24}>
         <div style={{ maxWidth: 320 }}>
-          <Dropdown block label="전체 너비" items={BASIC_ITEMS} />
+          <Dropdown
+            block
+            label="전체 너비"
+            items={BASIC_ITEMS}
+            onSelect={handleMenuSelect}
+          />
         </div>
         <div className="dropdown_demo-stage">
           <div className="dropdown_row">
@@ -466,6 +654,7 @@ const [region, setRegion] = useState(null)
               maxVisibleItems={5}
               label="스크롤"
               items={MANY_ITEMS}
+              onSelect={handleMenuSelect}
             />
           </div>
         </div>
@@ -480,14 +669,19 @@ const [region, setRegion] = useState(null)
         항목 단위 <code>disabled</code>도 지원합니다.
       </>
     ),
-    code: `<Dropdown disabled label="비활성" items={items} />
+    code: wrapPageExample(`<Dropdown disabled label="비활성" items={items} />
 <Dropdown
   label="일부 비활성"
   items={[
     { key: 'a', label: '활성' },
     { key: 'b', label: '비활성', disabled: true }
   ]}
-/>`,
+  onSelect={handleSelect}
+/>`, {
+  name: 'DropdownDisabledExample',
+  reactImports: [],
+  compImports: ['Dropdown']
+}),
     preview: (
       <div className="dropdown_demo-stage">
         <div className="dropdown_row">
@@ -499,6 +693,7 @@ const [region, setRegion] = useState(null)
               { key: 'b', label: '비활성', disabled: true },
               { key: 'c', label: '활성' }
             ]}
+            onSelect={handleMenuSelect}
           />
         </div>
       </div>
@@ -568,10 +763,22 @@ const [region, setRegion] = useState(null)
         패널은 <code>role=&quot;menu&quot;</code>, 항목은 <code>role=&quot;menuitem&quot;</code>입니다. Escape로 닫힙니다.
       </>
     ),
-    code: `<Dropdown label="계정 메뉴" items={[{ key: 'profile', label: '프로필' }]} />`,
+    code: wrapPageExample(`<Dropdown
+  label="계정 메뉴"
+  items={[{ key: 'profile', label: '프로필' }]}
+  onSelect={handleSelect}
+/>`, {
+  name: 'DropdownA11yExample',
+  reactImports: [],
+  compImports: ['Dropdown']
+}),
     preview: (
       <div className="dropdown_demo-stage">
-        <Dropdown label="계정 메뉴" items={[{ key: 'profile', label: '프로필' }]} />
+        <Dropdown
+          label="계정 메뉴"
+          items={[{ key: 'profile', label: '프로필' }]}
+          onSelect={handleMenuSelect}
+        />
       </div>
     )
   }
@@ -586,7 +793,7 @@ export default function DropdownGuide () {
     <GuideLayout
       category="네비게이션"
       title="Dropdown"
-      description="트리거 메뉴. items로 구성하며 placement · block · maxVisibleItems를 지원합니다."
+      description="트리거 메뉴. items · onSelect로 구성·제어하며 placement · block · maxVisibleItems를 지원합니다."
     >
       {SECTIONS.map((section) => (
         <DemoBlock
@@ -594,6 +801,7 @@ export default function DropdownGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName={section.title === 'HTML 마크업' ? 'dropdown.html' : 'DropdownExample.jsx'}
         >
           {section.preview}
         </DemoBlock>

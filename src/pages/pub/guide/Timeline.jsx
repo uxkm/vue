@@ -1,13 +1,7 @@
 'use client'
 
-import {
-  DemoBlock,
-  GuideApiDocs,
-  GuideLayout,
-  Tag,
-  Timeline,
-  TimelineItem
-} from '@/comp'
+import { Tag, Timeline, TimelineItem } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { timelineApiSections } from '@/pages/pub/data/guide/timelineApiSections'
 
 const SECTIONS = [
@@ -18,7 +12,7 @@ const SECTIONS = [
         <code>TimelineItem</code>의 time · title · description과 color로 이벤트를 나열합니다.
       </>
     ),
-    code: `<Timeline>
+    code: wrapPageExample(`<Timeline>
   <TimelineItem
     color="primary"
     time="2024-06-01 10:00"
@@ -27,7 +21,11 @@ const SECTIONS = [
     description="팀 미팅을 통해 프로젝트 범위와 일정을 확정했습니다."
   />
   …
-</Timeline>`,
+</Timeline>`, {
+      name: 'TimelineExample',
+      reactImports: [],
+      compImports: ['Timeline', 'TimelineItem']
+    }),
     preview: (
       <Timeline>
         <TimelineItem
@@ -64,10 +62,14 @@ const SECTIONS = [
   {
     title: '간단',
     description: '제목과 시간만으로 짧은 단계를 표시합니다.',
-    code: `<Timeline>
+    code: wrapPageExample(`<Timeline>
   <TimelineItem color="primary" title="주문 접수" time="오전 9:12" datetime="2024-06-20" />
   …
-</Timeline>`,
+</Timeline>`, {
+      name: 'TimelineSimpleExample',
+      reactImports: [],
+      compImports: ['Timeline', 'TimelineItem']
+    }),
     preview: (
       <Timeline>
         <TimelineItem color="primary" title="주문 접수" time="오전 9:12" datetime="2024-06-20" />
@@ -83,11 +85,15 @@ const SECTIONS = [
         <code>outline</code> · <code>active</code> · <code>pending</code>으로 진행 상태를 표현합니다.
       </>
     ),
-    code: `<Timeline>
+    code: wrapPageExample(`<Timeline>
   <TimelineItem outline color="primary" title="기획 단계" description="…" />
   <TimelineItem outline color="primary" title="개발 단계" … active />
   <TimelineItem outline title="배포 단계" … pending />
-</Timeline>`,
+</Timeline>`, {
+      name: 'TimelineOutlineExample',
+      reactImports: [],
+      compImports: ['Timeline', 'TimelineItem']
+    }),
     preview: (
       <Timeline>
         <TimelineItem outline color="primary" title="기획 단계" description="요구사항 정의 및 와이어프레임 작성" />
@@ -110,10 +116,14 @@ const SECTIONS = [
         <code>icon</code> · <code>iconSize</code>로 도트를 아이콘형으로 키웁니다.
       </>
     ),
-    code: `<Timeline icon iconSize="sm">
+    code: wrapPageExample(`<Timeline icon iconSize="sm">
   <TimelineItem color="primary" time="2024-06-01" … />
   …
-</Timeline>`,
+</Timeline>`, {
+      name: 'TimelineIconExample',
+      reactImports: [],
+      compImports: ['Timeline', 'TimelineItem']
+    }),
     preview: (
       <Timeline icon iconSize="sm">
         <TimelineItem
@@ -154,14 +164,18 @@ const SECTIONS = [
         <code>card</code>와 <code>meta</code>(Tag 등)로 카드형 이벤트를 구성합니다.
       </>
     ),
-    code: `<Timeline card>
+    code: wrapPageExample(`<Timeline card>
   <TimelineItem
     color="primary"
     title="디자인 시스템 v2.0 릴리스"
     description="…"
     meta={<><Tag color="primary" label="Release" /><Tag color="default" label="Design" /></>}
   />
-</Timeline>`,
+</Timeline>`, {
+      name: 'TimelineCardExample',
+      reactImports: [],
+      compImports: ['Tag', 'Timeline', 'TimelineItem']
+    }),
     preview: (
       <Timeline card>
         <TimelineItem
@@ -208,10 +222,14 @@ const SECTIONS = [
         <code>labelCol</code>과 item <code>label</code>로 왼쪽 날짜 열을 둡니다.
       </>
     ),
-    code: `<Timeline labelCol>
+    code: wrapPageExample(`<Timeline labelCol>
   <TimelineItem label="2024 Q1" labelDatetime="2024-01" color="primary" title="알파 버전 출시" … />
   …
-</Timeline>`,
+</Timeline>`, {
+      name: 'TimelineLabelExample',
+      reactImports: [],
+      compImports: ['Timeline', 'TimelineItem']
+    }),
     preview: (
       <Timeline labelCol>
         <TimelineItem
@@ -252,10 +270,14 @@ const SECTIONS = [
         <code>alternate</code>로 항목을 좌우로 교차 배치합니다.
       </>
     ),
-    code: `<Timeline alternate>
+    code: wrapPageExample(`<Timeline alternate>
   <TimelineItem color="primary" time="2024년 3월" title="회사 설립" … />
   …
-</Timeline>`,
+</Timeline>`, {
+      name: 'TimelineAlternateExample',
+      reactImports: [],
+      compImports: ['Timeline', 'TimelineItem']
+    }),
     preview: (
       <Timeline alternate>
         <TimelineItem
@@ -296,11 +318,15 @@ const SECTIONS = [
         <code>horizontal</code>로 프로세스형 가로 배치를 만듭니다.
       </>
     ),
-    code: `<Timeline horizontal>
+    code: wrapPageExample(`<Timeline horizontal>
   <TimelineItem color="success" title="신청" time="6/20" />
   <TimelineItem color="primary" title="승인" time="진행 중" active />
   <TimelineItem title="완료" time="예정" pending />
-</Timeline>`,
+</Timeline>`, {
+      name: 'TimelineHorizontalExample',
+      reactImports: [],
+      compImports: ['Timeline', 'TimelineItem']
+    }),
     preview: (
       <Timeline horizontal>
         <TimelineItem color="success" title="신청" time="6/20" datetime="2024-06-20" />
@@ -317,8 +343,12 @@ const SECTIONS = [
         <code>size</code>는 sm · md · lg입니다.
       </>
     ),
-    code: `<Timeline size="sm">…</Timeline>
-<Timeline size="lg">…</Timeline>`,
+    code: wrapPageExample(`<Timeline size="sm">…</Timeline>
+<Timeline size="lg">…</Timeline>`, {
+      name: 'TimelineSizeExample',
+      reactImports: [],
+      compImports: ['Timeline', 'TimelineItem']
+    }),
     preview: (
       <div className="typo_stack">
         <div>
@@ -357,11 +387,15 @@ const SECTIONS = [
         완료 · 진행(<code>active</code>) · 대기(<code>pending</code>) 상태를 조합합니다.
       </>
     ),
-    code: `<Timeline>
+    code: wrapPageExample(`<Timeline>
   <TimelineItem color="success" title="계정 생성" time="완료" />
   <TimelineItem color="primary" title="팀 초대" time="진행 중" active />
   <TimelineItem title="첫 프로젝트 생성" time="대기" pending />
-</Timeline>`,
+</Timeline>`, {
+      name: 'TimelineStatusExample',
+      reactImports: [],
+      compImports: ['Timeline', 'TimelineItem']
+    }),
     preview: (
       <Timeline>
         <TimelineItem color="success" title="계정 생성" time="완료" />
@@ -390,6 +424,7 @@ export default function TimelineGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName="TimelineExample.jsx"
         >
           {section.preview}
         </DemoBlock>

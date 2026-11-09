@@ -1,6 +1,7 @@
 'use client'
 
-import { DemoBlock, GuideApiDocs, GuideLayout, Icon, Stat } from '@/comp'
+import { Icon, Stat } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { statApiSections } from '@/pages/pub/data/guide/statApiSections'
 
 const SECTIONS = [
@@ -11,7 +12,11 @@ const SECTIONS = [
         <code>title</code> · <code>value</code> · <code>description</code>으로 지표를 표시합니다.
       </>
     ),
-    code: `<Stat title="총 사용자" value="12,480" description="지난 30일 기준" />`,
+    code: wrapPageExample(`<Stat title="총 사용자" value="12,480" description="지난 30일 기준" />`, {
+      name: 'StatExample',
+      reactImports: [],
+      compImports: ['Stat']
+    }),
     preview: <Stat title="총 사용자" value="12,480" description="지난 30일 기준" />
   },
   {
@@ -21,11 +26,15 @@ const SECTIONS = [
         <code>prefix</code> · <code>suffix</code>로 단위를 붙이고, description에 <code>trendColor</code>를 적용할 수 있습니다.
       </>
     ),
-    code: `<div className="stat_group stat_group-3">
+    code: wrapPageExample(`<div className="stat_group stat_group-3">
   <Stat title="총 매출" prefix="₩" value="4,280,000" description="+8.2%" trendColor="success" />
   <Stat title="전환율" value="3.6" suffix="%" description="-0.4%p" trendColor="danger" />
   <Stat title="평균 응답 시간" value="128" suffix="ms" />
-</div>`,
+</div>`, {
+      name: 'StatAffixExample',
+      reactImports: [],
+      compImports: ['Stat']
+    }),
     preview: (
       <div className="stat_group stat_group-3">
         <Stat title="총 매출" prefix="₩" value="4,280,000" description="+8.2%" trendColor="success" />
@@ -41,7 +50,7 @@ const SECTIONS = [
         <code>trend</code>는 헤더 우측(또는 description 자리)에 증감을 표시합니다. <code>trendIcon</code>으로 아이콘을 바꿀 수 있습니다.
       </>
     ),
-    code: `<div className="stat_group stat_group-2">
+    code: wrapPageExample(`<div className="stat_group stat_group-2">
   <Stat title="신규 가입" value="1,234" trend="+15.3%" trendColor="success" />
   <Stat
     title="이탈률"
@@ -50,7 +59,11 @@ const SECTIONS = [
     trendColor="danger"
     trendIcon={<Icon name="warning" />}
   />
-</div>`,
+</div>`, {
+      name: 'StatTrendExample',
+      reactImports: [],
+      compImports: ['Icon', 'Stat']
+    }),
     preview: (
       <div className="stat_group stat_group-2">
         <Stat title="신규 가입" value="1,234" trend="+15.3%" trendColor="success" />
@@ -71,11 +84,15 @@ const SECTIONS = [
         <code>size</code>는 sm · md · lg입니다. 카드와 함께 쓰면 밀도 차이를 보기 쉽습니다.
       </>
     ),
-    code: `<div className="stat_group stat_group-3">
+    code: wrapPageExample(`<div className="stat_group stat_group-3">
   <Stat card size="sm" title="Small" value="1,024" />
   <Stat card title="Medium" value="8,192" />
   <Stat card size="lg" title="Large" value="64K" />
-</div>`,
+</div>`, {
+      name: 'StatSizeExample',
+      reactImports: [],
+      compImports: ['Stat']
+    }),
     preview: (
       <div className="stat_group stat_group-3">
         <Stat card size="sm" title="Small" value="1,024" />
@@ -91,7 +108,7 @@ const SECTIONS = [
         <code>stat_horizontal</code> · <code>stat_inline</code> · <code>stat_row</code> 클래스로 배치를 바꿉니다.
       </>
     ),
-    code: `<Stat card className="stat_horizontal" title="활성 세션" value="342" />
+    code: wrapPageExample(`<Stat card className="stat_horizontal" title="활성 세션" value="342" />
 <Stat card className="stat_inline" title="CPU 사용률" value="68" suffix="%" />
 <Stat card className="stat_row" shadow>
   <span className="stat_icon-wrap color_primary"><Icon name="user" /></span>
@@ -99,7 +116,11 @@ const SECTIONS = [
     <span className="stat_label">신규 사용자</span>
     <span className="stat_value">1,284</span>
   </div>
-</Stat>`,
+</Stat>`, {
+      name: 'StatLayoutExample',
+      reactImports: [],
+      compImports: ['Icon', 'Stat']
+    }),
     preview: (
       <>
         <Stat card className="stat_horizontal" title="활성 세션" value="342" />
@@ -121,7 +142,7 @@ const SECTIONS = [
         children으로 <code>stat_icon</code> · <code>stat_row</code> 커스텀 레이아웃을 구성합니다.
       </>
     ),
-    code: `<div className="stat_group stat_group-2">
+    code: wrapPageExample(`<div className="stat_group stat_group-2">
   <Stat card>
     <span className="stat_icon"><Icon name="star" /></span>
     <span className="stat_label">즐겨찾기</span>
@@ -131,7 +152,11 @@ const SECTIONS = [
     <span className="stat_icon-wrap color_success"><Icon name="check" /></span>
     <div className="stat_body">…</div>
   </Stat>
-</div>`,
+</div>`, {
+      name: 'StatIconExample',
+      reactImports: [],
+      compImports: ['Icon', 'Stat']
+    }),
     preview: (
       <div className="stat_group stat_group-2">
         <Stat card>
@@ -156,12 +181,16 @@ const SECTIONS = [
         <code>card</code> · <code>shadow</code> · <code>stat_borderless</code> · <code>stat_accent</code>을 조합합니다.
       </>
     ),
-    code: `<div className="stat_group stat_group-4">
+    code: wrapPageExample(`<div className="stat_group stat_group-4">
   <Stat card title="기본 카드" value="1,200" />
   <Stat card shadow title="Shadow" value="980" />
   <Stat card className="stat_borderless" title="Borderless" value="456" />
   <Stat card className="stat_accent color_primary" title="Accent" value="789" description="강조 지표" />
-</div>`,
+</div>`, {
+      name: 'StatSkinExample',
+      reactImports: [],
+      compImports: ['Stat']
+    }),
     preview: (
       <div className="stat_group stat_group-4">
         <Stat card title="기본 카드" value="1,200" />
@@ -184,14 +213,18 @@ const SECTIONS = [
         <code>stat_group</code> · <code>stat_group-n</code> · <code>stat_group-divider</code>로 지표 행을 묶습니다.
       </>
     ),
-    code: `<div className="stat_group stat_group-4">
+    code: wrapPageExample(`<div className="stat_group stat_group-4">
   <Stat card shadow title="총 매출" prefix="₩" value="4.2M" description="+8.2%" trendColor="success" />
   …
 </div>
 <div className="stat_group stat_group-4 stat_group-divider">
   <Stat title="방문" value="24.5K" />
   …
-</div>`,
+</div>`, {
+      name: 'StatGroupExample',
+      reactImports: [],
+      compImports: ['Stat']
+    }),
     preview: (
       <>
         <div className="stat_group stat_group-4">
@@ -228,6 +261,7 @@ export default function StatGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName="StatExample.jsx"
         >
           {section.preview}
         </DemoBlock>

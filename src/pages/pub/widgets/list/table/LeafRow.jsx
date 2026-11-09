@@ -13,7 +13,7 @@ import {
   typeLabel,
   statusColor,
   statusLabel
-} from './labels'
+} from '../lib/labels'
 
 export default function LeafRow ({
   folder,

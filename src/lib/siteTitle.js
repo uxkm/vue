@@ -5,9 +5,6 @@ import { useEffect } from 'react'
 /** 브라우저 탭 기본 사이트명 */
 export const SITE_NAME = '멀티캠퍼스 기업교육'
 
-/** 퍼블리싱 가이드·데모 구간의 섹션명 */
-export const GUIDE_SECTION = '퍼블리싱가이드'
-
 /**
  * @typedef {object} SiteTitleOptions
  * @property {string} [page] 페이지명 (탭 앞부분)

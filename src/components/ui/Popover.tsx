@@ -18,6 +18,8 @@ export interface PopoverProps extends Omit<HTMLAttributes<HTMLDivElement>, 'titl
   title?: ReactNode
   content?: ReactNode
   open?: boolean
+  /** 비제어 초기 열림 */
+  defaultOpen?: boolean
   trigger?: ReactNode
   /** true 이면 패널에 닫기(Icon close) 버튼을 표시한다. 기본 true */
   closable?: boolean
@@ -42,6 +44,7 @@ export function Popover ({
   title,
   content,
   open,
+  defaultOpen = false,
   trigger,
   closable = true,
   closeOnOutsideClick = true,
@@ -54,7 +57,7 @@ export function Popover ({
   ...rest
 }: PopoverProps) {
   const rootRef = useRef<HTMLDivElement>(null)
-  const [inner, setInner] = useState(false)
+  const [inner, setInner] = useState(defaultOpen)
   const shown = open ?? inner
 
   const setShown = (next: boolean) => {

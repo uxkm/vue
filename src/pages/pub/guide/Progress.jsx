@@ -1,14 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import {
-  Button,
-  DemoBlock,
-  GuideApiDocs,
-  GuideLayout,
-  Progress,
-  Space
-} from '@/comp'
+import { Button, Progress, Space } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { progressApiSections } from '@/pages/pub/data/guide/progressApiSections'
 
 /** 원형 진행률 — React Progress 는 막대만 렌더링하므로 HTML 마크업 그대로 보여준다 */
@@ -72,9 +66,13 @@ const SECTIONS = [
         0 미만 · 100 초과 · 숫자가 아닌 값은 0~100 으로 보정됩니다.
       </>
     ),
-    code: `<Progress percent={25} showInfo />
+    code: wrapPageExample(`<Progress percent={25} showInfo />
 <Progress percent={62} showInfo />
-<Progress percent={150} showInfo />`,
+<Progress percent={150} showInfo />`, {
+  name: 'ProgressBasicExample',
+  reactImports: [],
+  compImports: ['Progress']
+}),
     preview: (
       <Space vertical block size={14}>
         <Progress percent={25} showInfo />
@@ -91,11 +89,15 @@ const SECTIONS = [
         <code>muted</code>를 받아 막대 <code>.progress_bar</code>에 <code>color_{'{값}'}</code> 클래스가 붙습니다.
       </>
     ),
-    code: `<Progress percent={60} color="primary" showInfo />
+    code: wrapPageExample(`<Progress percent={60} color="primary" showInfo />
 <Progress percent={60} color="success" showInfo />
 <Progress percent={60} color="warning" showInfo />
 <Progress percent={60} color="danger" showInfo />
-<Progress percent={60} color="muted" showInfo />`,
+<Progress percent={60} color="muted" showInfo />`, {
+  name: 'ProgressColorExample',
+  reactImports: [],
+  compImports: ['Progress']
+}),
     preview: (
       <Space vertical block size={14}>
         <Progress percent={60} color="primary" showInfo />
@@ -115,9 +117,13 @@ const SECTIONS = [
         <code>label</code>을 주면 상태 문구보다 우선해 그대로 표시됩니다.
       </>
     ),
-    code: `<Progress percent={100} status="success" showInfo />
+    code: wrapPageExample(`<Progress percent={100} status="success" showInfo />
 <Progress percent={40} status="exception" showInfo />
-<Progress percent={70} showInfo label="3 / 4 단계" />`,
+<Progress percent={70} showInfo label="3 / 4 단계" />`, {
+  name: 'ProgressStateExample',
+  reactImports: [],
+  compImports: ['Progress']
+}),
     preview: (
       <Space vertical block size={14}>
         <Progress percent={100} status="success" showInfo />
@@ -134,9 +140,13 @@ const SECTIONS = [
         <code>sm</code> · <code>lg</code>일 때 루트에 <code>progress_sm</code> · <code>progress_lg</code>가 붙어 막대 두께와 글자 크기가 바뀝니다.
       </>
     ),
-    code: `<Progress size="sm" percent={50} showInfo />
+    code: wrapPageExample(`<Progress size="sm" percent={50} showInfo />
 <Progress size="md" percent={50} showInfo />
-<Progress size="lg" percent={50} showInfo />`,
+<Progress size="lg" percent={50} showInfo />`, {
+  name: 'ProgressSizeExample',
+  reactImports: [],
+  compImports: ['Progress']
+}),
     preview: (
       <Space vertical block size={14}>
         <Progress size="sm" percent={50} showInfo />
@@ -153,8 +163,12 @@ const SECTIONS = [
         <code>animated</code>는 <code>striped</code>와 함께 써야 움직입니다.
       </>
     ),
-    code: `<Progress percent={45} striped showInfo />
-<Progress percent={45} striped animated showInfo />`,
+    code: wrapPageExample(`<Progress percent={45} striped showInfo />
+<Progress percent={45} striped animated showInfo />`, {
+  name: 'ProgressExample5',
+  reactImports: [],
+  compImports: ['Progress']
+}),
     preview: (
       <Space vertical block size={14}>
         <Progress percent={45} striped showInfo />
@@ -171,8 +185,12 @@ const SECTIONS = [
         진행률을 알 수 없을 때 쓰며, <code>aria-valuenow</code>는 생략됩니다.
       </>
     ),
-    code: `<Progress indeterminate />
-<Progress indeterminate color="success" size="lg" />`,
+    code: wrapPageExample(`<Progress indeterminate />
+<Progress indeterminate color="success" size="lg" />`, {
+  name: 'ProgressExample6',
+  reactImports: [],
+  compImports: ['Progress']
+}),
     preview: (
       <Space vertical block size={14}>
         <Progress indeterminate />
@@ -188,8 +206,12 @@ const SECTIONS = [
         트랙 배경은 투명해지고 막대 최소 너비가 확보되므로 두께가 있는 <code>size=&quot;lg&quot;</code>와 잘 어울립니다.
       </>
     ),
-    code: `<Progress inside showInfo percent={60} size="lg" />
-<Progress inside showInfo percent={80} size="lg" color="success" />`,
+    code: wrapPageExample(`<Progress inside showInfo percent={60} size="lg" />
+<Progress inside showInfo percent={80} size="lg" color="success" />`, {
+  name: 'ProgressTextExample',
+  reactImports: [],
+  compImports: ['Progress']
+}),
     preview: (
       <Space vertical block size={14}>
         <Progress inside showInfo percent={60} size="lg" />
@@ -205,8 +227,12 @@ const SECTIONS = [
         <code>block</code>을 켜면 <code>progress_block</code>이 붙어 최대 너비 제한 없이 부모 너비를 채웁니다.
       </>
     ),
-    code: `<Progress percent={50} />
-<Progress percent={50} block />`,
+    code: wrapPageExample(`<Progress percent={50} />
+<Progress percent={50} block />`, {
+  name: 'ProgressExample8',
+  reactImports: [],
+  compImports: ['Progress']
+}),
     preview: (
       <Space vertical block size={14}>
         <Progress percent={50} />
@@ -221,10 +247,14 @@ const SECTIONS = [
         <code>percent</code>를 상태로 관리해 갱신합니다. 100 에 도달하면 <code>status=&quot;success&quot;</code>로 바꿔 완료를 표시하는 식으로 조합합니다.
       </>
     ),
-    code: `const [percent, setPercent] = useState(30)
+    code: wrapPageExample(`const [percent, setPercent] = useState(30)
 
 <Progress percent={percent} status={percent >= 100 ? 'success' : ''} showInfo />
-<Button variant="outline" label="+10%" onClick={() => setPercent((v) => Math.min(100, v + 10))} />`,
+<Button variant="outline" label="+10%" onClick={() => setPercent((v) => Math.min(100, v + 10))} />`, {
+      name: 'ProgressExample',
+      reactImports: ['useState'],
+      compImports: ['Progress', 'Button']
+    }),
     preview: <InteractiveDemo />
   },
   {
@@ -297,7 +327,11 @@ const SECTIONS = [
         <code>aria-label</code>은 <code>ariaLabel</code> → <code>label</code> → &quot;진행률&quot; 순으로 정해지므로, 화면에 문구가 없으면 <code>ariaLabel</code>로 목적을 알려 주세요.
       </>
     ),
-    code: `<Progress percent={40} ariaLabel="파일 업로드 진행률" showInfo />`,
+    code: wrapPageExample(`<Progress percent={40} ariaLabel="파일 업로드 진행률" showInfo />`, {
+  name: 'ProgressA11yExample',
+  reactImports: [],
+  compImports: ['Progress']
+}),
     preview: <Progress percent={40} ariaLabel="파일 업로드 진행률" showInfo />
   }
 ]
@@ -319,6 +353,7 @@ export default function ProgressGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName={section.title.includes('HTML') ? 'progress.html' : 'ProgressExample.jsx'}
         >
           {section.preview}
         </DemoBlock>

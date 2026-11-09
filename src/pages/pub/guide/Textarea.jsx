@@ -1,12 +1,8 @@
 'use client'
 
-import {
-  Button,
-  DemoBlock,
-  GuideApiDocs,
-  GuideLayout,
-  Textarea
-} from '@/comp'
+import { useState } from 'react'
+import { Button, Textarea } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { textareaApiSections } from '@/pages/pub/data/guide/textareaApiSections'
 
 function Field ({ id, label, hint, children }) {
@@ -28,6 +24,29 @@ function ImplicitTextarea ({ label, ...props }) {
   )
 }
 
+/** value · onChange · onClear 로 입력을 제어하는 예시 */
+function ControlledDemo () {
+  const [value, setValue] = useState('제어 내용입니다.')
+
+  return (
+    <div className="demo-stack">
+      <Field id="textarea-controlled" label="메모" hint={`글자 수: ${value.length}`}>
+        <Textarea
+          id="textarea-controlled"
+          rows={4}
+          value={value}
+          onChange={(event) => setValue(event.target.value)}
+          onClear={() => setValue('')}
+          clearable
+          showCount
+          maxLength={200}
+          placeholder="메모를 입력하세요"
+        />
+      </Field>
+    </div>
+  )
+}
+
 const SECTIONS = [
   {
     title: '기본',
@@ -36,9 +55,13 @@ const SECTIONS = [
         <code>form_field</code> 라벨·힌트와 함께 사용합니다.
       </>
     ),
-    code: `<Field id="textarea-message" label="메시지" hint="문의 내용을 자세히 작성해 주세요.">
+    code: wrapPageExample(`<Field id="textarea-message" label="메시지" hint="문의 내용을 자세히 작성해 주세요.">
   <Textarea id="textarea-message" rows={4} placeholder="메시지를 입력하세요" />
-</Field>`,
+</Field>`, {
+  name: 'TextareaBasicExample',
+  reactImports: [],
+  compImports: ['Field', 'Textarea']
+}),
     preview: (
       <div className="demo-stack">
         <Field id="textarea-message" label="메시지" hint="문의 내용을 자세히 작성해 주세요.">
@@ -54,14 +77,18 @@ const SECTIONS = [
         <code>input_field</code> 또는 숨김 라벨(<code>display_contents</code>)로 단독 배치합니다.
       </>
     ),
-    code: `<div className="input_field input_field_fit">
+    code: wrapPageExample(`<div className="input_field input_field_fit">
   <label className="form_field-label" htmlFor="textarea-note">메모</label>
   <Textarea id="textarea-note" rows={3} placeholder="메모를 입력하세요" />
 </div>
 <label className="display_contents">
   <span className="input_group-label_hidden">추가 요청사항</span>
   <Textarea rows={3} placeholder="추가 요청사항" />
-</label>`,
+</label>`, {
+  name: 'TextareaExample2',
+  reactImports: [],
+  compImports: ['Textarea']
+}),
     preview: (
       <div className="demo-stack">
         <div className="input_field input_field_fit">
@@ -79,9 +106,13 @@ const SECTIONS = [
         <code>size</code>는 sm · md · lg입니다.
       </>
     ),
-    code: `<Textarea size="sm" rows={3} placeholder="textarea_sm" />
+    code: wrapPageExample(`<Textarea size="sm" rows={3} placeholder="textarea_sm" />
 <Textarea size="md" rows={3} placeholder="기본 크기" />
-<Textarea size="lg" rows={3} placeholder="textarea_lg" />`,
+<Textarea size="lg" rows={3} placeholder="textarea_lg" />`, {
+  name: 'TextareaSizeExample',
+  reactImports: [],
+  compImports: ['Textarea']
+}),
     preview: (
       <div className="demo-stack">
         {(['sm', 'md', 'lg']).map((size) => (
@@ -104,9 +135,13 @@ const SECTIONS = [
         기본은 전체 너비, <code>form_field_fit</code> · <code>fit</code>으로 최대 너비를 제한합니다.
       </>
     ),
-    code: `<Textarea rows={3} placeholder="width: 100%" />
+    code: wrapPageExample(`<Textarea rows={3} placeholder="width: 100%" />
 <div className="form_field form_field_fit">…</div>
-<Textarea fit showCount maxLength={100} rows={3} />`,
+<Textarea fit showCount maxLength={100} rows={3} />`, {
+  name: 'TextareaExample4',
+  reactImports: [],
+  compImports: ['Textarea']
+}),
     preview: (
       <div className="demo-stack">
         <Field id="textarea-full" label="전체 너비">
@@ -129,10 +164,14 @@ const SECTIONS = [
         <code>resize</code>로 none · vertical · horizontal · both 방향을 지정합니다.
       </>
     ),
-    code: `<Textarea resize="none" rows={3} />
+    code: wrapPageExample(`<Textarea resize="none" rows={3} />
 <Textarea resize="vertical" rows={3} />
 <Textarea resize="horizontal" rows={3} />
-<Textarea resize="both" rows={3} />`,
+<Textarea resize="both" rows={3} />`, {
+  name: 'TextareaSizeExample2',
+  reactImports: [],
+  compImports: ['Textarea']
+}),
     preview: (
       <div className="demo-stack">
         {(['none', 'vertical', 'horizontal', 'both']).map((resize) => (
@@ -155,11 +194,15 @@ const SECTIONS = [
         <code>form_field-required</code>와 <code>required</code> · <code>aria-required</code>를 함께 씁니다.
       </>
     ),
-    code: `<label className="form_field-label" htmlFor="textarea-required">
+    code: wrapPageExample(`<label className="form_field-label" htmlFor="textarea-required">
   문의 내용
   <span className="form_field-required">…</span>
 </label>
-<Textarea id="textarea-required" rows={4} required aria-required="true" />`,
+<Textarea id="textarea-required" rows={4} required aria-required="true" />`, {
+  name: 'TextareaRequiredExample',
+  reactImports: [],
+  compImports: ['Textarea']
+}),
     preview: (
       <div className="demo-stack">
         <div className="form_field form_field_fit">
@@ -189,11 +232,15 @@ const SECTIONS = [
         기본 · 비활성 · 읽기 전용 · <code>error</code> · <code>is-success</code> 상태입니다.
       </>
     ),
-    code: `<Textarea rows={3} placeholder="입력 가능" />
+    code: wrapPageExample(`<Textarea rows={3} placeholder="입력 가능" />
 <Textarea rows={3} defaultValue="수정할 수 없음" disabled />
 <Textarea rows={3} defaultValue="읽기만 가능" readOnly />
 <Textarea rows={3} error defaultValue="너무 짧은 내용" />
-<Textarea rows={3} className="is-success" defaultValue="등록할 수 있는 내용입니다." />`,
+<Textarea rows={3} className="is-success" defaultValue="등록할 수 있는 내용입니다." />`, {
+  name: 'TextareaStateExample',
+  reactImports: [],
+  compImports: ['Textarea']
+}),
     preview: (
       <div className="demo-stack">
         <Field id="textarea-default" label="기본">
@@ -241,8 +288,12 @@ const SECTIONS = [
         <code>showCount</code> · <code>maxLength</code>로 실시간 글자 수를 표시합니다.
       </>
     ),
-    code: `<Textarea rows={5} maxLength={200} showCount placeholder="자기소개를 입력하세요" />
-<Textarea size="sm" rows={3} maxLength={30} showCount defaultValue="…" />`,
+    code: wrapPageExample(`<Textarea rows={5} maxLength={200} showCount placeholder="자기소개를 입력하세요" />
+<Textarea size="sm" rows={3} maxLength={30} showCount defaultValue="…" />`, {
+  name: 'TextareaExample8',
+  reactImports: [],
+  compImports: ['Textarea']
+}),
     preview: (
       <div className="demo-stack">
         <div className="form_field">
@@ -277,9 +328,13 @@ const SECTIONS = [
         <code>clearable</code>은 값이 있을 때 지우기 버튼을 표시합니다. 읽기 전용에서는 숨깁니다.
       </>
     ),
-    code: `<Textarea rows={4} clearable defaultValue="지울 수 있는 내용" />
+    code: wrapPageExample(`<Textarea rows={4} clearable defaultValue="지울 수 있는 내용" />
 <Textarea rows={4} clearable showCount maxLength={200} defaultValue="…" />
-<Textarea rows={3} clearable readOnly defaultValue="수정 불가" />`,
+<Textarea rows={3} clearable readOnly defaultValue="수정 불가" />`, {
+  name: 'TextareaExample9',
+  reactImports: [],
+  compImports: ['Textarea']
+}),
     preview: (
       <div className="demo-stack">
         <Field id="textarea-clear" label="메모">
@@ -308,12 +363,41 @@ const SECTIONS = [
     )
   },
   {
+    title: '제어 모드',
+    description: (
+      <>
+        <code>value</code>를 넘기면 제어 모드입니다. <code>onChange</code>로 값을 갱신하고,
+        지우기 시 <code>onClear</code>에서 빈 문자열로 맞춥니다.
+      </>
+    ),
+    code: wrapPageExample(`const [value, setValue] = useState('제어 내용입니다.')
+
+<Textarea
+  rows={4}
+  value={value}
+  onChange={(e) => setValue(e.target.value)}
+  onClear={() => setValue('')}
+  clearable
+  showCount
+  maxLength={200}
+/>`, {
+      name: 'TextareaExample',
+      reactImports: ['useState'],
+      compImports: ['Textarea']
+    }),
+    preview: <ControlledDemo />
+  },
+  {
     title: '조합 예시',
     description: '필수 · 글자 수 · 에러 피드백이 있는 후기 폼 예시입니다.',
-    code: `<form className="form form_vertical form_fit form_compact">
+    code: wrapPageExample(`<form className="form form_vertical form_fit form_compact">
   <Textarea rows={6} showCount maxLength={300} error defaultValue="좋아요" required />
   <div className="form_actions">…</div>
-</form>`,
+</form>`, {
+  name: 'TextareaExample10',
+  reactImports: [],
+  compImports: ['Textarea']
+}),
     preview: (
       <form
         className="form form_vertical form_fit form_compact"
@@ -367,6 +451,7 @@ export default function TextareaGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName="TextareaExample.jsx"
         >
           {section.preview}
         </DemoBlock>

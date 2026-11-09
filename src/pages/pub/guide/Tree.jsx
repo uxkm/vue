@@ -1,13 +1,8 @@
 'use client'
 
-import {
-  DemoBlock,
-  GuideApiDocs,
-  GuideLayout,
-  Tag,
-  Tree,
-  TreeNode
-} from '@/comp'
+import { useState } from 'react'
+import { Tag, Tree, TreeNode } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { treeApiSections } from '@/pages/pub/data/guide/treeApiSections'
 
 function Check ({ label, checked = false }) {
@@ -39,49 +34,123 @@ const FolderIcon = (
   </svg>
 )
 
+/** value · onSelect · expanded 로 페이지에서 선택·펼침을 제어하는 예시 */
+function ControlledDemo () {
+  const [selected, setSelected] = useState('button')
+  const [srcOpen, setSrcOpen] = useState(true)
+  const [componentsOpen, setComponentsOpen] = useState(true)
+  const [publicOpen, setPublicOpen] = useState(false)
+
+  return (
+    <div className="demo-stack">
+      <Tree bordered ariaLabel="파일 탐색기">
+        <TreeNode
+          value="src"
+          label="src"
+          expanded={srcOpen}
+          onExpandedChange={setSrcOpen}
+          toggleLabel="src 폴더 접기"
+          onSelect={setSelected}
+        >
+          <TreeNode
+            value="components"
+            label="components"
+            expanded={componentsOpen}
+            onExpandedChange={setComponentsOpen}
+            toggleLabel="components 폴더 접기"
+            onSelect={setSelected}
+          >
+            <TreeNode
+              value="button"
+              label="button.html"
+              selected={selected === 'button'}
+              onSelect={setSelected}
+            />
+            <TreeNode
+              value="card"
+              label="card.html"
+              selected={selected === 'card'}
+              onSelect={setSelected}
+            />
+          </TreeNode>
+          <TreeNode
+            value="index"
+            label="index.html"
+            selected={selected === 'index'}
+            onSelect={setSelected}
+          />
+        </TreeNode>
+        <TreeNode
+          value="public"
+          label="public"
+          expanded={publicOpen}
+          onExpandedChange={setPublicOpen}
+          toggleLabel="public 폴더 펼치기"
+          onSelect={setSelected}
+        >
+          <TreeNode
+            value="favicon"
+            label="favicon.ico"
+            selected={selected === 'favicon'}
+            onSelect={setSelected}
+          />
+        </TreeNode>
+      </Tree>
+      <p>
+        선택: <code>{selected}</code>
+      </p>
+    </div>
+  )
+}
+
 const SECTIONS = [
   {
     title: '기본',
     description: (
       <>
-        <code>TreeNode</code>를 중첩하고 <code>expanded</code> · <code>selected</code>로 상태를 지정합니다.
+        <code>value</code> · <code>onSelect</code>로 선택을, <code>expanded</code> · <code>onExpandedChange</code>로 펼침을
+        페이지에서 제어합니다. <code>expanded</code>를 넘기면 제어 모드입니다.
       </>
     ),
-    code: `<Tree bordered ariaLabel="파일 탐색기">
-  <TreeNode label="src" expanded toggleLabel="src 폴더 접기">
-    <TreeNode label="components" expanded>
-      <TreeNode label="button.html" selected />
-      <TreeNode label="card.html" />
-    </TreeNode>
-    <TreeNode label="index.html" />
+    code: wrapPageExample(`const [selected, setSelected] = useState('button')
+const [srcOpen, setSrcOpen] = useState(true)
+
+<Tree bordered ariaLabel="파일 탐색기">
+  <TreeNode
+    value="src"
+    label="src"
+    expanded={srcOpen}
+    onExpandedChange={setSrcOpen}
+    onSelect={setSelected}
+  >
+    <TreeNode
+      value="button"
+      label="button.html"
+      selected={selected === 'button'}
+      onSelect={setSelected}
+    />
   </TreeNode>
-  <TreeNode label="public" expanded={false}>…</TreeNode>
-</Tree>`,
-    preview: (
-      <Tree bordered ariaLabel="파일 탐색기">
-        <TreeNode label="src" expanded toggleLabel="src 폴더 접기">
-          <TreeNode label="components" expanded toggleLabel="components 폴더 접기">
-            <TreeNode label="button.html" selected />
-            <TreeNode label="card.html" />
-          </TreeNode>
-          <TreeNode label="index.html" />
-        </TreeNode>
-        <TreeNode label="public" expanded={false} toggleLabel="public 폴더 펼치기">
-          <TreeNode label="favicon.ico" />
-        </TreeNode>
-      </Tree>
-    )
+</Tree>`, {
+      name: 'TreeExample',
+      reactImports: ['useState'],
+      compImports: ['Tree', 'TreeNode']
+    }),
+    preview: <ControlledDemo />
   },
   {
     title: '간단',
     description: '테두리 없이 카테고리형 트리를 구성합니다.',
-    code: `<Tree ariaLabel="카테고리">
+    code: wrapPageExample(`<Tree ariaLabel="카테고리">
   <TreeNode label="전자기기" expanded>
     <TreeNode label="노트북" />
     <TreeNode label="스마트폰" />
   </TreeNode>
   <TreeNode label="의류" />
-</Tree>`,
+</Tree>`, {
+  name: 'TreeExample1',
+  reactImports: [],
+  compImports: ['Tree', 'TreeNode']
+}),
     preview: (
       <Tree ariaLabel="카테고리">
         <TreeNode label="전자기기" expanded toggleLabel="전자기기 접기">
@@ -99,9 +168,13 @@ const SECTIONS = [
         <code>lines</code>로 계층 연결선을 표시합니다.
       </>
     ),
-    code: `<Tree lines bordered ariaLabel="조직도">
+    code: wrapPageExample(`<Tree lines bordered ariaLabel="조직도">
   <TreeNode label="개발본부" expanded>…</TreeNode>
-</Tree>`,
+</Tree>`, {
+  name: 'TreeExample2',
+  reactImports: [],
+  compImports: ['Tree', 'TreeNode']
+}),
     preview: (
       <Tree lines bordered ariaLabel="조직도">
         <TreeNode label="개발본부" expanded toggleLabel="개발본부 접기">
@@ -124,7 +197,11 @@ const SECTIONS = [
         <code>compact</code>로 행 밀도를 줄입니다.
       </>
     ),
-    code: `<Tree compact bordered ariaLabel="권한 목록">…</Tree>`,
+    code: wrapPageExample(`<Tree compact bordered ariaLabel="권한 목록">…</Tree>`, {
+  name: 'TreeExample3',
+  reactImports: [],
+  compImports: ['Tree']
+}),
     preview: (
       <Tree compact bordered ariaLabel="권한 목록">
         <TreeNode label="관리자" expanded toggleLabel="관리자 접기">
@@ -146,9 +223,13 @@ const SECTIONS = [
         <code>plusToggle</code>로 +/− 토글 스타일을 사용합니다.
       </>
     ),
-    code: `<Tree bordered>
+    code: wrapPageExample(`<Tree bordered>
   <TreeNode label="가이드" expanded plusToggle>…</TreeNode>
-</Tree>`,
+</Tree>`, {
+  name: 'TreeExample4',
+  reactImports: [],
+  compImports: ['Tree', 'TreeNode']
+}),
     preview: (
       <Tree bordered ariaLabel="메뉴 구조">
         <TreeNode label="가이드" expanded plusToggle toggleLabel="가이드 접기">
@@ -170,11 +251,23 @@ const SECTIONS = [
         <code>prefix</code>에 체크박스를 두고 <code>multiselectable</code>을 켭니다.
       </>
     ),
-    code: `<Tree bordered multiselectable>
+    code: wrapPageExample(`function Check ({ label, checked = false }) {
+  return (
+    <label className="tree_check">
+      <input type="checkbox" defaultChecked={checked} aria-label={label} />
+    </label>
+  )
+}
+
+<Tree bordered multiselectable>
   <TreeNode label="대시보드" expanded prefix={<Check label="대시보드" checked />}>
     <TreeNode label="조회" prefix={<Check label="조회" checked />} />
   </TreeNode>
-</Tree>`,
+</Tree>`, {
+      name: 'TreeCheckExample',
+      reactImports: [],
+      compImports: ['Tree', 'TreeNode']
+    }),
     preview: (
       <Tree bordered multiselectable ariaLabel="권한 선택">
         <TreeNode
@@ -205,12 +298,16 @@ const SECTIONS = [
         <code>icon</code> · <code>meta</code> · <code>metaSlot</code>으로 보조 정보를 붙입니다.
       </>
     ),
-    code: `<Tree bordered>
+    code: wrapPageExample(`<Tree bordered>
   <TreeNode label="assets" meta="3개" icon={FolderIcon} expanded>
     <TreeNode label="logo.png" meta="24 KB" icon={ImageIcon} />
   </TreeNode>
   <TreeNode label="package.json" icon={FileIcon} metaSlot={<Tag label="수정됨" />} />
-</Tree>`,
+</Tree>`, {
+  name: 'TreeExample6',
+  reactImports: [],
+  compImports: ['Tag', 'Tree', 'TreeNode']
+}),
     preview: (
       <Tree bordered ariaLabel="프로젝트 파일">
         <TreeNode
@@ -239,12 +336,16 @@ const SECTIONS = [
         <code>disabled</code>로 노드·토글을 비활성화합니다.
       </>
     ),
-    code: `<Tree bordered>
+    code: wrapPageExample(`<Tree bordered>
   <TreeNode label="기본 기능" expanded>
     <TreeNode label="고급 분석 (Pro)" disabled />
   </TreeNode>
   <TreeNode label="베타 기능" disabled expanded={false}>…</TreeNode>
-</Tree>`,
+</Tree>`, {
+  name: 'TreeDisabledExample',
+  reactImports: [],
+  compImports: ['Tree', 'TreeNode']
+}),
     preview: (
       <Tree bordered ariaLabel="기능 목록">
         <TreeNode label="기본 기능" expanded toggleLabel="기본 기능 접기">
@@ -265,12 +366,16 @@ const SECTIONS = [
         <code>link</code>으로 클릭 가능한 라벨을 만들고 <code>selected</code>로 현재 항목을 표시합니다.
       </>
     ),
-    code: `<Tree bordered>
+    code: wrapPageExample(`<Tree bordered>
   <TreeNode label="문서" expanded link>
     <TreeNode label="시작하기" selected link />
     <TreeNode label="컴포넌트" link />
   </TreeNode>
-</Tree>`,
+</Tree>`, {
+  name: 'TreeExample8',
+  reactImports: [],
+  compImports: ['Tree', 'TreeNode']
+}),
     preview: (
       <Tree bordered ariaLabel="네비게이션">
         <TreeNode label="문서" expanded link toggleLabel="문서 접기">
@@ -293,7 +398,7 @@ export default function TreeGuide () {
     <GuideLayout
       category="데이터 표시"
       title="Tree"
-      description="Tree · TreeNode로 계층을 구성하고 bordered · lines · compact · plusToggle · link를 조합합니다."
+      description="Tree · TreeNode로 계층을 구성하고 value · onSelect · expanded · onExpandedChange로 제어합니다."
     >
       {SECTIONS.map((section) => (
         <DemoBlock
@@ -301,6 +406,7 @@ export default function TreeGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName="TreeExample.jsx"
         >
           {section.preview}
         </DemoBlock>

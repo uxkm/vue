@@ -8,13 +8,13 @@
  *
  * 헤더 숨김: export const meta = { header: false } (PageChrome)
  */
-import { Link } from '@/lib/router'
-import { Container } from '@/comp/ui/Container'
-import { Header } from '@/comp/module/Header'
-import { GuideMenu } from '@/comp/widget/GuideMenu'
-import { hasNodes } from '@/utils/react'
-import { cx } from '@/utils/cx'
-import { GUIDE_SECTION, useSiteTitle } from '@/lib/siteTitle'
+import { Link } from '@/lib/router' // 앱 라우터 Link
+import { Container } from '@/comp/ui/Container' // 본문 폭·패딩 컨테이너
+import { Header } from '@/comp/module/Header' // 상단 헤더 슬롯
+import { hasNodes } from '@/utils/react' // children 유무 판별
+import { cx } from '@/utils/cx' // className 결합
+import { GUIDE_SECTION, useGuideTitle } from '@/pages/pub/shared/guideTitle' // 탭 섹션·가이드 타이틀
+import { GuideMenu } from './GuideMenu' // 좌측 가이드 네비
 
 const DEFAULT_GUIDE_BRAND = (
   <span className="app-header__brand">퍼블리싱 가이드</span>
@@ -59,10 +59,7 @@ export function GuideLayout ({
   showMenu = true,
   className
 }) {
-  useSiteTitle({
-    page: documentTitle || title,
-    section: documentSection
-  })
+  useGuideTitle(documentTitle || title, { section: documentSection })
 
   const defaultBack = showBack
     ? <Link className="app-header__back-link" to={backTo}>{backLabel}</Link>

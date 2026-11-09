@@ -41,6 +41,24 @@ const props = [
     description: '화살표 위치(가장자리 기준 %). 넘기면 tooltip_arrow-anchor-mixed 와 --tooltip-arrow-position 이 적용됩니다. 예: \'25%\' · 50.'
   },
   {
+    name: 'open',
+    type: 'boolean',
+    default: '—',
+    description: '넘기면 표시 상태를 페이지가 제어합니다. 루트에 is-open 이 붙습니다.'
+  },
+  {
+    name: 'defaultOpen',
+    type: 'boolean',
+    default: 'false',
+    description: '비제어 초기 표시 상태입니다. open 을 넘기지 않을 때 씁니다.'
+  },
+  {
+    name: 'onOpenChange',
+    type: '(open: boolean) => void',
+    default: '—',
+    description: '표시 상태가 바뀔 때 호출됩니다(포인터 진입·이탈 · 포커스·블러 · 제어 토글).'
+  },
+  {
     name: 'children',
     type: 'ReactNode',
     default: '—',
@@ -50,7 +68,7 @@ const props = [
     name: 'className · ...props',
     type: 'span attributes',
     default: '—',
-    description: '루트(tooltip) 클래스와 네이티브 span 속성입니다. 크기(tooltip_sm · tooltip_lg) · 간격(tooltip_offset-*) · 정렬 · 스킨(tooltip_inverse) 변형은 className 으로 붙입니다. is-open 을 붙이면 호버 없이 계속 표시됩니다.'
+    description: '루트(tooltip) 클래스와 네이티브 span 속성입니다. 크기(tooltip_sm · tooltip_lg) · 간격(tooltip_offset-*) · 정렬 · 스킨(tooltip_inverse) 변형은 className 으로 붙입니다.'
   }
 ]
 
@@ -207,7 +225,7 @@ const tokens = [
 export const tooltipApiSections = [
   {
     title: 'API · Props',
-    description: 'React · Next.js Tooltip props입니다. 별도 이벤트(onOpenChange 등)는 없고, 열림 상태는 포인터 · 포커스로 내부에서 관리합니다.',
+    description: 'React · Next.js Tooltip props입니다. 기본은 포인터 · 포커스로 열리고, open · onOpenChange 로 페이지에서 표시를 제어할 수 있습니다.',
     tables: [{ columns, rows: props }]
   },
   {

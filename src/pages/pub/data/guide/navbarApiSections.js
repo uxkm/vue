@@ -65,6 +65,18 @@ const props = [
     description: '모바일 메뉴 열림입니다. open 을 주면 제어 모드, 없으면 defaultOpen 으로 시작합니다. 토글 시 루트·collapse 에 is-open 이 붙습니다.'
   },
   {
+    name: 'selectedKey · defaultSelectedKey',
+    type: 'string | null',
+    default: '— · null',
+    description: '활성 링크 키입니다. selectedKey 를 넘기면 제어하고, 생략하면 defaultSelectedKey 와 내부 상태로 클릭 선택이 갱신됩니다. item.active 와 함께 쓸 수 있습니다.'
+  },
+  {
+    name: 'onSelect',
+    type: '(key, item, event) => void',
+    default: '—',
+    description: '메뉴 링크 클릭 시 호출됩니다. 비제어 모드에서는 내부 selectedKey 도 갱신됩니다. 모바일에서 열린 메뉴는 클릭 후 자동으로 닫힙니다.'
+  },
+  {
     name: 'toggleLabel',
     type: 'string',
     default: "'메뉴 열기'",

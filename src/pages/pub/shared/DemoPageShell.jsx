@@ -1,7 +1,8 @@
 'use client'
 
-import { Link } from '@/lib/router'
-import { GuideLayout, AppHeaderLink } from '@/comp'
+import { Link } from '@/lib/router' // 앱 라우터 Link (브랜드 등)
+import { AppHeaderLink } from '@/comp' // 헤더 네비 링크
+import { GuideLayout } from '@/pages/pub/widgets/guide' // 가이드·데모 공통 레이아웃
 
 /**
  * 라이브러리 데모 공통 틀.

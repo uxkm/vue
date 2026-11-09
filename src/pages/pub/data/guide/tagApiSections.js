@@ -67,8 +67,20 @@ const props = [
   {
     name: 'selected',
     type: 'boolean',
+    default: '—',
+    description: '선택 상태(제어, is-selected · aria-pressed). 넘기면 부모가 선택을 관리합니다.'
+  },
+  {
+    name: 'defaultSelected',
+    type: 'boolean',
     default: 'false',
-    description: '선택 상태(is-selected · aria-pressed).'
+    description: '비제어 초기 선택(checkable). selected 를 넘기지 않을 때 씁니다.'
+  },
+  {
+    name: 'onSelectedChange',
+    type: '(selected: boolean, event) => void',
+    default: '—',
+    description: 'checkable 선택 상태가 바뀔 때 호출됩니다. 페이지에서 선택값을 제어합니다.'
   },
   {
     name: 'disabled',
@@ -104,7 +116,7 @@ const props = [
     name: 'onClose',
     type: '(event) => void',
     default: '—',
-    description: '닫기 버튼 클릭.'
+    description: '닫기 버튼 클릭. 페이지 상태에서 해당 태그를 제거할 때 사용합니다.'
   },
   {
     name: 'children',

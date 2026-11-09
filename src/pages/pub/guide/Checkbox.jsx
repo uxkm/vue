@@ -1,15 +1,8 @@
 'use client'
 
-import {
-  Card,
-  CardBody,
-  CardDeck,
-  CardHeader,
-  Checkbox,
-  DemoBlock,
-  GuideApiDocs,
-  GuideLayout
-} from '@/comp'
+import { useState } from 'react'
+import { Card, CardBody, CardDeck, CardHeader, Checkbox } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { checkboxApiSections } from '@/pages/pub/data/guide/checkboxApiSections'
 
 /** 카드 전체 클릭 → 내부 checkbox input */
@@ -17,6 +10,40 @@ function onClickableCardClick (event) {
   if (event.target.closest('.checkbox_control')) return
   const input = event.currentTarget.querySelector('.checkbox_input')
   if (input instanceof HTMLInputElement && !input.disabled) input.click()
+}
+
+/** checked · onChange 로 부모가 상태를 관리하는 예시 */
+function ControlledDemo () {
+  const [checked, setChecked] = useState(false)
+  const [email, setEmail] = useState(true)
+  const [push, setPush] = useState(false)
+
+  return (
+    <div className="demo-stack">
+      <Checkbox
+        checked={checked}
+        onChange={(e) => setChecked(e.target.checked)}
+        label="동의"
+      />
+      <div className="form_field">
+        <span className="form_field-label" id="checkbox-notify-label">알림 설정</span>
+        <fieldset className="checkbox_group" aria-labelledby="checkbox-notify-label">
+          <Checkbox checked={email} onChange={(e) => setEmail(e.target.checked)}>
+            <span className="checkbox_content">
+              <span className="checkbox_label">이메일 알림</span>
+              <span className="checkbox_hint">중요 공지와 계정 관련 메일을 받습니다.</span>
+            </span>
+          </Checkbox>
+          <Checkbox checked={push} onChange={(e) => setPush(e.target.checked)}>
+            <span className="checkbox_content">
+              <span className="checkbox_label">푸시 알림</span>
+              <span className="checkbox_hint">모바일·브라우저 푸시를 허용합니다.</span>
+            </span>
+          </Checkbox>
+        </fieldset>
+      </div>
+    </div>
+  )
 }
 
 const SECTIONS = [
@@ -28,7 +55,7 @@ const SECTIONS = [
         보이는 레이블이 없으면 <code>label.checkbox_control</code>로 암묵 연결합니다.
       </>
     ),
-    code: `<Checkbox checked label="기본 — checkbox" />
+    code: wrapPageExample(`<Checkbox checked label="기본 — checkbox" />
 <Checkbox labelEnd label="레이블 뒤 — checkbox_label-end" />
 <fieldset className="checkbox_group checkbox_group_horizontal">
   <Checkbox button checked label="버튼형" />
@@ -36,7 +63,11 @@ const SECTIONS = [
 </fieldset>
 <div className="checkbox_card">
   <Card compact>…</Card>
-</div>`,
+</div>`, {
+  name: 'CheckboxExample1',
+  reactImports: [],
+  compImports: ['Card', 'Checkbox']
+}),
     preview: (
       <div className="demo-stack">
         <Checkbox checked label="기본 — checkbox" />
@@ -77,13 +108,17 @@ const SECTIONS = [
         전체 너비는 <code>checkbox_block</code> · <code>checkbox_group_block</code>을 씁니다.
       </>
     ),
-    code: `<Checkbox labelEnd checked label="푸시 알림 받기" />
+    code: wrapPageExample(`<Checkbox labelEnd checked label="푸시 알림 받기" />
 <Checkbox labelEnd>
   <span className="checkbox_content">
     <span className="checkbox_label">마케팅 정보 수신</span>
     <span className="checkbox_hint">이벤트·할인 소식을 이메일로 받습니다.</span>
   </span>
-</Checkbox>`,
+</Checkbox>`, {
+  name: 'CheckboxExample2',
+  reactImports: [],
+  compImports: ['Checkbox']
+}),
     preview: (
       <div className="demo-stack">
         <Checkbox labelEnd checked label="푸시 알림 받기" />
@@ -111,40 +146,29 @@ const SECTIONS = [
     title: '기본',
     description: (
       <>
-        레이블과 보조 설명(<code>checkbox_hint</code>)을 함께 사용할 수 있습니다.
+        <code>checked !== undefined</code>이면 제어 모드입니다(<code>onChange</code> 유무와 무관).
+        부모 <code>useState</code>로 체크 상태를 관리하고, 레이블·보조 설명(<code>checkbox_hint</code>)을 함께 쓸 수 있습니다.
       </>
     ),
-    code: `<div className="form_field">
-  <span className="form_field-label" id="checkbox-notify-label">알림 설정</span>
-  <fieldset className="checkbox_group" aria-labelledby="checkbox-notify-label">
-    <Checkbox checked>
-      <span className="checkbox_content">
-        <span className="checkbox_label">이메일 알림</span>
-        <span className="checkbox_hint">중요 공지와 계정 관련 메일을 받습니다.</span>
-      </span>
-    </Checkbox>
-    …
-  </fieldset>
-</div>`,
-    preview: (
-      <div className="form_field">
-        <span className="form_field-label" id="checkbox-notify-label">알림 설정</span>
-        <fieldset className="checkbox_group" aria-labelledby="checkbox-notify-label">
-          <Checkbox checked>
-            <span className="checkbox_content">
-              <span className="checkbox_label">이메일 알림</span>
-              <span className="checkbox_hint">중요 공지와 계정 관련 메일을 받습니다.</span>
-            </span>
-          </Checkbox>
-          <Checkbox>
-            <span className="checkbox_content">
-              <span className="checkbox_label">푸시 알림</span>
-              <span className="checkbox_hint">모바일·브라우저 푸시를 허용합니다.</span>
-            </span>
-          </Checkbox>
-        </fieldset>
-      </div>
-    )
+    code: wrapPageExample(`const [checked, setChecked] = useState(false)
+const [email, setEmail] = useState(true)
+
+<Checkbox
+  checked={checked}
+  onChange={(e) => setChecked(e.target.checked)}
+  label="동의"
+/>
+<Checkbox checked={email} onChange={(e) => setEmail(e.target.checked)}>
+  <span className="checkbox_content">
+    <span className="checkbox_label">이메일 알림</span>
+    <span className="checkbox_hint">중요 공지와 계정 관련 메일을 받습니다.</span>
+  </span>
+</Checkbox>`, {
+      name: 'CheckboxExample',
+      reactImports: ['useState'],
+      compImports: ['Checkbox']
+    }),
+    preview: <ControlledDemo />
   },
   {
     title: '단독 사용',
@@ -153,9 +177,13 @@ const SECTIONS = [
         레이블 없이 체크박스만 사용할 수 있습니다. <code>ariaLabel</code>로 접근 가능한 이름을 지정합니다.
       </>
     ),
-    code: `<Checkbox ariaLabel="항목 선택" />
+    code: wrapPageExample(`<Checkbox ariaLabel="항목 선택" />
 <Checkbox checked ariaLabel="선택됨" />
-<Checkbox disabled ariaLabel="비활성" />`,
+<Checkbox disabled ariaLabel="비활성" />`, {
+  name: 'CheckboxExample3',
+  reactImports: [],
+  compImports: ['Checkbox']
+}),
     preview: (
       <div className="demo-stack">
         <Checkbox ariaLabel="항목 선택" />
@@ -171,9 +199,13 @@ const SECTIONS = [
         <code>checkbox_sm</code> · 기본 · <code>checkbox_lg</code>로 박스·텍스트 크기를 조절합니다.
       </>
     ),
-    code: `<Checkbox className="checkbox_sm" checked label="Small — checkbox_sm" />
+    code: wrapPageExample(`<Checkbox className="checkbox_sm" checked label="Small — checkbox_sm" />
 <Checkbox checked label="Medium — 기본" />
-<Checkbox className="checkbox_lg" checked label="Large — checkbox_lg" />`,
+<Checkbox className="checkbox_lg" checked label="Large — checkbox_lg" />`, {
+  name: 'CheckboxSizeExample',
+  reactImports: [],
+  compImports: ['Checkbox']
+}),
     preview: (
       <div className="demo-stack">
         <Checkbox className="checkbox_sm" checked label="Small — checkbox_sm" />
@@ -189,9 +221,13 @@ const SECTIONS = [
         기본은 인라인(콘텐츠) 너비입니다. <code>checkbox_block</code> · <code>checkbox_group_block</code>으로 전체 너비를 사용합니다.
       </>
     ),
-    code: `<Checkbox checked label="기본 — 인라인 너비" />
+    code: wrapPageExample(`<Checkbox checked label="기본 — 인라인 너비" />
 <Checkbox className="checkbox_block" checked label="checkbox_block — 전체 너비" />
-<fieldset className="checkbox_group checkbox_group_block">…</fieldset>`,
+<fieldset className="checkbox_group checkbox_group_block">…</fieldset>`, {
+  name: 'CheckboxExample5',
+  reactImports: [],
+  compImports: ['Checkbox']
+}),
     preview: (
       <div className="demo-stack">
         <Checkbox checked label="기본 — 인라인 너비" />
@@ -214,9 +250,13 @@ const SECTIONS = [
         <code>color_primary</code> · <code>color_success</code> · <code>color_danger</code> · <code>color_warning</code>으로 선택 색을 지정합니다.
       </>
     ),
-    code: `<Checkbox className="color_primary" checked label="Primary" />
+    code: wrapPageExample(`<Checkbox className="color_primary" checked label="Primary" />
 <Checkbox className="color_success" checked label="Success" />
-…`,
+…`, {
+  name: 'CheckboxColorExample',
+  reactImports: [],
+  compImports: ['Checkbox']
+}),
     preview: (
       <div className="demo-stack">
         <Checkbox className="color_primary" checked label="Primary" />
@@ -233,10 +273,14 @@ const SECTIONS = [
         선택·미선택·불확정(<code>indeterminate</code>)·비활성 상태를 지원합니다.
       </>
     ),
-    code: `<Checkbox label="미선택" />
+    code: wrapPageExample(`<Checkbox label="미선택" />
 <Checkbox checked label="선택됨" />
 <Checkbox checked indeterminate label="불확정" />
-<Checkbox disabled label="비활성" />`,
+<Checkbox disabled label="비활성" />`, {
+  name: 'CheckboxStateExample',
+  reactImports: [],
+  compImports: ['Checkbox']
+}),
     preview: (
       <div className="demo-stack">
         <Checkbox label="미선택" />
@@ -254,12 +298,16 @@ const SECTIONS = [
         <code>checkbox_group</code>으로 묶습니다. <code>checkbox_group_horizontal</code> · <code>checkbox_group_compact</code> 변형이 있습니다.
       </>
     ),
-    code: `<fieldset className="checkbox_group">
+    code: wrapPageExample(`<fieldset className="checkbox_group">
   <legend className="checkbox_group-legend">관심 분야 (세로)</legend>
   <Checkbox checked label="디자인" />
   …
 </fieldset>
-<fieldset className="checkbox_group checkbox_group_horizontal">…</fieldset>`,
+<fieldset className="checkbox_group checkbox_group_horizontal">…</fieldset>`, {
+  name: 'CheckboxGroupExample',
+  reactImports: [],
+  compImports: ['Checkbox']
+}),
     preview: (
       <div className="demo-stack">
         <fieldset className="checkbox_group">
@@ -284,11 +332,15 @@ const SECTIONS = [
         <code>button</code>은 태그·필터 UI에 적합합니다. 크기·색상 변형과 함께 사용할 수 있습니다.
       </>
     ),
-    code: `<fieldset className="checkbox_group checkbox_group_horizontal">
+    code: wrapPageExample(`<fieldset className="checkbox_group checkbox_group_horizontal">
   <Checkbox button checked label="전체" />
   <Checkbox button label="진행 중" />
   …
-</fieldset>`,
+</fieldset>`, {
+  name: 'CheckboxExample9',
+  reactImports: [],
+  compImports: ['Checkbox']
+}),
     preview: (
       <div className="demo-stack">
         <fieldset className="checkbox_group checkbox_group_horizontal">
@@ -312,7 +364,7 @@ const SECTIONS = [
         <code>div.checkbox_card</code> + card 조합입니다. 카드 전체 클릭은 <code>checkbox_card-clickable</code>을 씁니다.
       </>
     ),
-    code: `<div className="checkbox_card">
+    code: wrapPageExample(`<div className="checkbox_card">
   <Card compact className="card_shadow">
     <CardHeader extra={<Checkbox id="…" checked aria-labelledby="…" />}>
       <h3 className="card_title" id="…">Basic</h3>
@@ -320,7 +372,11 @@ const SECTIONS = [
     </CardHeader>
     <CardBody id="…">개인 프로젝트에 적합합니다.</CardBody>
   </Card>
-</div>`,
+</div>`, {
+  name: 'CheckboxExample10',
+  reactImports: [],
+  compImports: ['Card', 'CardBody', 'CardHeader', 'Checkbox']
+}),
     preview: (
       <div className="demo-stack">
         <fieldset className="checkbox_group">
@@ -529,7 +585,7 @@ const SECTIONS = [
         <code>form_vertical</code> · <code>form_horizontal</code>과 함께 사용합니다.
       </>
     ),
-    code: `<form className="form form_vertical form_fit">
+    code: wrapPageExample(`<form className="form form_vertical form_fit">
   <div className="form_field">
     <span className="form_field-label" id="…">수신 동의</span>
     <fieldset className="checkbox_group" aria-labelledby="…">
@@ -537,7 +593,11 @@ const SECTIONS = [
       <Checkbox label="뉴스레터 구독" />
     </fieldset>
   </div>
-</form>`,
+</form>`, {
+  name: 'CheckboxFormExample',
+  reactImports: [],
+  compImports: ['Checkbox']
+}),
     preview: (
       <div className="demo-stack">
         <form className="form form_vertical form_fit" onSubmit={(event) => event.preventDefault()}>
@@ -579,7 +639,7 @@ export default function CheckboxGuide () {
     <GuideLayout
       category="폼"
       title="Checkbox"
-      description="다중 선택이 가능한 체크박스. label · button · indeterminate · labelEnd · 카드형을 조합합니다."
+      description="다중 선택이 가능한 체크박스. checked · onChange로 제어하고 label · button · indeterminate · labelEnd를 조합합니다."
     >
       {SECTIONS.map((section) => (
         <DemoBlock
@@ -587,6 +647,7 @@ export default function CheckboxGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName="CheckboxExample.jsx"
         >
           {section.preview}
         </DemoBlock>

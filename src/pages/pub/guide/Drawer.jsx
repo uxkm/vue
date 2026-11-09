@@ -1,13 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  Button,
-  DemoBlock,
-  Drawer,
-  GuideApiDocs,
-  GuideLayout
-} from '@/comp'
+import { Button, Drawer } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { drawerApiSections } from '@/pages/pub/data/guide/drawerApiSections'
 
 /** 취소·확인 푸터 버튼 */
@@ -33,6 +28,9 @@ function OpenDemo () {
         title="필터"
         footer={<FooterActions onCancel={close} onConfirm={close} />}
         onClose={close}
+        onOpenChange={(next) => {
+          if (!next) close()
+        }}
       >
         조건을 선택하세요.
       </Drawer>
@@ -103,10 +101,57 @@ function BottomSheetDemo () {
         draggable={drag}
         title={drag ? '드래그 시트' : '일반 하단 시트'}
         onClose={() => setOpen(false)}
+        onOpenChange={(next) => {
+          if (!next) setOpen(false)
+        }}
       >
         {drag
           ? '상단 바를 아래로 끌면 닫히고, 위로 끌면 확장됩니다.'
           : '핸들 바 없이 닫기 버튼·오버레이로만 닫습니다.'}
+      </Drawer>
+    </>
+  )
+}
+
+/** bottom + draggable — expanded 를 페이지에서 제어하는 예시 */
+function ExpandedControlDemo () {
+  const [open, setOpen] = useState(false)
+  const [expanded, setExpanded] = useState(false)
+  const close = () => {
+    setOpen(false)
+    setExpanded(false)
+  }
+
+  return (
+    <>
+      <div className="demo-row">
+        <Button
+          label="시트 열기"
+          onClick={() => {
+            setExpanded(false)
+            setOpen(true)
+          }}
+        />
+        <Button
+          variant="outline"
+          label={expanded ? '축소' : '확장'}
+          disabled={!open}
+          onClick={() => setExpanded((prev) => !prev)}
+        />
+      </div>
+      <Drawer
+        open={open}
+        placement="bottom"
+        draggable
+        expanded={expanded}
+        onExpandedChange={setExpanded}
+        title="확장 제어 시트"
+        onClose={close}
+        onOpenChange={(next) => {
+          if (!next) close()
+        }}
+      >
+        핸들을 위로 끌거나 페이지의 확장 버튼으로 높이를 바꿉니다.
       </Drawer>
     </>
   )
@@ -142,10 +187,10 @@ const SECTIONS = [
     description: (
       <>
         <code>open</code>에 맞춰 가장자리에서 슬라이드로 열리고 닫힙니다.
-        오버레이나 닫기 버튼(<code>Icon</code> <code>close</code>)을 누르면 <code>onClose</code>가 호출되므로, 부모에서 <code>open</code> 상태를 직접 바꿉니다.
+        오버레이나 닫기 버튼(<code>Icon</code> <code>close</code>)을 누르면 <code>onClose</code>와 <code>onOpenChange(false)</code>가 호출되므로, 부모에서 <code>open</code> 상태를 직접 바꿉니다.
       </>
     ),
-    code: `const [open, setOpen] = useState(false)
+    code: wrapPageExample(`const [open, setOpen] = useState(false)
 
 <Button label="서랍 열기" onClick={() => setOpen(true)} />
 <Drawer
@@ -158,9 +203,14 @@ const SECTIONS = [
     </>
   }
   onClose={() => setOpen(false)}
+  onOpenChange={(next) => { if (!next) setOpen(false) }}
 >
   조건을 선택하세요.
-</Drawer>`,
+</Drawer>`, {
+      name: 'DrawerExample',
+      reactImports: ['useState'],
+      compImports: ['Drawer', 'Button']
+    }),
     preview: <OpenDemo />
   },
   {
@@ -171,10 +221,14 @@ const SECTIONS = [
         <code>drawer_placement-*</code> 클래스가 붙습니다.
       </>
     ),
-    code: `<Drawer open={open} placement="left" title="left" onClose={close}>내용</Drawer>
+    code: wrapPageExample(`<Drawer open={open} placement="left" title="left" onClose={close}>내용</Drawer>
 <Drawer open={open} placement="right" title="right" onClose={close}>내용</Drawer>
 <Drawer open={open} placement="top" title="top" onClose={close}>내용</Drawer>
-<Drawer open={open} placement="bottom" title="bottom" onClose={close}>내용</Drawer>`,
+<Drawer open={open} placement="bottom" title="bottom" onClose={close}>내용</Drawer>`, {
+  name: 'DrawerExample1',
+  reactImports: [],
+  compImports: ['Drawer']
+}),
     preview: <PlacementDemo />
   },
   {
@@ -183,15 +237,62 @@ const SECTIONS = [
       <>
         <code>placement=&quot;bottom&quot;</code>에서 <code>draggable</code>이면 상단에 핸들 바가 보이고 드래그로 닫기·확장할 수 있습니다.
         <code>draggable</code>이 없으면 바를 표시하지 않으며 닫기 버튼·오버레이만 사용합니다.
+        닫힐 때 <code>onClose</code>와 함께 <code>onOpenChange(false)</code>가 호출됩니다.
       </>
     ),
-    code: `<Drawer open={open} placement="bottom" draggable title="드래그 시트" onClose={close}>
+    code: wrapPageExample(`<Drawer
+  open={open}
+  placement="bottom"
+  draggable
+  title="드래그 시트"
+  onClose={close}
+  onOpenChange={(next) => { if (!next) setOpen(false) }}
+>
   상단 바를 드래그하세요.
 </Drawer>
 <Drawer open={open} placement="bottom" title="일반 하단 시트" onClose={close}>
   핸들 바 없음
-</Drawer>`,
+</Drawer>`, {
+  name: 'DrawerExample2',
+  reactImports: [],
+  compImports: ['Drawer']
+}),
     preview: <BottomSheetDemo />
+  },
+  {
+    title: '하단 시트 · 확장 제어',
+    description: (
+      <>
+        <code>expanded</code> · <code>onExpandedChange</code>로 확장 높이를 페이지에서 제어합니다.
+        비제어는 <code>defaultExpanded</code>를 씁니다. 페이지 버튼으로도 토글할 수 있습니다.
+      </>
+    ),
+    code: wrapPageExample(`const [open, setOpen] = useState(false)
+const [expanded, setExpanded] = useState(false)
+
+<Button label="시트 열기" onClick={() => setOpen(true)} />
+<Button
+  variant="outline"
+  label={expanded ? '축소' : '확장'}
+  onClick={() => setExpanded((prev) => !prev)}
+/>
+<Drawer
+  open={open}
+  placement="bottom"
+  draggable
+  expanded={expanded}
+  onExpandedChange={setExpanded}
+  title="확장 제어 시트"
+  onClose={() => setOpen(false)}
+  onOpenChange={(next) => { if (!next) setOpen(false) }}
+>
+  핸들 드래그 또는 버튼으로 확장합니다.
+</Drawer>`, {
+      name: 'DrawerExpandedExample',
+      reactImports: ['useState'],
+      compImports: ['Drawer', 'Button']
+    }),
+    preview: <ExpandedControlDemo />
   },
   {
     title: '제목과 본문',
@@ -201,12 +302,16 @@ const SECTIONS = [
         <code>title</code>이 없어도 빈 제목 영역이 남아 닫기 버튼은 항상 오른쪽 끝에 위치합니다.
       </>
     ),
-    code: `<div className="drawer_demo-frame drawer_demo-frame-compact">
+    code: wrapPageExample(`<div className="drawer_demo-frame drawer_demo-frame-compact">
   <Drawer staticDemo open title="제목이 있는 서랍">본문 내용입니다.</Drawer>
 </div>
 <div className="drawer_demo-frame drawer_demo-frame-compact">
   <Drawer staticDemo open>제목 없이 본문만 있는 서랍입니다.</Drawer>
-</div>`,
+</div>`, {
+  name: 'DrawerExample3',
+  reactImports: [],
+  compImports: ['Drawer']
+}),
     preview: (
       <div className="demo-stack">
         <div className="drawer_demo-frame drawer_demo-frame-compact">
@@ -226,9 +331,13 @@ const SECTIONS = [
         left·right는 너비, top·bottom은 높이 토큰이 바뀝니다.
       </>
     ),
-    code: `<Drawer open={open} className="drawer_sm" title="Small" onClose={close}>작은 서랍</Drawer>
+    code: wrapPageExample(`<Drawer open={open} className="drawer_sm" title="Small" onClose={close}>작은 서랍</Drawer>
 <Drawer open={open} title="Medium" onClose={close}>기본 서랍</Drawer>
-<Drawer open={open} className="drawer_lg" title="Large" onClose={close}>큰 서랍</Drawer>`,
+<Drawer open={open} className="drawer_lg" title="Large" onClose={close}>큰 서랍</Drawer>`, {
+  name: 'DrawerSizeExample',
+  reactImports: [],
+  compImports: ['Drawer']
+}),
     preview: <SizeDemo />
   },
   {
@@ -239,7 +348,7 @@ const SECTIONS = [
         <code>footer</code>가 없으면 푸터 영역은 렌더링되지 않습니다.
       </>
     ),
-    code: `<Drawer
+    code: wrapPageExample(`<Drawer
   open
   title="필터"
   footer={
@@ -250,7 +359,11 @@ const SECTIONS = [
   }
 >
   조건을 선택하세요.
-</Drawer>`,
+</Drawer>`, {
+  name: 'DrawerExample5',
+  reactImports: [],
+  compImports: ['Button', 'Drawer']
+}),
     preview: (
       <div className="drawer_demo-frame drawer_demo-frame-compact">
         <Drawer
@@ -272,9 +385,13 @@ const SECTIONS = [
         가이드 미리보기용이며, 실제 화면에서는 쓰지 않습니다.
       </>
     ),
-    code: `<div className="drawer_demo-frame">
+    code: wrapPageExample(`<div className="drawer_demo-frame">
   <Drawer staticDemo open title="고정 미리보기">프레임 안에 표시됩니다.</Drawer>
-</div>`,
+</div>`, {
+  name: 'DrawerScrollExample',
+  reactImports: [],
+  compImports: ['Drawer']
+}),
     preview: (
       <div className="drawer_demo-frame">
         <Drawer staticDemo open title="고정 미리보기">프레임 안에 표시됩니다.</Drawer>
@@ -285,13 +402,17 @@ const SECTIONS = [
     title: '접근성',
     description: (
       <>
-        루트에 <code>role="dialog"</code> · <code>aria-modal="true"</code>가 자동 지정되고, 닫기 버튼에는 <code>aria-label="닫기"</code>가 있습니다.
+        루트에 <code>role=&quot;dialog&quot;</code> · <code>aria-modal=&quot;true&quot;</code>가 자동 지정되고, 닫기 버튼에는 <code>aria-label=&quot;닫기&quot;</code>가 있습니다.
         <code>aria-label</code> 등 네이티브 div 속성은 루트로 전달됩니다.
       </>
     ),
-    code: `<Drawer open title="상세" aria-label="상세 서랍" onClose={close}>
+    code: wrapPageExample(`<Drawer open title="상세" aria-label="상세 서랍" onClose={close}>
   내용
-</Drawer>`,
+</Drawer>`, {
+  name: 'DrawerA11yExample',
+  reactImports: [],
+  compImports: ['Drawer']
+}),
     preview: (
       <div className="drawer_demo-frame drawer_demo-frame-compact">
         <Drawer staticDemo open title="상세" aria-label="상세 서랍">내용</Drawer>
@@ -309,7 +430,7 @@ export default function DrawerGuide () {
     <GuideLayout
       category="피드백"
       title="Drawer"
-      description="화면 가장자리 패널. open · placement · title · footer로 구성합니다."
+      description="화면 가장자리 패널. open · placement · title · footer · expanded로 구성합니다."
     >
       {SECTIONS.map((section) => (
         <DemoBlock
@@ -317,6 +438,7 @@ export default function DrawerGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName="DrawerExample.jsx"
         >
           {section.preview}
         </DemoBlock>

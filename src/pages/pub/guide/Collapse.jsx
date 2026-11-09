@@ -1,17 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  Button,
-  Collapse,
-  CollapseItem,
-  CollapsePanel,
-  DemoBlock,
-  GuideApiDocs,
-  GuideLayout,
-  Icon,
-  Space
-} from '@/comp'
+import { Button, Collapse, CollapseItem, CollapsePanel, Icon, Space } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { collapseApiSections } from '@/pages/pub/data/guide/collapseApiSections'
 
 const BASIC_ITEMS = [
@@ -98,7 +89,7 @@ function compoundCode (options = {}) {
     hasDisabled ? 'disabled={item.disabled}' : null
   ].filter(Boolean).join('\n      ')
 
-  return `${wrapStart}${itemsDecl}
+  const fragment = `${wrapStart}${itemsDecl}
 const [value, setValue] = useState(${initialLit})
 
 <Collapse value={value} onChange={setValue}${propLine}>
@@ -113,6 +104,15 @@ const [value, setValue] = useState(${initialLit})
     </CollapsePanel>
   ))}
 </Collapse>${wrapEnd}`
+
+  const compImports = ['Collapse', 'CollapseItem', 'CollapsePanel']
+  if (hasIcon) compImports.push('Icon')
+
+  return wrapPageExample(fragment, {
+    name: options.name || 'CollapseExample',
+    reactImports: ['useState'],
+    compImports
+  })
 }
 
 /** 메뉴 데이터 map + 아이콘 커스텀 · 칸별 패널 */
@@ -283,14 +283,14 @@ const SECTIONS = [
         패널은 칸별 <code>CollapsePanel</code>에 텍스트·컴포넌트(슬롯)·페이지를 넣습니다.
       </>
     ),
-    code: `const menu = [
+    code: [
+      wrapPageExample(`const menu = [
   { value: 'overview', label: '개요', icon: 'home' },
   { value: 'settings', label: '설정', icon: 'settings' },
   { value: 'activity', label: '활동(비활성)', disabled: true }
 ]
 const [value, setValue] = useState(['overview'])
 
-// 1) 메뉴 map + 칸별 패널
 <Collapse value={value} onChange={setValue}>
   {menu.map((item) => (
     <CollapseItem key={item.value} value={item.value} disabled={item.disabled}>
@@ -307,9 +307,18 @@ const [value, setValue] = useState(['overview'])
       <p>콘텐츠: {item.label}</p>
     </CollapsePanel>
   ))}
-</Collapse>
-
-// 2) value → 컴포넌트(슬롯)·페이지
+</Collapse>`, {
+        name: 'CollapseCustomLabelExample',
+        reactImports: ['useState'],
+        compImports: ['Collapse', 'CollapseItem', 'CollapsePanel', 'Icon']
+      }),
+      wrapPageExample(`const menu = [
+  { value: 'overview', label: '개요', icon: 'home' },
+  { value: 'settings', label: '설정', icon: 'settings' },
+  { value: 'activity', label: '활동(비활성)', disabled: true }
+]
+const [value, setValue] = useState(['overview'])
+// OverviewPage · SettingsPage · ActivityPage 는 페이지/슬롯 컴포넌트
 const panels = {
   overview: OverviewPage,
   settings: SettingsPage,
@@ -335,7 +344,12 @@ const panels = {
       </CollapsePanel>
     )
   })}
-</Collapse>`,
+</Collapse>`, {
+        name: 'CollapseSlotPanelExample',
+        reactImports: ['useState'],
+        compImports: ['Collapse', 'CollapseItem', 'CollapsePanel', 'Icon']
+      })
+    ].join('\n\n'),
     preview: (
       <Space vertical block size={24}>
         <CompoundCollapseDemo />
@@ -480,6 +494,7 @@ export default function CollapseGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName={section.title === 'HTML 마크업' ? 'collapse.html' : 'CollapseExample.jsx'}
         >
           {section.preview}
         </DemoBlock>

@@ -35,16 +35,16 @@ const props = [
     description: '메뉴는 tabs.map → Tab 반복을 권장합니다. TabPanel 없이 남은 children 은 활성 패널 단일 슬롯(내용·컴포넌트 교체)으로 씁니다. 항목별 패널이 필요하면 TabPanel(value) 또는 tabs[].content 를 씁니다. Tabs.Tab · Tabs.Panel 별칭도 같습니다.'
   },
   {
-    name: 'value',
+    name: 'value · defaultValue',
     type: 'string | number',
-    default: "''",
-    description: '선택된 탭 value 입니다. 일치하는 탭에 is-active · aria-selected="true" 가 붙습니다.'
+    default: '— · 첫 사용 가능 탭',
+    description: '선택된 탭 value 입니다. value 를 넘기면 제어하고, 생략하면 defaultValue(또는 첫 탭)와 내부 상태로 동작합니다.'
   },
   {
     name: 'onChange',
     type: '(value: string | number) => void',
     default: '—',
-    description: '탭을 고를 때 호출됩니다. 같은 값을 다시 눌러도 호출되지 않습니다.'
+    description: '탭을 고를 때 호출됩니다. 같은 값을 다시 눌러도 호출되지 않습니다. 비제어 모드에서도 내부 활성 탭이 갱신됩니다.'
   },
   {
     name: 'onClose',

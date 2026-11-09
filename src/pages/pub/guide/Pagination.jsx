@@ -1,13 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  DemoBlock,
-  GuideApiDocs,
-  GuideLayout,
-  Pagination,
-  Space
-} from '@/comp'
+import { Pagination, Space } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { paginationApiSections } from '@/pages/pub/data/guide/paginationApiSections'
 
 /** page 상태를 가진 데모 */
@@ -25,8 +20,12 @@ const SECTIONS = [
         현재 쪽은 <code>is-active</code>와 <code>aria-current=&quot;page&quot;</code>가 붙습니다.
       </>
     ),
-    code: `const [page, setPage] = useState(1)
-<Pagination page={page} pageCount={8} onChange={setPage} />`,
+    code: wrapPageExample(`const [page, setPage] = useState(1)
+<Pagination page={page} pageCount={8} onChange={setPage} />`, {
+      name: 'PaginationExample',
+      reactImports: ['useState'],
+      compImports: ['Pagination']
+    }),
     preview: <ControlledPagination page={1} pageCount={8} />
   },
   {
@@ -37,8 +36,12 @@ const SECTIONS = [
         <code>siblingCount</code>로 현재 페이지 양옆 번호 개수를 조절합니다.
       </>
     ),
-    code: `<Pagination page={5} pageCount={20} siblingCount={1} onChange={setPage} />
-<Pagination page={5} pageCount={20} siblingCount={2} onChange={setPage} />`,
+    code: wrapPageExample(`<Pagination page={5} pageCount={20} siblingCount={1} onChange={setPage} />
+<Pagination page={5} pageCount={20} siblingCount={2} onChange={setPage} />`, {
+  name: 'PaginationCountExample',
+  reactImports: [],
+  compImports: ['Pagination']
+}),
     preview: (
       <Space vertical block size={16}>
         <ControlledPagination page={5} pageCount={20} siblingCount={1} />
@@ -54,9 +57,13 @@ const SECTIONS = [
         <code>sm</code> · <code>lg</code>일 때 <code>pagination_sm</code> · <code>pagination_lg</code>가 붙습니다.
       </>
     ),
-    code: `<Pagination size="sm" page={2} pageCount={5} onChange={setPage} />
+    code: wrapPageExample(`<Pagination size="sm" page={2} pageCount={5} onChange={setPage} />
 <Pagination size="md" page={2} pageCount={5} onChange={setPage} />
-<Pagination size="lg" page={2} pageCount={5} onChange={setPage} />`,
+<Pagination size="lg" page={2} pageCount={5} onChange={setPage} />`, {
+  name: 'PaginationSizeExample',
+  reactImports: [],
+  compImports: ['Pagination']
+}),
     preview: (
       <Space vertical block size={16}>
         <ControlledPagination size="sm" page={2} pageCount={5} />
@@ -73,9 +80,13 @@ const SECTIONS = [
         <code>simple</code>은 번호 대신 <code>현재 / 전체</code> 텍스트입니다.
       </>
     ),
-    code: `<Pagination round page={2} pageCount={6} onChange={setPage} />
+    code: wrapPageExample(`<Pagination round page={2} pageCount={6} onChange={setPage} />
 <Pagination minimal page={2} pageCount={6} onChange={setPage} />
-<Pagination simple page={2} pageCount={6} onChange={setPage} />`,
+<Pagination simple page={2} pageCount={6} onChange={setPage} />`, {
+  name: 'PaginationVariantExample',
+  reactImports: [],
+  compImports: ['Pagination']
+}),
     preview: (
       <Space vertical block size={16}>
         <ControlledPagination round page={2} pageCount={6} />
@@ -92,14 +103,18 @@ const SECTIONS = [
         <code>showJumper</code>로 페이지 입력 이동을 추가합니다.
       </>
     ),
-    code: `<Pagination
+    code: wrapPageExample(`<Pagination
   align="center"
   total="총 128건"
   showJumper
   page={3}
   pageCount={12}
   onChange={setPage}
-/>`,
+/>`, {
+  name: 'PaginationExample4',
+  reactImports: [],
+  compImports: ['Pagination']
+}),
     preview: (
       <ControlledPagination
         align="center"
@@ -172,7 +187,11 @@ const SECTIONS = [
         이전·다음은 각각 aria-label, 활성 번호는 <code>aria-current=&quot;page&quot;</code>입니다.
       </>
     ),
-    code: `<Pagination ariaLabel="검색 결과 페이지" page={1} pageCount={4} onChange={setPage} />`,
+    code: wrapPageExample(`<Pagination ariaLabel="검색 결과 페이지" page={1} pageCount={4} onChange={setPage} />`, {
+  name: 'PaginationA11yExample',
+  reactImports: [],
+  compImports: ['Pagination']
+}),
     preview: (
       <ControlledPagination ariaLabel="검색 결과 페이지" page={1} pageCount={4} />
     )
@@ -196,6 +215,7 @@ export default function PaginationGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName={section.title === 'HTML 마크업' ? 'pagination.html' : 'PaginationExample.jsx'}
         >
           {section.preview}
         </DemoBlock>

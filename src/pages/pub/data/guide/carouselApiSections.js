@@ -39,7 +39,25 @@ const props = [
     name: 'initialSlide',
     type: 'number',
     default: '0',
-    description: '처음 표시할 슬라이드 인덱스입니다.'
+    description: '처음 표시할 슬라이드 인덱스입니다. index(제어)를 쓰지 않을 때 초기 위치입니다.'
+  },
+  {
+    name: 'index',
+    type: 'number',
+    default: '—',
+    description: '현재 슬라이드 인덱스(제어). 넘기면 페이지가 위치를 관리합니다.'
+  },
+  {
+    name: 'onIndexChange',
+    type: '(index: number, swiper) => void',
+    default: '—',
+    description: '슬라이드가 바뀔 때 호출됩니다. 제어 모드에서는 부모가 index 를 갱신합니다. 갱신하지 않으면 prop 위치로 되돌립니다.'
+  },
+  {
+    name: 'playing · defaultPlaying · onPlayingChange',
+    type: 'boolean · (playing) => void',
+    default: '— · autoplay · —',
+    description: '자동재생 재생/정지 상태입니다. playing 을 넘기면 페이지가 제어하고, 토글 시 onPlayingChange 가 호출됩니다.'
   },
   {
     name: 'navigation',
@@ -135,7 +153,7 @@ const autoplayProps = [
     name: 'autoplayToggle',
     type: 'boolean',
     default: 'false',
-    description: '자동 재생이 꺼져 있어도 재생·정지 버튼(carousel_toggle)을 표시합니다. 슬라이드가 1장이면 숨깁니다.'
+    description: '자동 재생이 꺼져 있어도 재생·정지 버튼(carousel_toggle)을 표시하고, 버튼·playing 으로 실제 자동재생을 켤 수 있습니다. 슬라이드가 1장이면 숨깁니다.'
   },
   {
     name: 'coverflowStyle',

@@ -35,6 +35,12 @@ const props = [
     description: '넘기면 제어 모드로 동작해 열림 상태를 부모가 관리합니다. 넘기지 않으면 내부 상태로 트리거를 누를 때마다 토글됩니다. 열리면 루트에 is-open 이 붙습니다.'
   },
   {
+    name: 'defaultOpen',
+    type: 'boolean',
+    default: 'false',
+    description: '비제어 모드의 초기 열림 여부입니다. open 을 넘기면 무시됩니다.'
+  },
+  {
     name: 'closable',
     type: 'boolean',
     default: 'true',

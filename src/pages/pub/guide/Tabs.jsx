@@ -1,16 +1,14 @@
 'use client'
 
 import { useState } from 'react'
+import { Button, Icon, Space, Tab, Tabs } from '@/comp'
 import {
-  Button,
   DemoBlock,
   GuideApiDocs,
   GuideLayout,
-  Icon,
-  Space,
-  Tab,
-  Tabs
-} from '@/comp'
+  pageExampleCode,
+  pageExampleReturn
+} from '@/pages/pub/widgets/guide'
 import { tabsApiSections } from '@/pages/pub/data/guide/tabsApiSections'
 
 const BASIC_TABS = [
@@ -71,7 +69,7 @@ function ControlledTabs ({
   )
 }
 
-/** 코드보기용 — tabs map + 단일 패널 슬롯 */
+/** 코드보기용 — 페이지 함수 안에서 tabs map + 단일 패널 슬롯 */
 function compoundCode (options = {}) {
   const {
     props = '',
@@ -79,7 +77,8 @@ function compoundCode (options = {}) {
     panelPrefix = '콘텐츠',
     initial = tabs[0]?.value,
     wrapStart = '',
-    wrapEnd = ''
+    wrapEnd = '',
+    name = 'TabsExample'
   } = options
   const propLine = props ? ` ${props}` : ''
   const hasIcon = tabs.some((tab) => tab.icon)
@@ -111,18 +110,30 @@ function compoundCode (options = {}) {
     hasClosable ? 'closable={tab.closable}' : null
   ].filter(Boolean).join('\n      ')
 
-  return `${wrapStart}${tabsDecl}
-const [value, setValue] = useState('${initial}')
-const active = tabs.find((tab) => tab.value === value)
-
-<Tabs value={value} onChange={setValue}${propLine}>
+  const tabsJsx = `<Tabs value={value} onChange={setValue}${propLine}>
   {tabs.map((tab) => (
     <Tab
       ${tabAttrs}
     />
   ))}
   <p className="tabs_panel-placeholder">${panelPrefix}: {active?.label}</p>
-</Tabs>${wrapEnd}`
+</Tabs>`
+
+  const jsx = wrapStart
+    ? `${wrapStart.replace(/\n$/, '')}\n  ${tabsJsx.split('\n').join('\n  ')}\n${wrapEnd.replace(/^\n/, '')}`
+    : tabsJsx
+
+  return pageExampleCode({
+    name,
+    reactImports: ['useState'],
+    compImports: hasIcon ? ['Icon', 'Tab', 'Tabs'] : ['Tab', 'Tabs'],
+    body: pageExampleReturn(
+      jsx,
+      `${tabsDecl}
+const [value, setValue] = useState('${initial}')
+const active = tabs.find((tab) => tab.value === value)`
+    )
+  })
 }
 
 /** 메뉴 데이터 map + 아이콘 커스텀 · 패널 내용만 교체 */
@@ -498,16 +509,13 @@ const SECTIONS = [
         패널은 활성 <code>value</code>에 맞춰 텍스트만 바꾸거나, 컴포넌트(슬롯)·페이지를 교체해 넣습니다.
       </>
     ),
-    code: `const menu = [
-  { value: 'overview', label: '개요', icon: 'home' },
-  { value: 'settings', label: '설정', icon: 'settings' },
-  { value: 'activity', label: '활동(비활성)', disabled: true }
-]
-const [value, setValue] = useState('overview')
-const active = menu.find((tab) => tab.value === value)
-
-// 1) 메뉴 map + 패널 내용만 교체
-<Tabs value={value} onChange={setValue} indicatorSlide>
+    code: [
+      pageExampleCode({
+        name: 'TabsCustomLabelExample',
+        reactImports: ['useState'],
+        compImports: ['Icon', 'Tab', 'Tabs'],
+        body: pageExampleReturn(
+          `<Tabs value={value} onChange={setValue} indicatorSlide>
   {menu.map((tab) => (
     <Tab key={tab.value} value={tab.value} disabled={tab.disabled}>
       {tab.icon && (
@@ -517,17 +525,22 @@ const active = menu.find((tab) => tab.value === value)
     </Tab>
   ))}
   <p className="tabs_panel-placeholder">콘텐츠: {active?.label}</p>
-</Tabs>
-
-// 2) value → 컴포넌트(슬롯)·페이지 교체
-const panels = {
-  overview: OverviewPage,
-  settings: SettingsPage,
-  activity: ActivityPage
-}
-const Panel = panels[value]
-
-<Tabs value={value} onChange={setValue} indicatorSlide>
+</Tabs>`,
+          `const menu = [
+  { value: 'overview', label: '개요', icon: 'home' },
+  { value: 'settings', label: '설정', icon: 'settings' },
+  { value: 'activity', label: '활동(비활성)', disabled: true }
+]
+const [value, setValue] = useState('overview')
+const active = menu.find((tab) => tab.value === value)`
+        )
+      }),
+      pageExampleCode({
+        name: 'TabsSlotPanelExample',
+        reactImports: ['useState'],
+        compImports: ['Icon', 'Tab', 'Tabs'],
+        body: pageExampleReturn(
+          `<Tabs value={value} onChange={setValue} indicatorSlide>
   {menu.map((tab) => (
     <Tab key={tab.value} value={tab.value} disabled={tab.disabled}>
       {tab.icon && (
@@ -538,6 +551,22 @@ const Panel = panels[value]
   ))}
   {Panel ? <Panel key={value} /> : null}
 </Tabs>`,
+          `const menu = [
+  { value: 'overview', label: '개요', icon: 'home' },
+  { value: 'settings', label: '설정', icon: 'settings' },
+  { value: 'activity', label: '활동(비활성)', disabled: true }
+]
+const [value, setValue] = useState('overview')
+// OverviewPage · SettingsPage · ActivityPage 는 페이지/슬롯 컴포넌트
+const panels = {
+  overview: OverviewPage,
+  settings: SettingsPage,
+  activity: ActivityPage
+}
+const Panel = panels[value]`
+        )
+      })
+    ].join('\n\n'),
     preview: (
       <Space vertical block size={24}>
         <CompoundTabsDemo />
@@ -663,15 +692,12 @@ const Panel = panels[value]
         <code>onClose</code>가 호출됩니다. <code>extra</code>는 바 오른쪽(<code>tabs_extra</code>)에 둡니다.
       </>
     ),
-    code: `const [items, setItems] = useState([
-  { value: 'doc-1', label: '문서 1', closable: true },
-  { value: 'doc-2', label: '문서 2', closable: true },
-  { value: 'doc-3', label: '문서 3', closable: true }
-])
-const [value, setValue] = useState('doc-1')
-const active = items.find((tab) => tab.value === value)
-
-<Tabs
+    code: pageExampleCode({
+      name: 'TabsClosableExample',
+      reactImports: ['useState'],
+      compImports: ['Button', 'Tab', 'Tabs'],
+      body: pageExampleReturn(
+        `<Tabs
   value={value}
   onChange={setValue}
   onClose={(closed) => {
@@ -689,6 +715,15 @@ const active = items.find((tab) => tab.value === value)
   ))}
   <p className="tabs_panel-placeholder">{active?.label} 내용</p>
 </Tabs>`,
+        `const [items, setItems] = useState([
+  { value: 'doc-1', label: '문서 1', closable: true },
+  { value: 'doc-2', label: '문서 2', closable: true },
+  { value: 'doc-3', label: '문서 3', closable: true }
+])
+const [value, setValue] = useState('doc-1')
+const active = items.find((tab) => tab.value === value)`
+      )
+    }),
     preview: <ClosableTabsDemo />
   },
   {
@@ -812,6 +847,7 @@ export default function TabsGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName={section.title === 'HTML 마크업' ? 'tabs.html' : 'TabsExample.jsx'}
         >
           {section.preview}
         </DemoBlock>

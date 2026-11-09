@@ -1,13 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  Button,
-  DemoBlock,
-  GuideApiDocs,
-  GuideLayout,
-  Modal
-} from '@/comp'
+import { Button, Modal } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { modalApiSections } from '@/pages/pub/data/guide/modalApiSections'
 
 /** 취소·확인 푸터 버튼 */
@@ -33,6 +28,9 @@ function OpenDemo () {
         title="변경 사항 저장"
         footer={<FooterActions onCancel={close} onConfirm={close} />}
         onClose={close}
+        onOpenChange={(next) => {
+          if (!next) close()
+        }}
       >
         저장하지 않은 내용이 있습니다.
       </Modal>
@@ -71,10 +69,10 @@ const SECTIONS = [
     description: (
       <>
         <code>open</code>이 <code>true</code>일 때만 렌더링됩니다.
-        오버레이나 닫기 버튼(<code>Icon</code> <code>close</code>)을 누르면 <code>onClose</code>가 호출되므로, 부모에서 <code>open</code> 상태를 직접 바꿉니다.
+        오버레이나 닫기 버튼(<code>Icon</code> <code>close</code>)을 누르면 <code>onClose</code>와 <code>onOpenChange(false)</code>가 호출되므로, 부모에서 <code>open</code> 상태를 직접 바꿉니다.
       </>
     ),
-    code: `const [open, setOpen] = useState(false)
+    code: wrapPageExample(`const [open, setOpen] = useState(false)
 
 <Button label="모달 열기" onClick={() => setOpen(true)} />
 <Modal
@@ -87,9 +85,14 @@ const SECTIONS = [
     </>
   }
   onClose={() => setOpen(false)}
+  onOpenChange={(next) => { if (!next) setOpen(false) }}
 >
   저장하지 않은 내용이 있습니다.
-</Modal>`,
+</Modal>`, {
+      name: 'ModalExample',
+      reactImports: ['useState'],
+      compImports: ['Modal', 'Button']
+    }),
     preview: <OpenDemo />
   },
   {
@@ -100,12 +103,16 @@ const SECTIONS = [
         <code>title</code>이 없어도 헤더에는 닫기 버튼이 남습니다.
       </>
     ),
-    code: `<div className="modal_demo-frame modal_demo-frame-compact">
+    code: wrapPageExample(`<div className="modal_demo-frame modal_demo-frame-compact">
   <Modal staticDemo open title="제목이 있는 모달">본문 내용입니다.</Modal>
 </div>
 <div className="modal_demo-frame modal_demo-frame-compact">
   <Modal staticDemo open>제목 없이 본문만 있는 모달입니다.</Modal>
-</div>`,
+</div>`, {
+  name: 'ModalExample1',
+  reactImports: [],
+  compImports: ['Modal']
+}),
     preview: (
       <div className="demo-stack">
         <div className="modal_demo-frame modal_demo-frame-compact">
@@ -125,9 +132,13 @@ const SECTIONS = [
         <code>modal_sm</code> · <code>modal_lg</code> 클래스가 붙어 너비 토큰이 바뀝니다.
       </>
     ),
-    code: `<Modal open={open} size="sm" title="Small" onClose={close}>작은 모달</Modal>
+    code: wrapPageExample(`<Modal open={open} size="sm" title="Small" onClose={close}>작은 모달</Modal>
 <Modal open={open} size="md" title="Medium" onClose={close}>기본 모달</Modal>
-<Modal open={open} size="lg" title="Large" onClose={close}>큰 모달</Modal>`,
+<Modal open={open} size="lg" title="Large" onClose={close}>큰 모달</Modal>`, {
+  name: 'ModalSizeExample',
+  reactImports: [],
+  compImports: ['Modal']
+}),
     preview: <SizeDemo />
   },
   {
@@ -138,7 +149,7 @@ const SECTIONS = [
         <code>footer</code>가 없으면 푸터 영역은 렌더링되지 않습니다.
       </>
     ),
-    code: `<Modal
+    code: wrapPageExample(`<Modal
   open
   title="항목 삭제"
   footer={
@@ -149,7 +160,11 @@ const SECTIONS = [
   }
 >
   선택한 항목을 삭제하시겠습니까?
-</Modal>`,
+</Modal>`, {
+  name: 'ModalExample3',
+  reactImports: [],
+  compImports: ['Button', 'Modal']
+}),
     preview: (
       <div className="modal_demo-frame">
         <Modal
@@ -171,9 +186,13 @@ const SECTIONS = [
         가이드 미리보기용이며, 실제 화면에서는 쓰지 않습니다.
       </>
     ),
-    code: `<div className="modal_demo-frame">
+    code: wrapPageExample(`<div className="modal_demo-frame">
   <Modal staticDemo open title="고정 미리보기">프레임 안에 표시됩니다.</Modal>
-</div>`,
+</div>`, {
+  name: 'ModalScrollExample',
+  reactImports: [],
+  compImports: ['Modal']
+}),
     preview: (
       <div className="modal_demo-frame">
         <Modal staticDemo open title="고정 미리보기">프레임 안에 표시됩니다.</Modal>
@@ -188,9 +207,13 @@ const SECTIONS = [
         <code>modal_scrollable</code>은 본문이 길 때 본문만 스크롤합니다.
       </>
     ),
-    code: `<Modal open title="스크롤 본문" className="modal_scrollable" onClose={close}>
+    code: wrapPageExample(`<Modal open title="스크롤 본문" className="modal_scrollable" onClose={close}>
   {/* 긴 본문 */}
-</Modal>`,
+</Modal>`, {
+  name: 'ModalExample5',
+  reactImports: [],
+  compImports: ['Modal']
+}),
     preview: (
       <div className="modal_demo-frame modal_demo-frame-compact">
         <Modal staticDemo open title="스크롤 본문" className="modal_scrollable">
@@ -205,13 +228,17 @@ const SECTIONS = [
     title: '접근성',
     description: (
       <>
-        루트에 <code>role="dialog"</code> · <code>aria-modal="true"</code>가 자동 지정되고, 닫기 버튼에는 <code>aria-label="닫기"</code>가 있습니다.
+        루트에 <code>role=&quot;dialog&quot;</code> · <code>aria-modal=&quot;true&quot;</code>가 자동 지정되고, 닫기 버튼에는 <code>aria-label=&quot;닫기&quot;</code>가 있습니다.
         <code>aria-label</code> 등 네이티브 div 속성은 루트로 전달됩니다.
       </>
     ),
-    code: `<Modal open title="확인" aria-label="확인 대화상자" onClose={close}>
+    code: wrapPageExample(`<Modal open title="확인" aria-label="확인 대화상자" onClose={close}>
   내용
-</Modal>`,
+</Modal>`, {
+  name: 'ModalA11yExample',
+  reactImports: [],
+  compImports: ['Modal']
+}),
     preview: (
       <div className="modal_demo-frame modal_demo-frame-compact">
         <Modal staticDemo open title="확인" aria-label="확인 대화상자">내용</Modal>
@@ -237,6 +264,7 @@ export default function ModalGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName="ModalExample.jsx"
         >
           {section.preview}
         </DemoBlock>

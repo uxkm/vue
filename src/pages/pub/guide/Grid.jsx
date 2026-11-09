@@ -1,6 +1,7 @@
 'use client'
 
-import { DemoBlock, Grid, GuideApiDocs, GuideLayout } from '@/comp'
+import { Grid } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { gridApiSections } from '@/pages/pub/data/guide/gridApiSections'
 
 const cells = (count, label = (index) => String(index + 1)) =>
@@ -13,9 +14,13 @@ const cells = (count, label = (index) => String(index + 1)) =>
 const SECTIONS = [
   {
     title: '균등 열',
-    code: `<Grid cols={2}>{/* cells */}</Grid>
+    code: wrapPageExample(`<Grid cols={2}>{/* cells */}</Grid>
 <Grid cols={3}>…</Grid>
-<Grid cols={4}>…</Grid>`,
+<Grid cols={4}>…</Grid>`, {
+      name: 'GridExample',
+      reactImports: [],
+      compImports: ['Grid']
+    }),
     preview: (
       <div className="typo_stack">
         <Grid cols={2}>{cells(2, 'cols 2')}</Grid>
@@ -26,9 +31,13 @@ const SECTIONS = [
   },
   {
     title: '간격',
-    code: `<Grid cols={3} gap="sm">…</Grid>
+    code: wrapPageExample(`<Grid cols={3} gap="sm">…</Grid>
 <Grid cols={3} gap="lg">…</Grid>
-<Grid cols={3} gap="none">…</Grid>`,
+<Grid cols={3} gap="none">…</Grid>`, {
+      name: 'GridGapExample',
+      reactImports: [],
+      compImports: ['Grid']
+    }),
     preview: (
       <div className="typo_stack">
         <Grid cols={3} gap="sm">{cells(3, 'gap sm')}</Grid>
@@ -39,7 +48,7 @@ const SECTIONS = [
   },
   {
     title: '비율 열',
-    code: `<Grid ratio="1-2">
+    code: wrapPageExample(`<Grid ratio="1-2">
   <div className="grid_demo-cell">1 : 2</div>
   <div className="grid_demo-cell">1 : 2</div>
 </Grid>
@@ -47,7 +56,11 @@ const SECTIONS = [
   <div className="grid_demo-cell">1</div>
   <div className="grid_demo-cell">2</div>
   <div className="grid_demo-cell">1</div>
-</Grid>`,
+</Grid>`, {
+      name: 'GridRatioExample',
+      reactImports: [],
+      compImports: ['Grid']
+    }),
     preview: (
       <div className="typo_stack">
         <Grid ratio="1-2">
@@ -64,9 +77,13 @@ const SECTIONS = [
   },
   {
     title: '자동 배치',
-    code: `<Grid autoFit>{/* cells */}</Grid>
+    code: wrapPageExample(`<Grid autoFit>{/* cells */}</Grid>
 <Grid autoFill>…</Grid>
-<Grid equalColumns>…</Grid>`,
+<Grid equalColumns>…</Grid>`, {
+      name: 'GridAutoExample',
+      reactImports: [],
+      compImports: ['Grid']
+    }),
     preview: (
       <div className="typo_stack">
         <Grid autoFit>{cells(6, 'auto-fit')}</Grid>
@@ -82,7 +99,7 @@ const SECTIONS = [
         자식에 <code>grid_col-span-*</code> 클래스를 주면 열을 차지합니다.
       </>
     ),
-    code: `<Grid gap="sm">
+    code: wrapPageExample(`<Grid gap="sm">
   <div className="grid_col-span-8">
     <div className="grid_demo-cell">span 8</div>
   </div>
@@ -98,7 +115,11 @@ const SECTIONS = [
   <div className="grid_col-span-4">
     <div className="grid_demo-cell">span 4</div>
   </div>
-</Grid>`,
+</Grid>`, {
+      name: 'GridSpanExample',
+      reactImports: [],
+      compImports: ['Grid']
+    }),
     preview: (
       <Grid gap="sm">
         <div className="grid_col-span-8">
@@ -138,6 +159,7 @@ export default function GridGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName="GridExample.jsx"
         >
           {section.preview}
         </DemoBlock>

@@ -1,12 +1,7 @@
 'use client'
 
-import {
-  DemoBlock,
-  GuideApiDocs,
-  GuideLayout,
-  Skeleton,
-  Space
-} from '@/comp'
+import { Skeleton, Space } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { skeletonApiSections } from '@/pages/pub/data/guide/skeletonApiSections'
 
 const SECTIONS = [
@@ -19,11 +14,15 @@ const SECTIONS = [
         각각 <code>skeleton_*</code> 클래스가 붙습니다.
       </>
     ),
-    code: `<Skeleton variant="title" />
+    code: wrapPageExample(`<Skeleton variant="title" />
 <Skeleton variant="text" />
 <Skeleton variant="circle" />
 <Skeleton variant="button" />
-<Skeleton width={160} height={12} />`,
+<Skeleton width={160} height={12} />`, {
+      name: 'SkeletonExample',
+      reactImports: [],
+      compImports: ['Skeleton']
+    }),
     preview: (
       <Space vertical block size={12} style={{ maxWidth: 360 }}>
         <Skeleton variant="title" />
@@ -42,12 +41,16 @@ const SECTIONS = [
         <code>round</code>는 <code>skeleton_circle</code>과 같습니다.
       </>
     ),
-    code: `<Skeleton variant="text" />
+    code: wrapPageExample(`<Skeleton variant="text" />
 <Skeleton variant="title" />
 <Skeleton variant="circle" />
 <Skeleton variant="button" />
 <Skeleton variant="image" />
-<Skeleton variant="block" />`,
+<Skeleton variant="block" />`, {
+      name: 'SkeletonVariantExample',
+      reactImports: [],
+      compImports: ['Skeleton']
+    }),
     preview: (
       <Space vertical block size={12} style={{ maxWidth: 360 }}>
         <Skeleton variant="text" />
@@ -69,10 +72,14 @@ const SECTIONS = [
         각각 약 35% · 65% · 85% 너비가 됩니다. CSS 길이·숫자를 주면 인라인 너비입니다.
       </>
     ),
-    code: `<Skeleton variant="text" width="sm" />
+    code: wrapPageExample(`<Skeleton variant="text" width="sm" />
 <Skeleton variant="text" width="md" />
 <Skeleton variant="text" width="lg" />
-<Skeleton variant="text" width="50%" />`,
+<Skeleton variant="text" width="50%" />`, {
+      name: 'SkeletonWidthExample',
+      reactImports: [],
+      compImports: ['Skeleton']
+    }),
     preview: (
       <Space vertical block size={12} style={{ maxWidth: 360 }}>
         <Skeleton variant="text" width="sm" />
@@ -90,11 +97,15 @@ const SECTIONS = [
         <code>sm</code> · <code>lg</code>일 때 <code>skeleton_sm</code> · <code>skeleton_lg</code>가 붙어 줄·원·버튼 치수가 바뀝니다.
       </>
     ),
-    code: `<Skeleton size="sm" variant="text" />
+    code: wrapPageExample(`<Skeleton size="sm" variant="text" />
 <Skeleton size="md" variant="text" />
 <Skeleton size="lg" variant="text" />
 <Skeleton size="sm" variant="circle" />
-<Skeleton size="lg" variant="circle" />`,
+<Skeleton size="lg" variant="circle" />`, {
+      name: 'SkeletonSizeExample',
+      reactImports: [],
+      compImports: ['Skeleton']
+    }),
     preview: (
       <Space vertical block size={14} style={{ maxWidth: 360 }}>
         <Skeleton size="sm" variant="text" />
@@ -116,8 +127,12 @@ const SECTIONS = [
         <code>prefers-reduced-motion</code>에서도 동일하게 꺼집니다.
       </>
     ),
-    code: `<Skeleton variant="text" />
-<Skeleton variant="text" static />`,
+    code: wrapPageExample(`<Skeleton variant="text" />
+<Skeleton variant="text" static />`, {
+      name: 'SkeletonStaticExample',
+      reactImports: [],
+      compImports: ['Skeleton']
+    }),
     preview: (
       <Space vertical block size={12} style={{ maxWidth: 360 }}>
         <Skeleton variant="text" />
@@ -174,12 +189,16 @@ const SECTIONS = [
         <code>image</code>와 텍스트 줄을 모아 카드형 로딩 UI를 구성한 예시입니다.
       </>
     ),
-    code: `<div className="skeleton_group">
+    code: wrapPageExample(`<div className="skeleton_group">
   <Skeleton variant="image" />
   <Skeleton variant="title" width="md" />
   <Skeleton variant="text" />
   <Skeleton variant="text" width="lg" />
-</div>`,
+</div>`, {
+      name: 'SkeletonCardExample',
+      reactImports: [],
+      compImports: ['Skeleton']
+    }),
     preview: (
       <div className="skeleton_group" style={{ maxWidth: 280 }}>
         <Skeleton variant="image" />
@@ -208,6 +227,9 @@ export default function SkeletonGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName={
+            section.title.includes('HTML') ? 'skeleton.html' : 'SkeletonExample.jsx'
+          }
         >
           {section.preview}
         </DemoBlock>

@@ -1,15 +1,7 @@
 'use client'
 
-import {
-  Avatar,
-  Badge,
-  BadgeWrap,
-  Button,
-  DemoBlock,
-  GuideApiDocs,
-  GuideLayout,
-  Icon
-} from '@/comp'
+import { Avatar, Badge, BadgeWrap, Button, Icon } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { badgeApiSections } from '@/pages/pub/data/guide/badgeApiSections'
 
 const SECTIONS = [
@@ -20,12 +12,16 @@ const SECTIONS = [
         공통 <code>color_*</code> 색상으로 배지의 의미를 구분합니다.
       </>
     ),
-    code: `<Badge color="default" label="Default" />
+    code: wrapPageExample(`<Badge color="default" label="Default" />
 <Badge color="primary" label="Primary" />
 <Badge color="success" label="Success" />
 <Badge color="warning" label="Warning" />
 <Badge color="danger" label="Danger" />
-<Badge color="info" label="Info" />`,
+<Badge color="info" label="Info" />`, {
+      name: 'BadgeExample',
+      reactImports: [],
+      compImports: ['Badge']
+    }),
     preview: (
       <div className="demo-row icon_group">
         <Badge color="default" label="Default" />
@@ -44,9 +40,13 @@ const SECTIONS = [
         small, medium, large 세 가지 크기를 제공합니다.
       </>
     ),
-    code: `<Badge size="sm" label="Small" />
+    code: wrapPageExample(`<Badge size="sm" label="Small" />
 <Badge label="Medium" />
-<Badge size="lg" label="Large" />`,
+<Badge size="lg" label="Large" />`, {
+      name: 'BadgeSizeExample',
+      reactImports: [],
+      compImports: ['Badge']
+    }),
     preview: (
       <div className="demo-row icon_group">
         <Badge size="sm" label="Small" />
@@ -62,10 +62,14 @@ const SECTIONS = [
         <code>dot</code>으로 텍스트 앞에 상태 점을 표시합니다.
       </>
     ),
-    code: `<Badge dot color="primary" label="Online" />
+    code: wrapPageExample(`<Badge dot color="primary" label="Online" />
 <Badge dot color="success" label="Active" />
 <Badge dot color="warning" label="Away" />
-<Badge dot color="danger" label="Offline" />`,
+<Badge dot color="danger" label="Offline" />`, {
+      name: 'BadgeDotExample',
+      reactImports: [],
+      compImports: ['Badge']
+    }),
     preview: (
       <div className="demo-row icon_group">
         <Badge dot color="primary" label="Online" />
@@ -82,11 +86,15 @@ const SECTIONS = [
         <code>count</code>로 숫자 폭과 정렬이 안정적인 카운트 배지를 만듭니다.
       </>
     ),
-    code: `<Badge count color="danger" label="3" ariaLabel="알림 3건" />
+    code: wrapPageExample(`<Badge count color="danger" label="3" ariaLabel="알림 3건" />
 <Badge count label="12" ariaLabel="알림 12건" />
 <Badge count color="success" label="99+" ariaLabel="알림 99건 이상" />
 <Badge count size="sm" color="danger" label="5" />
-<Badge count size="lg" label="New" />`,
+<Badge count size="lg" label="New" />`, {
+      name: 'BadgeCountExample',
+      reactImports: [],
+      compImports: ['Badge']
+    }),
     preview: (
       <div className="demo-row icon_group">
         <Badge count color="danger" label="3" ariaLabel="알림 3건" />
@@ -105,7 +113,7 @@ const SECTIONS = [
         점만 표시할 때도 <code>ariaLabel</code>로 의미를 지정합니다.
       </>
     ),
-    code: `<BadgeWrap>
+    code: wrapPageExample(`<BadgeWrap>
   <Button label="알림" />
   <Badge count color="danger" ariaLabel="읽지 않은 알림 5건" label="5" />
 </BadgeWrap>
@@ -118,7 +126,11 @@ const SECTIONS = [
 <BadgeWrap>
   <Avatar color="primary" label="홍" aria-hidden="true" />
   <Badge dotOnly color="success" ariaLabel="온라인" />
-</BadgeWrap>`,
+</BadgeWrap>`, {
+      name: 'BadgeWrapExample',
+      reactImports: [],
+      compImports: ['Avatar', 'Badge', 'BadgeWrap', 'Button', 'Icon']
+    }),
     preview: (
       <div className="demo-row icon_group">
         <BadgeWrap>
@@ -157,6 +169,7 @@ export default function BadgeGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName="BadgeExample.jsx"
         >
           {section.preview}
         </DemoBlock>

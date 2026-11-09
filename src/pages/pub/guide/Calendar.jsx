@@ -1,19 +1,8 @@
 'use client'
 
-import {
-  Calendar,
-  CalendarFooter,
-  CalendarGroup,
-  CalendarHeader,
-  CalendarMonth,
-  CalendarNav,
-  CalendarWeekdays,
-  CalendarWheel,
-  CalendarWheelColumn,
-  DemoBlock,
-  GuideApiDocs,
-  GuideLayout
-} from '@/comp'
+import { useState } from 'react'
+import { Calendar, CalendarFooter, CalendarGroup, CalendarHeader, CalendarMonth, CalendarNav, CalendarWeekdays, CalendarWheel, CalendarWheelColumn } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { calendarApiSections } from '@/pages/pub/data/guide/calendarApiSections'
 
 const header = (title = '2024년 6월', showNav = true) => (
@@ -45,6 +34,103 @@ function EventItem ({ time, title, description, color = 'primary' }) {
   )
 }
 
+/** 월·선택일·푸터를 페이지에서 제어하는 예시 */
+function ControlledCalendarDemo () {
+  const [month, setMonth] = useState(new Date(2024, 5, 1))
+  const [selected, setSelected] = useState(15)
+  const title = `${month.getFullYear()}년 ${month.getMonth() + 1}월`
+  const today = new Date()
+  const isSameMonth =
+    today.getFullYear() === month.getFullYear() &&
+    today.getMonth() === month.getMonth()
+
+  const moveMonth = (offset) => {
+    setMonth((current) => new Date(current.getFullYear(), current.getMonth() + offset, 1))
+  }
+
+  return (
+    <div className="calendar_group">
+      <Calendar
+        shadow
+        ariaLabel={title}
+        header={(
+          <CalendarHeader
+            title={title}
+            onPrev={() => moveMonth(-1)}
+            onNext={() => moveMonth(1)}
+          />
+        )}
+        weekdays={weekdays}
+        footer={(
+          <CalendarFooter
+            onToday={() => {
+              const now = new Date()
+              setMonth(new Date(now.getFullYear(), now.getMonth(), 1))
+              setSelected(now.getDate())
+            }}
+            onClear={() => setSelected(null)}
+            onConfirm={() => {}}
+          />
+        )}
+      >
+        <CalendarMonth
+          selected={selected}
+          today={isSameMonth ? today.getDate() : undefined}
+          onSelect={(day) => {
+            if (!day.otherMonth) setSelected(day.day)
+          }}
+        />
+      </Calendar>
+      <p>
+        선택: <code>{selected == null ? '—' : `${title} ${selected}일`}</code>
+      </p>
+    </div>
+  )
+}
+
+/** 휠 값을 페이지에서 제어하는 예시 */
+function ControlledWheelDemo () {
+  const [year, setYear] = useState('2024년')
+  const [month, setMonth] = useState('6월')
+  const [day, setDay] = useState('15일')
+
+  return (
+    <div className="typo_stack">
+      <CalendarWheel
+        shadow
+        title="날짜 선택"
+        cancelLabel="취소"
+        confirmLabel="완료"
+        ariaLabel="날짜 휠 선택"
+        onCancel={() => {}}
+        onConfirm={() => {}}
+      >
+        <CalendarWheelColumn
+          label="년"
+          items={years}
+          selected={year}
+          onChange={setYear}
+        />
+        <CalendarWheelColumn
+          label="월"
+          items={months}
+          selected={month}
+          onChange={setMonth}
+        />
+        <CalendarWheelColumn
+          label="일"
+          items={days}
+          selected={day}
+          onChange={setDay}
+        />
+      </CalendarWheel>
+      <p>
+        선택: <code>{year} {month} {day}</code>
+      </p>
+    </div>
+  )
+}
+
 const SECTIONS = [
   {
     title: '기본',
@@ -53,9 +139,13 @@ const SECTIONS = [
         <code>CalendarHeader</code> · <code>CalendarWeekdays</code> · <code>CalendarMonth</code>를 조합합니다.
       </>
     ),
-    code: `<Calendar ariaLabel="2024년 6월" header={<CalendarHeader title="2024년 6월" />} weekdays={<CalendarWeekdays />}>
+    code: wrapPageExample(`<Calendar ariaLabel="2024년 6월" header={<CalendarHeader title="2024년 6월" />} weekdays={<CalendarWeekdays />}>
   <CalendarMonth />
-</Calendar>`,
+</Calendar>`, {
+  name: 'CalendarBasicExample',
+  reactImports: [],
+  compImports: ['Calendar', 'CalendarHeader', 'CalendarMonth', 'CalendarWeekdays']
+}),
     preview: (
       <div className="calendar_group">
         <Calendar ariaLabel="2024년 6월" header={header()} weekdays={weekdays}>
@@ -65,15 +155,59 @@ const SECTIONS = [
     )
   },
   {
+    title: '선택 · 월 제어',
+    description: (
+      <>
+        <code>CalendarMonth.onSelect</code> · <code>CalendarHeader.onPrev/onNext</code> ·
+        <code>CalendarFooter.onToday/onClear/onConfirm</code>로 페이지에서 선택일과 월을 제어합니다.
+      </>
+    ),
+    code: wrapPageExample(`const [month, setMonth] = useState(new Date(2024, 5, 1))
+const [selected, setSelected] = useState(15)
+const title = \`\${month.getFullYear()}년 \${month.getMonth() + 1}월\`
+
+<Calendar
+  header={
+    <CalendarHeader
+      title={title}
+      onPrev={() => setMonth(m => new Date(m.getFullYear(), m.getMonth() - 1, 1))}
+      onNext={() => setMonth(m => new Date(m.getFullYear(), m.getMonth() + 1, 1))}
+    />
+  }
+  weekdays={<CalendarWeekdays />}
+  footer={
+    <CalendarFooter
+      onToday={() => { /* 오늘로 이동 */ }}
+      onClear={() => setSelected(null)}
+      onConfirm={() => { /* 확정 */ }}
+    />
+  }
+>
+  <CalendarMonth
+    selected={selected}
+    onSelect={(day) => setSelected(day.day)}
+  />
+</Calendar>`, {
+      name: 'CalendarExample',
+      reactImports: ['useState'],
+      compImports: ['Calendar', 'CalendarHeader', 'CalendarWeekdays', 'CalendarFooter', 'CalendarMonth']
+    }),
+    preview: <ControlledCalendarDemo />
+  },
+  {
     title: '헤더 없음',
     description: (
       <>
         <code>noHeader</code>로 제목 영역을 숨깁니다.
       </>
     ),
-    code: `<Calendar noHeader ariaLabel="2024년 6월" weekdays={<CalendarWeekdays />}>
+    code: wrapPageExample(`<Calendar noHeader ariaLabel="2024년 6월" weekdays={<CalendarWeekdays />}>
   <CalendarMonth />
-</Calendar>`,
+</Calendar>`, {
+  name: 'CalendarExample2',
+  reactImports: [],
+  compImports: ['Calendar', 'CalendarMonth', 'CalendarWeekdays']
+}),
     preview: (
       <div className="calendar_group">
         <Calendar noHeader ariaLabel="2024년 6월" weekdays={weekdays}>
@@ -89,9 +223,13 @@ const SECTIONS = [
         <code>minimal</code> · <code>compact</code> · <code>borderless</code>로 날짜 셀만 표시합니다.
       </>
     ),
-    code: `<Calendar minimal compact borderless ariaLabel="2024년 6월 날짜만">
+    code: wrapPageExample(`<Calendar minimal compact borderless ariaLabel="2024년 6월 날짜만">
   <CalendarMonth />
-</Calendar>`,
+</Calendar>`, {
+  name: 'CalendarDateExample',
+  reactImports: [],
+  compImports: ['Calendar', 'CalendarMonth']
+}),
     preview: (
       <div className="calendar_group">
         <Calendar minimal compact borderless ariaLabel="2024년 6월 날짜만">
@@ -107,11 +245,15 @@ const SECTIONS = [
         <code>week</code>와 <code>CalendarNav</code>로 주 단위 보기를 구성합니다.
       </>
     ),
-    code: `<Calendar week shadow ariaLabel="2024년 6월 9일~15일">
+    code: wrapPageExample(`<Calendar week shadow ariaLabel="2024년 6월 9일~15일">
   <CalendarNav label="6월 9일 ~ 15일" />
   <CalendarWeekdays />
   <CalendarMonth week days={weekDays} />
-</Calendar>`,
+</Calendar>`, {
+  name: 'CalendarExample4',
+  reactImports: [],
+  compImports: ['Calendar', 'CalendarMonth', 'CalendarNav', 'CalendarWeekdays']
+}),
     preview: (
       <div className="typo_stack">
         <Calendar week shadow ariaLabel="2024년 6월 9일~15일">
@@ -131,41 +273,31 @@ const SECTIONS = [
     description: (
       <>
         <code>CalendarWheel</code> · <code>CalendarWheelColumn</code>으로 년·월·일을 고릅니다.
+        <code>selected</code> · <code>onChange</code>로 페이지에서 값을 제어하고,
+        <code>onCancel</code> · <code>onConfirm</code>으로 툴바 액션을 받습니다.
       </>
     ),
-    code: `<CalendarWheel shadow title="날짜 선택" cancelLabel="취소" confirmLabel="완료">
-  <CalendarWheelColumn label="년" items={years} selected="2024년" />
-  <CalendarWheelColumn label="월" items={months} selected="6월" />
-  <CalendarWheelColumn label="일" items={days} selected="15일" />
-</CalendarWheel>`,
-    preview: (
-      <div className="typo_stack">
-        <CalendarWheel
-          shadow
-          title="날짜 선택"
-          cancelLabel="취소"
-          confirmLabel="완료"
-          ariaLabel="날짜 휠 선택"
-        >
-          <CalendarWheelColumn label="년" items={years} selected="2024년" />
-          <CalendarWheelColumn label="월" items={months} selected="6월" />
-          <CalendarWheelColumn label="일" items={days} selected="15일" />
-        </CalendarWheel>
-        <CalendarGroup className="calendar_group-center">
-          <CalendarWheel shadow title="년도" ariaLabel="년도 선택">
-            <CalendarWheelColumn label="년" items={years.slice(4, 7)} selected="2024년" />
-          </CalendarWheel>
-          <CalendarWheel
-            shadow
-            toolbarContent={<span className="calendar_wheel-title">년·월</span>}
-            ariaLabel="년·월 선택"
-          >
-            <CalendarWheelColumn label="년" items={['2024년']} selected="2024년" showSteps={false} />
-            <CalendarWheelColumn label="월" items={['6월']} selected="6월" showSteps={false} />
-          </CalendarWheel>
-        </CalendarGroup>
-      </div>
-    )
+    code: wrapPageExample(`const [year, setYear] = useState('2024년')
+const [month, setMonth] = useState('6월')
+const [day, setDay] = useState('15일')
+
+<CalendarWheel
+  shadow
+  title="날짜 선택"
+  cancelLabel="취소"
+  confirmLabel="완료"
+  onCancel={() => {}}
+  onConfirm={() => {}}
+>
+  <CalendarWheelColumn label="년" items={years} selected={year} onChange={setYear} />
+  <CalendarWheelColumn label="월" items={months} selected={month} onChange={setMonth} />
+  <CalendarWheelColumn label="일" items={days} selected={day} onChange={setDay} />
+</CalendarWheel>`, {
+      name: 'CalendarWheelExample',
+      reactImports: ['useState'],
+      compImports: ['CalendarWheel', 'CalendarWheelColumn']
+    }),
+    preview: <ControlledWheelDemo />
   },
   {
     title: '범위 선택',
@@ -174,9 +306,13 @@ const SECTIONS = [
         <code>rangeStart</code> · <code>rangeEnd</code>로 구간을 표시합니다.
       </>
     ),
-    code: `<Calendar …>
+    code: wrapPageExample(`<Calendar …>
   <CalendarMonth rangeStart={10} rangeEnd={18} />
-</Calendar>`,
+</Calendar>`, {
+  name: 'CalendarExample5',
+  reactImports: [],
+  compImports: ['Calendar', 'CalendarMonth']
+}),
     preview: (
       <div className="calendar_group">
         <Calendar ariaLabel="2024년 6월 범위 선택" header={header()} weekdays={weekdays}>
@@ -192,9 +328,13 @@ const SECTIONS = [
         <code>events</code>와 <code>weekends</code>로 일정 점과 주말 색을 켭니다.
       </>
     ),
-    code: `<Calendar weekends …>
+    code: wrapPageExample(`<Calendar weekends …>
   <CalendarMonth events={[3, 7, 12, 15, 21, 28]} weekends />
-</Calendar>`,
+</Calendar>`, {
+  name: 'CalendarExample6',
+  reactImports: [],
+  compImports: ['Calendar', 'CalendarMonth']
+}),
     preview: (
       <div className="calendar_group">
         <Calendar
@@ -215,9 +355,13 @@ const SECTIONS = [
         <code>borderless</code> · <code>ghost</code> · <code>shadow</code> 스킨입니다.
       </>
     ),
-    code: `<Calendar borderless …>…</Calendar>
+    code: wrapPageExample(`<Calendar borderless …>…</Calendar>
 <Calendar ghost …>…</Calendar>
-<Calendar shadow …>…</Calendar>`,
+<Calendar shadow …>…</Calendar>`, {
+  name: 'CalendarExample7',
+  reactImports: [],
+  compImports: ['Calendar']
+}),
     preview: (
       <div className="calendar_group">
         <Calendar borderless ariaLabel="Borderless" header={header('Borderless', false)} weekdays={weekdays}>
@@ -239,9 +383,13 @@ const SECTIONS = [
         <code>size=&quot;sm&quot;|lg</code>와 <code>compact</code>로 밀도를 조절합니다.
       </>
     ),
-    code: `<Calendar size="sm" …>…</Calendar>
+    code: wrapPageExample(`<Calendar size="sm" …>…</Calendar>
 <Calendar compact …>…</Calendar>
-<Calendar size="lg" …>…</Calendar>`,
+<Calendar size="lg" …>…</Calendar>`, {
+  name: 'CalendarSizeExample',
+  reactImports: [],
+  compImports: ['Calendar']
+}),
     preview: (
       <div className="calendar_group">
         <Calendar size="sm" ariaLabel="Small" header={header('Small', false)} weekdays={weekdays}>
@@ -260,12 +408,26 @@ const SECTIONS = [
     title: '푸터',
     description: (
       <>
-        <code>footer</code>에 <code>CalendarFooter</code>를 넣습니다.
+        <code>footer</code>에 <code>CalendarFooter</code>를 넣고
+        <code>onToday</code> · <code>onClear</code> · <code>onConfirm</code>으로 액션을 제어합니다.
       </>
     ),
-    code: `<Calendar shadow footer={<CalendarFooter />} …>
+    code: wrapPageExample(`<Calendar
+  shadow
+  footer={
+    <CalendarFooter
+      onToday={() => {}}
+      onClear={() => {}}
+      onConfirm={() => {}}
+    />
+  }
+>
   <CalendarMonth />
-</Calendar>`,
+</Calendar>`, {
+  name: 'CalendarExample9',
+  reactImports: [],
+  compImports: ['Calendar', 'CalendarFooter', 'CalendarMonth']
+}),
     preview: (
       <div className="calendar_group">
         <Calendar
@@ -273,7 +435,13 @@ const SECTIONS = [
           ariaLabel="2024년 6월 푸터 포함"
           header={header()}
           weekdays={weekdays}
-          footer={<CalendarFooter />}
+          footer={(
+            <CalendarFooter
+              onToday={() => {}}
+              onClear={() => {}}
+              onConfirm={() => {}}
+            />
+          )}
         >
           <CalendarMonth />
         </Calendar>
@@ -287,10 +455,14 @@ const SECTIONS = [
         <code>calendar_group</code>으로 두 달을 나란히 배치합니다.
       </>
     ),
-    code: `<div className="calendar_group">
+    code: wrapPageExample(`<div className="calendar_group">
   <Calendar compact shadow weekends …>…</Calendar>
   <Calendar compact shadow weekends …>…</Calendar>
-</div>`,
+</div>`, {
+  name: 'CalendarExample10',
+  reactImports: [],
+  compImports: ['Calendar']
+}),
     preview: (
       <div className="calendar_group">
         <Calendar
@@ -323,9 +495,13 @@ const SECTIONS = [
         <code>agenda</code>와 <code>calendar_agenda-*</code> 마크업으로 일정 목록을 표시합니다.
       </>
     ),
-    code: `<Calendar agenda shadow role="feed" header={<CalendarHeader title="6월 14일 ~ 20일" />}>
+    code: wrapPageExample(`<Calendar agenda shadow role="feed" header={<CalendarHeader title="6월 14일 ~ 20일" />}>
   <ol className="calendar_agenda-list">…</ol>
-</Calendar>`,
+</Calendar>`, {
+  name: 'CalendarExample11',
+  reactImports: [],
+  compImports: ['Calendar', 'CalendarHeader']
+}),
     preview: (
       <Calendar
         agenda
@@ -378,12 +554,16 @@ const SECTIONS = [
         <code>readonly</code> · <code>disabled</code>로 상호작용을 제한합니다.
       </>
     ),
-    code: `<Calendar readonly …>
+    code: wrapPageExample(`<Calendar readonly …>
   <CalendarMonth partial={14} today={7} selected={9} readonly />
 </Calendar>
 <Calendar disabled …>
   <CalendarMonth partial={14} today={7} selected={9} disabled={[2, 3, 4, 5]} />
-</Calendar>`,
+</Calendar>`, {
+  name: 'CalendarStateExample',
+  reactImports: [],
+  compImports: ['Calendar', 'CalendarMonth']
+}),
     preview: (
       <div className="typo_stack">
         <Calendar readonly ariaLabel="읽기 전용 캘린더" header={header('읽기 전용', false)} weekdays={weekdays}>
@@ -414,6 +594,7 @@ export default function CalendarGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName="CalendarExample.jsx"
         >
           {section.preview}
         </DemoBlock>

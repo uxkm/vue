@@ -1,13 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  Button,
-  DatePicker,
-  DemoBlock,
-  GuideApiDocs,
-  GuideLayout
-} from '@/comp'
+import { Button, DatePicker } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { datePickerApiSections } from '@/pages/pub/data/guide/datePickerApiSections'
 
 function Field ({ id, label, hint, children }) {
@@ -22,6 +17,8 @@ function Field ({ id, label, hint, children }) {
 
 function ControlledExample () {
   const [date, setDate] = useState('')
+  const [open, setOpen] = useState(false)
+  const [month, setMonth] = useState(new Date())
   return (
     <form
       className="form form_vertical form_fit form_compact"
@@ -40,6 +37,10 @@ function ControlledExample () {
           name="visitDate"
           value={date}
           onChange={setDate}
+          open={open}
+          onOpenChange={setOpen}
+          displayMonth={month}
+          onDisplayMonthChange={setMonth}
           required
           error={!date}
           aria-describedby={!date ? 'visit-date-error' : 'visit-date-success'}
@@ -55,8 +56,14 @@ function ControlledExample () {
               {date}로 선택했습니다.
             </p>
             )}
+        <p className="form_field-hint">
+          open: <code>{String(open)}</code>
+          {' · '}
+          displayMonth: <code>{month.getFullYear()}-{String(month.getMonth() + 1).padStart(2, '0')}</code>
+        </p>
       </div>
       <div className="form_actions">
+        <Button type="button" variant="outline" label={open ? '달력 닫기' : '달력 열기'} onClick={() => setOpen((v) => !v)} />
         <Button type="submit" label="예약" />
       </div>
     </form>
@@ -71,9 +78,13 @@ const SECTIONS = [
         <code>form_field</code>와 함께 사용합니다. <code>defaultValue</code>는 YYYY-MM-DD입니다.
       </>
     ),
-    code: `<Field id="date-basic" label="예약일" hint="달력에서 날짜를 선택해 주세요.">
+    code: wrapPageExample(`<Field id="date-basic" label="예약일" hint="달력에서 날짜를 선택해 주세요.">
   <DatePicker id="date-basic" fit defaultValue="2024-06-15" />
-</Field>`,
+</Field>`, {
+  name: 'DatePickerBasicExample',
+  reactImports: [],
+  compImports: ['DatePicker', 'Field']
+}),
     preview: (
       <Field id="date-basic" label="예약일" hint="달력에서 날짜를 선택해 주세요.">
         <DatePicker id="date-basic" fit defaultValue="2024-06-15" />
@@ -87,9 +98,13 @@ const SECTIONS = [
         <code>size</code>는 sm · md · lg입니다.
       </>
     ),
-    code: `<DatePicker id="date-sm" size="sm" defaultValue="2024-06-15" />
+    code: wrapPageExample(`<DatePicker id="date-sm" size="sm" defaultValue="2024-06-15" />
 <DatePicker id="date-md" defaultValue="2024-06-15" />
-<DatePicker id="date-lg" size="lg" defaultValue="2024-06-15" />`,
+<DatePicker id="date-lg" size="lg" defaultValue="2024-06-15" />`, {
+  name: 'DatePickerSizeExample',
+  reactImports: [],
+  compImports: ['DatePicker']
+}),
     preview: (
       <div className="demo-stack">
         {(['sm', 'md', 'lg']).map((size) => (
@@ -107,8 +122,12 @@ const SECTIONS = [
         <code>block</code>은 전체 너비, <code>fit</code>은 제한 너비입니다.
       </>
     ),
-    code: `<DatePicker id="date-full" block defaultValue="2024-06-15" />
-<DatePicker id="date-fit" fit defaultValue="2024-06-15" />`,
+    code: wrapPageExample(`<DatePicker id="date-full" block defaultValue="2024-06-15" />
+<DatePicker id="date-fit" fit defaultValue="2024-06-15" />`, {
+  name: 'DatePickerExample3',
+  reactImports: [],
+  compImports: ['DatePicker']
+}),
     preview: (
       <div className="demo-stack">
         <Field id="date-full" label="전체 너비">
@@ -128,12 +147,16 @@ const SECTIONS = [
         <code>min</code> · <code>max</code>로 선택 가능한 날짜를 제한합니다.
       </>
     ),
-    code: `<DatePicker
+    code: wrapPageExample(`<DatePicker
   id="date-limits"
   defaultValue="2024-06-15"
   min="2024-06-10"
   max="2024-06-20"
-/>`,
+/>`, {
+  name: 'DatePickerExample4',
+  reactImports: [],
+  compImports: ['DatePicker']
+}),
     preview: (
       <Field id="date-limits" label="프로모션 기간">
         <DatePicker
@@ -151,9 +174,13 @@ const SECTIONS = [
   {
     title: '상태',
     description: <>비활성·오류·성공 상태를 지원합니다.</>,
-    code: `<DatePicker id="date-disabled" disabled defaultValue="2024-06-15" />
+    code: wrapPageExample(`<DatePicker id="date-disabled" disabled defaultValue="2024-06-15" />
 <DatePicker id="date-error" error />
-<DatePicker id="date-success" success defaultValue="2024-06-15" />`,
+<DatePicker id="date-success" success defaultValue="2024-06-15" />`, {
+  name: 'DatePickerStateExample',
+  reactImports: [],
+  compImports: ['DatePicker']
+}),
     preview: (
       <div className="demo-stack">
         <Field id="date-disabled" label="비활성">
@@ -185,17 +212,30 @@ const SECTIONS = [
     title: '조합 예시',
     description: (
       <>
-        제어 <code>value</code> · <code>onChange</code>와 필수 검증을 조합합니다.
+        제어 <code>value</code> · <code>onChange</code>, <code>open</code> · <code>onOpenChange</code>,
+        <code>displayMonth</code> · <code>onDisplayMonthChange</code>, 필수 검증을 조합합니다.
       </>
     ),
-    code: `<DatePicker
+    code: wrapPageExample(`const [date, setDate] = useState('')
+const [open, setOpen] = useState(false)
+const [month, setMonth] = useState(new Date())
+
+<DatePicker
   id="visit-date"
   name="visitDate"
   value={date}
   onChange={setDate}
+  open={open}
+  onOpenChange={setOpen}
+  displayMonth={month}
+  onDisplayMonthChange={setMonth}
   required
   error={!date}
-/>`,
+/>`, {
+      name: 'DatePickerExample',
+      reactImports: ['useState'],
+      compImports: ['DatePicker']
+    }),
     preview: <ControlledExample />
   }
 ]
@@ -209,7 +249,7 @@ export default function DatePickerGuide () {
     <GuideLayout
       category="폼"
       title="DatePicker"
-      description="날짜 선택. YYYY-MM-DD 값, min · max · clearable · 검증 상태를 조합합니다."
+      description="날짜 선택. YYYY-MM-DD 값, open · onOpenChange · displayMonth · onDisplayMonthChange · min · max · clearable을 조합합니다."
     >
       {SECTIONS.map((section) => (
         <DemoBlock
@@ -217,6 +257,7 @@ export default function DatePickerGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName="DatePickerExample.jsx"
         >
           {section.preview}
         </DemoBlock>

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { cx } from '@/utils/cx'
-import { GuideLayout } from '@/comp'
+import { GuideLayout } from '@/pages/pub/widgets/guide'
 
 /** 정렬 기준 목록 */
 const sortList = ['최신순', '인기순', '이름순', '오래된순']

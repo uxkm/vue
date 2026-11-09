@@ -79,13 +79,13 @@ export function useLayoutSlots (): PageSlots {
   return useContext(LayoutSlotsContext)
 }
 
-/** Header / Footer / LayoutSlot 용: Provider 밖이면 null (Vue inject default null) */
+/** Header / Footer / LayoutSlot 용: Provider 밖이면 null */
 export function useLayoutSetSlot (): SetPageSlot | null {
   return useContext(LayoutSetSlotContext)
 }
 
 /**
- * 슬롯 등록 헬퍼 — 매 렌더 후 동기화(Vue mounted/updated), 언마운트 시 정리(beforeDestroy)
+ * 슬롯 등록 헬퍼 — 매 렌더 후 동기화, 언마운트 시 정리
  *
  * @param sync   현재 props 기준으로 setSlot 호출
  * @param names  언마운트 시 비울 슬롯 이름

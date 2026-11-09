@@ -1,14 +1,8 @@
 'use client'
 
-import {
-  Alert,
-  Button,
-  DemoBlock,
-  GuideApiDocs,
-  GuideLayout,
-  Icon,
-  Input
-} from '@/comp'
+import { useState } from 'react'
+import { Alert, Button, Icon, Input } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { inputApiSections } from '@/pages/pub/data/guide/inputApiSections'
 
 function Field ({ id, label, hint, children }) {
@@ -44,6 +38,37 @@ const TYPE_ROWS = [
 
 const CLEARABLE_TYPES = new Set(['text', 'password', 'email', 'tel', 'url', 'search'])
 
+/** value · onChange · onClear 로 입력을 제어하는 예시 */
+function ControlledDemo () {
+  const [value, setValue] = useState('제어 값')
+  const [search, setSearch] = useState('')
+
+  return (
+    <div className="demo-stack">
+      <Field id="input-controlled" label="이름" hint={`현재 값: ${value || '(비어 있음)'}`}>
+        <Input
+          id="input-controlled"
+          value={value}
+          onChange={(event) => setValue(event.target.value)}
+          onClear={() => setValue('')}
+          clearable
+          placeholder="이름을 입력하세요"
+        />
+      </Field>
+      <Input
+        aria-label="검색"
+        type="search"
+        value={search}
+        onChange={(event) => setSearch(event.target.value)}
+        onClear={() => setSearch('')}
+        prefix={<Icon name="search" />}
+        clearable
+        placeholder="검색어를 입력하세요"
+      />
+    </div>
+  )
+}
+
 const SECTIONS = [
   {
     title: '기본',
@@ -52,9 +77,13 @@ const SECTIONS = [
         <code>form_field</code> 라벨·힌트와 함께 사용합니다. <code>clearable</code>로 지우기 버튼을 켤 수 있습니다.
       </>
     ),
-    code: `<Field id="input-name" label="이름" hint="2~20자 이내로 입력해 주세요.">
+    code: wrapPageExample(`<Field id="input-name" label="이름" hint="2~20자 이내로 입력해 주세요.">
   <Input id="input-name" placeholder="이름을 입력하세요" clearable />
-</Field>`,
+</Field>`, {
+  name: 'InputBasicExample',
+  reactImports: [],
+  compImports: ['Field', 'Input']
+}),
     preview: (
       <div className="demo-stack">
         <Field id="input-name" label="이름" hint="2~20자 이내로 입력해 주세요.">
@@ -70,11 +99,15 @@ const SECTIONS = [
         <code>input_field</code> · prefix 아이콘으로 검색형 입력을 구성합니다.
       </>
     ),
-    code: `<div className="input_field input_field_fit">
+    code: wrapPageExample(`<div className="input_field input_field_fit">
   <label className="form_field-label" htmlFor="input-search">검색어</label>
   <Input id="input-search" placeholder="플레이스홀더" clearable />
 </div>
-<Input type="search" placeholder="검색어를 입력하세요" prefix={<Icon name="search" />} clearable />`,
+<Input type="search" placeholder="검색어를 입력하세요" prefix={<Icon name="search" />} clearable />`, {
+  name: 'InputExample2',
+  reactImports: [],
+  compImports: ['Icon', 'Input']
+}),
     preview: (
       <div className="demo-stack">
         <div className="input_field input_field_fit">
@@ -98,8 +131,12 @@ const SECTIONS = [
   {
     title: '입력 타입',
     description: '네이티브 type별로 플레이스홀더와 clearable을 조합합니다.',
-    code: `<Input type="email" placeholder="name@example.com" clearable />
-<Input type="date" placeholder="날짜" />`,
+    code: wrapPageExample(`<Input type="email" placeholder="name@example.com" clearable />
+<Input type="date" placeholder="날짜" />`, {
+  name: 'InputExample3',
+  reactImports: [],
+  compImports: ['Input']
+}),
     preview: (
       <div className="demo-stack">
         {TYPE_ROWS.map(([type, label]) => (
@@ -128,13 +165,17 @@ const SECTIONS = [
         <code>input_split</code> · <code>input_otp</code> · 그룹 애드온 패턴입니다.
       </>
     ),
-    code: `<div className="input_split" role="group">…</div>
+    code: wrapPageExample(`<div className="input_split" role="group">…</div>
 <div className="input_otp" role="group">…</div>
 <div className="input_group">
   <span className="input_group-addon">+82</span>
   <Input type="tel" />
   <Button variant="outline" size="sm" label="인증요청" />
-</div>`,
+</div>`, {
+  name: 'InputExample4',
+  reactImports: [],
+  compImports: ['Button', 'Input']
+}),
     preview: (
       <div className="demo-stack">
         <div className="form_field">
@@ -189,9 +230,13 @@ const SECTIONS = [
         <code>size</code>는 sm · md · lg입니다.
       </>
     ),
-    code: `<Input size="sm" placeholder="input_sm" clearable />
+    code: wrapPageExample(`<Input size="sm" placeholder="input_sm" clearable />
 <Input size="md" placeholder="기본 크기" clearable />
-<Input size="lg" placeholder="input_lg" clearable />`,
+<Input size="lg" placeholder="input_lg" clearable />`, {
+  name: 'InputSizeExample',
+  reactImports: [],
+  compImports: ['Input']
+}),
     preview: (
       <div className="demo-stack">
         {(['sm', 'md', 'lg']).map((size) => (
@@ -214,11 +259,15 @@ const SECTIONS = [
         기본은 전체 너비, <code>form_field_fit</code> · <code>input_fit</code>으로 최대 너비를 제한합니다.
       </>
     ),
-    code: `<Field id="input-full" label="전체 너비">
+    code: wrapPageExample(`<Field id="input-full" label="전체 너비">
   <Input id="input-full" placeholder="width: 100%" clearable />
 </Field>
 <div className="form_field form_field_fit">…</div>
-<Input className="input_fit" placeholder="애드온 그룹 최대 320px" prefix="@" clearable />`,
+<Input className="input_fit" placeholder="애드온 그룹 최대 320px" prefix="@" clearable />`, {
+  name: 'InputExample6',
+  reactImports: [],
+  compImports: ['Field', 'Input']
+}),
     preview: (
       <div className="demo-stack">
         <Field id="input-full" label="전체 너비">
@@ -245,9 +294,13 @@ const SECTIONS = [
         <code>prefix</code> · <code>suffix</code>로 애드온 그룹을 만듭니다.
       </>
     ),
-    code: `<Input placeholder="example.com" prefix="https://" clearable />
+    code: wrapPageExample(`<Input placeholder="example.com" prefix="https://" clearable />
 <Input placeholder="username" prefix="@" clearable />
-<Input inputMode="numeric" placeholder="0" prefix="₩" suffix="KRW" clearable />`,
+<Input inputMode="numeric" placeholder="0" prefix="₩" suffix="KRW" clearable />`, {
+  name: 'InputGroupExample',
+  reactImports: [],
+  compImports: ['Input']
+}),
     preview: (
       <div className="demo-stack">
         <Input aria-label="도메인" placeholder="example.com" prefix="https://" clearable />
@@ -270,11 +323,15 @@ const SECTIONS = [
         <code>form_field-required</code>와 <code>required</code> · <code>aria-required</code>를 함께 씁니다.
       </>
     ),
-    code: `<label className="form_field-label" htmlFor="required-email">
+    code: wrapPageExample(`<label className="form_field-label" htmlFor="required-email">
   이메일
   <span className="form_field-required">…</span>
 </label>
-<Input id="required-email" type="email" required aria-required="true" clearable />`,
+<Input id="required-email" type="email" required aria-required="true" clearable />`, {
+  name: 'InputRequiredExample',
+  reactImports: [],
+  compImports: ['Input']
+}),
     preview: (
       <div className="demo-stack">
         <div className="form_field form_field_fit">
@@ -305,11 +362,15 @@ const SECTIONS = [
         기본 · 비활성 · 읽기 전용 · <code>error</code> · <code>is-success</code> 상태입니다.
       </>
     ),
-    code: `<Input placeholder="입력 가능" clearable />
+    code: wrapPageExample(`<Input placeholder="입력 가능" clearable />
 <Input defaultValue="수정할 수 없음" disabled clearable />
 <Input defaultValue="읽기만 가능" readOnly clearable />
 <Input error defaultValue="invalid-email" clearable />
-<Input className="is-success" defaultValue="uxkm_user" clearable />`,
+<Input className="is-success" defaultValue="uxkm_user" clearable />`, {
+  name: 'InputStateExample',
+  reactImports: [],
+  compImports: ['Input']
+}),
     preview: (
       <div className="demo-stack">
         <Field id="state-default" label="기본">
@@ -357,9 +418,13 @@ const SECTIONS = [
         <code>clearable</code>은 값이 있을 때 지우기 버튼을 표시합니다. 읽기 전용에서는 숨깁니다.
       </>
     ),
-    code: `<Input defaultValue="지울 수 있는 값" clearable />
+    code: wrapPageExample(`<Input defaultValue="지울 수 있는 값" clearable />
 <Input type="search" defaultValue="검색어" prefix={<Icon name="search" />} clearable />
-<Input defaultValue="수정 불가" readOnly clearable />`,
+<Input defaultValue="수정 불가" readOnly clearable />`, {
+  name: 'InputExample10',
+  reactImports: [],
+  compImports: ['Icon', 'Input']
+}),
     preview: (
       <div className="demo-stack">
         <Input aria-label="텍스트" defaultValue="지울 수 있는 값" clearable />
@@ -375,14 +440,49 @@ const SECTIONS = [
     )
   },
   {
+    title: '제어 모드',
+    description: (
+      <>
+        <code>value</code>를 넘기면 제어 모드입니다. <code>onChange</code>로 값을 갱신하고,
+        지우기 시 <code>onClear</code>에서 빈 문자열로 맞춥니다.
+      </>
+    ),
+    code: wrapPageExample(`const [value, setValue] = useState('제어 값')
+const [search, setSearch] = useState('')
+
+<Input
+  value={value}
+  onChange={(e) => setValue(e.target.value)}
+  onClear={() => setValue('')}
+  clearable
+/>
+<Input
+  type="search"
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+  onClear={() => setSearch('')}
+  prefix={<Icon name="search" />}
+  clearable
+/>`, {
+      name: 'InputExample',
+      reactImports: ['useState'],
+      compImports: ['Icon', 'Input']
+    }),
+    preview: <ControlledDemo />
+  },
+  {
     title: '조합 예시',
     description: '성공·에러 피드백과 액션 버튼이 있는 로그인 폼 예시입니다.',
-    code: `<form className="form form_vertical form_fit form_compact">
+    code: wrapPageExample(`<form className="form form_vertical form_fit form_compact">
   <Alert>…</Alert>
   <Input className="is-success" defaultValue="uxkm_user" clearable />
   <Input type="password" error defaultValue="1234" clearable />
   <div className="form_actions">…</div>
-</form>`,
+</form>`, {
+  name: 'InputExample11',
+  reactImports: [],
+  compImports: ['Alert', 'Input']
+}),
     preview: (
       <form
         className="form form_vertical form_fit form_compact"
@@ -445,6 +545,7 @@ export default function InputGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName="InputExample.jsx"
         >
           {section.preview}
         </DemoBlock>

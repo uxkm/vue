@@ -12,7 +12,7 @@ const TrendIcon = () => (
 )
 
 /** 지표가 받는 값 */
-export interface StatProps extends HTMLAttributes<HTMLDivElement> {
+export interface StatProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title' | 'prefix'> {
   title?: ReactNode
   value?: ReactNode
   prefix?: ReactNode

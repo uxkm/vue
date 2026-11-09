@@ -1,15 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  Button,
-  DemoBlock,
-  GuideApiDocs,
-  GuideLayout,
-  Icon,
-  Space,
-  Steps
-} from '@/comp'
+import { Button, Icon, Space, Steps } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { stepsApiSections } from '@/pages/pub/data/guide/stepsApiSections'
 
 const ORDER_ITEMS = [
@@ -61,7 +54,7 @@ const SECTIONS = [
         뒤는 <code>is-wait</code>입니다. 완료 단계는 체크 아이콘으로 표시됩니다.
       </>
     ),
-    code: `<Steps
+    code: wrapPageExample(`<Steps
   current={1}
   label="주문 진행 단계"
   items={[
@@ -69,7 +62,11 @@ const SECTIONS = [
     { title: '결제', desc: '수단 선택' },
     { title: '완료', desc: '주문 확정' }
   ]}
-/>`,
+/>`, {
+  name: 'StepsBasicExample',
+  reactImports: [],
+  compImports: ['Steps']
+}),
     preview: (
       <div className="steps_demo-narrow">
         <Steps current={1} label="주문 진행 단계" items={ORDER_ITEMS} />
@@ -83,7 +80,11 @@ const SECTIONS = [
         <code>direction=&quot;vertical&quot;</code>이면 <code>steps_vertical</code>이 붙어 세로 타임라인처럼 배치됩니다.
       </>
     ),
-    code: `<Steps direction="vertical" current={1} items={items} />`,
+    code: wrapPageExample(`<Steps direction="vertical" current={1} items={items} />`, {
+  name: 'StepsExample2',
+  reactImports: [],
+  compImports: ['Steps']
+}),
     preview: (
       <div style={{ maxWidth: 280 }}>
         <Steps direction="vertical" current={1} items={ORDER_ITEMS} />
@@ -98,9 +99,13 @@ const SECTIONS = [
         <code>dot</code>은 숫자 대신 작은 점 인디케이터입니다.
       </>
     ),
-    code: `<Steps size="sm" current={1} items={items} />
+    code: wrapPageExample(`<Steps size="sm" current={1} items={items} />
 <Steps align="center" current={1} items={items} />
-<Steps dot current={1} items={items} />`,
+<Steps dot current={1} items={items} />`, {
+  name: 'StepsSizeExample',
+  reactImports: [],
+  compImports: ['Steps']
+}),
     preview: (
       <Space vertical block size={24}>
         <div className="steps_demo-narrow">
@@ -121,7 +126,7 @@ const SECTIONS = [
         <code>status=&quot;error&quot;</code>이면 <code>is-error</code> 상태입니다.
       </>
     ),
-    code: `<Steps current={1} items={iconItems} />
+    code: wrapPageExample(`<Steps current={1} items={iconItems} />
 <Steps
   current={1}
   items={[
@@ -129,7 +134,11 @@ const SECTIONS = [
     { title: '검증', desc: '실패', status: 'error' },
     { title: '제출', desc: '대기' }
   ]}
-/>`,
+/>`, {
+  name: 'StepsIconExample',
+  reactImports: [],
+  compImports: ['Steps']
+}),
     preview: (
       <Space vertical block size={24}>
         <div className="steps_demo-narrow">
@@ -156,8 +165,12 @@ const SECTIONS = [
         대기 단계는 클릭되지 않습니다.
       </>
     ),
-    code: `const [current, setCurrent] = useState(1)
-<Steps navigable current={current} onChange={setCurrent} items={items} />`,
+    code: wrapPageExample(`const [current, setCurrent] = useState(1)
+<Steps navigable current={current} onChange={setCurrent} items={items} />`, {
+      name: 'StepsExample',
+      reactImports: ['useState'],
+      compImports: ['Steps']
+    }),
     preview: (
       <div className="steps_demo-narrow">
         <ControlledSteps navigable current={1} items={ORDER_ITEMS} />
@@ -222,7 +235,11 @@ const SECTIONS = [
         현재 단계는 <code>aria-current=&quot;step&quot;</code>, 인디케이터·연결선은 <code>aria-hidden</code>입니다.
       </>
     ),
-    code: `<Steps label="가입 진행 단계" current={0} items={[{ title: '약관 동의' }]} />`,
+    code: wrapPageExample(`<Steps label="가입 진행 단계" current={0} items={[{ title: '약관 동의' }]} />`, {
+  name: 'StepsA11yExample',
+  reactImports: [],
+  compImports: ['Steps']
+}),
     preview: (
       <Steps label="가입 진행 단계" current={0} items={[{ title: '약관 동의', desc: '필수' }]} />
     )
@@ -246,6 +263,7 @@ export default function StepsGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName={section.title === 'HTML 마크업' ? 'steps.html' : 'StepsExample.jsx'}
         >
           {section.preview}
         </DemoBlock>

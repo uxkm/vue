@@ -19,7 +19,7 @@ export interface PageSkeletonProps extends HTMLAttributes<HTMLDivElement> {
   rows?: number
   fields?: number
   cards?: number
-  /** 기본 프리셋 대신 직접 구성 (Vue 기본 슬롯) */
+  /** 기본 프리셋 대신 직접 구성 */
   children?: ReactNode
 }
 

@@ -3,7 +3,7 @@
  * - 상단 전체 진행률 바와 상태별(완료/진행중/대기/지연) 건수 요약
  */
 import { cx } from '@/utils/cx'
-import { statusColor } from './labels'
+import { statusColor } from '../lib/labels'
 
 export default function ProgressSummary ({
   label,

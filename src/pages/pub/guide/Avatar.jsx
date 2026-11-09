@@ -1,6 +1,7 @@
 'use client'
 
-import { Avatar, AvatarGroup, DemoBlock, GuideApiDocs, GuideLayout, Icon } from '@/comp'
+import { Avatar, AvatarGroup, Icon } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { avatarApiSections } from '@/pages/pub/data/guide/avatarApiSections'
 
 const SAMPLE = '/images/samples/avatar/avatar-sample.svg'
@@ -13,9 +14,13 @@ const SECTIONS = [
         이미지가 있으면 <code>avatar_image</code>로 표시하고, 없으면 아이콘·이니셜 순으로 대체합니다.
       </>
     ),
-    code: `<Avatar src="/images/samples/avatar/avatar-sample.svg" alt="홍길동" />
+    code: wrapPageExample(`<Avatar src="/images/samples/avatar/avatar-sample.svg" alt="홍길동" />
 <Avatar color="primary" initials="홍" ariaHidden />
-<Avatar color="default" icon={<Icon name="user" className="avatar_icon" />} ariaHidden />`,
+<Avatar color="default" icon={<Icon name="user" className="avatar_icon" />} ariaHidden />`, {
+      name: 'AvatarExample',
+      reactImports: [],
+      compImports: ['Avatar', 'Icon']
+    }),
     preview: (
       <div className="demo-row icon_group">
         <Avatar src={SAMPLE} alt="홍길동" />
@@ -27,10 +32,14 @@ const SECTIONS = [
   {
     title: '크기',
     description: 'small, medium, large, extra large 네 가지 크기를 제공합니다.',
-    code: `<Avatar size="sm" color="primary" initials="A" ariaHidden />
+    code: wrapPageExample(`<Avatar size="sm" color="primary" initials="A" ariaHidden />
 <Avatar size="md" color="primary" initials="B" ariaHidden />
 <Avatar size="lg" color="primary" initials="C" ariaHidden />
-<Avatar size="xl" color="primary" initials="D" ariaHidden />`,
+<Avatar size="xl" color="primary" initials="D" ariaHidden />`, {
+      name: 'AvatarSizeExample',
+      reactImports: [],
+      compImports: ['Avatar']
+    }),
     preview: (
       <div className="demo-row icon_group">
         <Avatar size="sm" color="primary" initials="A" ariaHidden />
@@ -47,9 +56,13 @@ const SECTIONS = [
         기본은 원형이며 <code>square</code>로 사각형을 적용합니다.
       </>
     ),
-    code: `<Avatar color="primary" initials="원" ariaHidden />
+    code: wrapPageExample(`<Avatar color="primary" initials="원" ariaHidden />
 <Avatar square color="primary" initials="각" ariaHidden />
-<Avatar square src="…" alt="홍길동" />`,
+<Avatar square src="…" alt="홍길동" />`, {
+      name: 'AvatarShapeExample',
+      reactImports: [],
+      compImports: ['Avatar']
+    }),
     preview: (
       <div className="demo-row icon_group">
         <Avatar color="primary" initials="원" ariaHidden />
@@ -65,11 +78,15 @@ const SECTIONS = [
         이니셜·아이콘형 아바타에 공통 <code>color_*</code> 색상을 적용합니다.
       </>
     ),
-    code: `<Avatar color="default" initials="D" ariaHidden />
+    code: wrapPageExample(`<Avatar color="default" initials="D" ariaHidden />
 <Avatar color="primary" initials="P" ariaHidden />
 <Avatar color="success" initials="S" ariaHidden />
 <Avatar color="warning" initials="W" ariaHidden />
-<Avatar color="danger" initials="E" ariaHidden />`,
+<Avatar color="danger" initials="E" ariaHidden />`, {
+      name: 'AvatarColorExample',
+      reactImports: [],
+      compImports: ['Avatar']
+    }),
     preview: (
       <div className="demo-row icon_group">
         <Avatar color="default" initials="D" ariaHidden />
@@ -87,9 +104,13 @@ const SECTIONS = [
         <code>badgeColor</code>와 <code>badgeLabel</code>로 온라인·자리 비움·오프라인 상태를 표시합니다.
       </>
     ),
-    code: `<Avatar color="primary" initials="온" badgeColor="success" badgeLabel="온라인" />
+    code: wrapPageExample(`<Avatar color="primary" initials="온" badgeColor="success" badgeLabel="온라인" />
 <Avatar color="default" initials="대" badgeColor="warning" badgeLabel="자리 비움" />
-<Avatar color="default" initials="오" badgeColor="danger" badgeLabel="오프라인" />`,
+<Avatar color="default" initials="오" badgeColor="danger" badgeLabel="오프라인" />`, {
+      name: 'AvatarBadgeExample',
+      reactImports: [],
+      compImports: ['Avatar']
+    }),
     preview: (
       <div className="demo-row icon_group">
         <Avatar color="primary" initials="온" badgeColor="success" badgeLabel="온라인" />
@@ -105,7 +126,7 @@ const SECTIONS = [
         <code>AvatarGroup</code>은 여러 아바타를 겹쳐 표시합니다. <code>ariaLabel</code>로 인원·목적을 설명합니다.
       </>
     ),
-    code: `<AvatarGroup ariaLabel="팀 멤버 4명">
+    code: wrapPageExample(`<AvatarGroup ariaLabel="팀 멤버 4명">
   <Avatar color="primary" initials="김" ariaHidden />
   <Avatar color="success" initials="이" ariaHidden />
   <Avatar color="warning" initials="박" ariaHidden />
@@ -115,7 +136,11 @@ const SECTIONS = [
   <Avatar src="…" alt="홍길동" />
   <Avatar color="primary" initials="홍" ariaHidden />
   <Avatar color="default" icon={<Icon name="plus" className="avatar_icon" />} ariaHidden />
-</AvatarGroup>`,
+</AvatarGroup>`, {
+      name: 'AvatarGroupExample',
+      reactImports: [],
+      compImports: ['Avatar', 'AvatarGroup', 'Icon']
+    }),
     preview: (
       <div className="typo_stack">
         <AvatarGroup ariaLabel="팀 멤버 4명">
@@ -151,6 +176,7 @@ export default function AvatarGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName="AvatarExample.jsx"
         >
           {section.preview}
         </DemoBlock>

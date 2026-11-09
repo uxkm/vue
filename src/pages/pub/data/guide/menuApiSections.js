@@ -47,6 +47,42 @@ const props = [
     description: 'nav 의 aria-label 입니다.'
   },
   {
+    name: 'selectedKey',
+    type: 'string | null',
+    default: '—',
+    description: '선택 키(제어). 넘기면 해당 항목에 is-active 가 붙습니다. 부모가 선택 상태를 관리합니다.'
+  },
+  {
+    name: 'defaultSelectedKey',
+    type: 'string',
+    default: '—',
+    description: '비제어 초기 선택 키입니다. selectedKey 를 넘기지 않을 때 씁니다.'
+  },
+  {
+    name: 'onSelect',
+    type: '(key: string, item: MenuItem, event) => void',
+    default: '—',
+    description: '항목 클릭 시 호출됩니다. 페이지에서 라우팅·액션·선택 상태를 제어할 때 씁니다.'
+  },
+  {
+    name: 'openKeys',
+    type: 'string[]',
+    default: '—',
+    description: '열린 서브메뉴 키 목록(제어). 넘기면 부모가 펼침 상태를 관리합니다.'
+  },
+  {
+    name: 'defaultOpenKeys',
+    type: 'string[]',
+    default: '—',
+    description: '비제어 초기 열린 서브메뉴 키입니다. openKeys 를 넘기지 않을 때 씁니다. 없으면 items 의 defaultOpen 을 수집합니다.'
+  },
+  {
+    name: 'onOpenChange',
+    type: '(openKeys: string[]) => void',
+    default: '—',
+    description: '서브메뉴 열림이 바뀔 때 호출됩니다.'
+  },
+  {
     name: 'children',
     type: 'ReactNode',
     default: '—',
@@ -135,7 +171,7 @@ const tokens = [
 export const menuApiSections = [
   {
     title: 'API · Props',
-    description: 'React · Next.js Menu props입니다. items 로 링크·서브메뉴·그룹·구분선을 구성하고, direction · bordered · compact · dark 로 스킨을 바꿉니다.',
+    description: 'React · Next.js Menu props입니다. items 로 링크·서브메뉴·그룹·구분선을 구성하고, selectedKey · onSelect · openKeys · onOpenChange 로 페이지에서 선택·펼침을 제어합니다.',
     tables: [{ columns, rows: props }]
   },
   {

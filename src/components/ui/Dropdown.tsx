@@ -48,7 +48,7 @@ export type DropdownPlacement =
 export type DropdownOffset = 'none' | 'sm' | 'md' | 'lg'
 
 /** 드롭다운이 받는 값 */
-export interface DropdownProps extends Omit<HTMLAttributes<HTMLDivElement>, 'style' | 'onChange'> {
+export interface DropdownProps extends Omit<HTMLAttributes<HTMLDivElement>, 'style' | 'onChange' | 'onSelect'> {
   /** 트리거 버튼 라벨. 선택 모드에서 미선택 시 placeholder 가 없으면 이 값을 쓴다 */
   label?: ReactNode
   items?: DropdownItem[]
@@ -65,6 +65,11 @@ export interface DropdownProps extends Omit<HTMLAttributes<HTMLDivElement>, 'sty
    * 항목 선택 시 호출. value · defaultValue · onChange 중 하나라도 있으면 선택 모드로 동작한다.
    */
   onChange?: (key: string, item: DropdownItem) => void
+  /**
+   * 메뉴 항목 클릭 시 호출. 선택 모드와 무관하게 동작하며, 페이지에서 액션을 제어할 때 쓴다.
+   * onChange 와 달리 넘겨도 셀렉트 모드로 바뀌지 않는다.
+   */
+  onSelect?: (key: string, item: DropdownItem) => void
   /** 선택 모드에서 값이 없을 때 트리거에 보이는 문구. 없으면 label */
   placeholder?: ReactNode
   /**
@@ -138,7 +143,8 @@ function findItem (items: DropdownItem[], key: string | null | undefined) {
 
 /**
  * 버튼을 누르면 아래로 열리는 메뉴.
- * items 가 메뉴 줄. value · onChange 를 쓰면 셀렉트처럼 트리거 라벨이 선택값으로 바뀐다.
+ * items 가 메뉴 줄. onSelect 로 페이지에서 클릭 액션을 제어하고,
+ * value · onChange 를 쓰면 셀렉트처럼 트리거 라벨이 선택값으로 바뀐다.
  */
 export function Dropdown ({
   label = '메뉴',
@@ -160,6 +166,7 @@ export function Dropdown ({
   style,
   onOpenChange,
   onChange,
+  onSelect,
   ...rest
 }: DropdownProps) {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -187,10 +194,14 @@ export function Dropdown ({
   const toggle = () => setShown(!shown)
   const close = () => setShown(false)
 
-  const selectItem = (item: DropdownItem) => {
+  /** 메뉴 항목 클릭 — 페이지 onSelect · 항목 onSelect · (선택 모드면) onChange */
+  const handleItemClick = (item: DropdownItem) => {
     if (item.disabled || item.type === 'divider') return
-    if (value === undefined) setInnerValue(item.key)
-    onChange?.(item.key, item)
+    if (selectable) {
+      if (value === undefined) setInnerValue(item.key)
+      onChange?.(item.key, item)
+    }
+    onSelect?.(item.key, item)
     item.onSelect?.()
     close()
   }
@@ -297,15 +308,7 @@ export function Dropdown ({
                       role={selectable ? 'menuitemradio' : 'menuitem'}
                       aria-checked={selectable ? active : undefined}
                       disabled={item.disabled}
-                      onClick={() => {
-                        if (item.disabled) return
-                        if (selectable) {
-                          selectItem(item)
-                          return
-                        }
-                        item.onSelect?.()
-                        close()
-                      }}
+                      onClick={() => handleItemClick(item)}
                     >
                       {hasNodes(item.icon) && (
                         <span className="menu_icon">{item.icon}</span>

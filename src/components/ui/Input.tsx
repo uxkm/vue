@@ -62,7 +62,9 @@ export function Input ({
     maxLength: maxLengthProp,
     maxlength,
     ...restProps
-  } = props as InputProps & { maxlength?: number | string }
+  } = props as Omit<InputProps, 'size' | 'prefix' | 'onChange'> & {
+    maxlength?: number | string
+  }
   const resolvedMaxLength = Number(maxLengthProp ?? maxlength)
   const nativeMaxLength =
     Number.isFinite(resolvedMaxLength) && resolvedMaxLength > 0 ? resolvedMaxLength : undefined

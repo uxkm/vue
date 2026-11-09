@@ -19,6 +19,8 @@ import { hasNodes } from '@/utils/react'
 /** 페이지 이동이 받는 값 */
 export interface PaginationProps extends Omit<HTMLAttributes<HTMLElement>, 'onChange'> {
   page?: number
+  /** 비제어 초기 페이지 */
+  defaultPage?: number
   pageCount?: number
   siblingCount?: number
   size?: 'sm' | 'md' | 'lg'
@@ -64,7 +66,8 @@ function clampPage (value: number, pageCount: number) {
  * page 현재 쪽, pageCount 전체 쪽. onChange 로 바뀐 쪽을 올린다.
  */
 export function Pagination ({
-  page = 1,
+  page: pageProp,
+  defaultPage = 1,
   pageCount = 1,
   siblingCount = 1,
   size = 'md',
@@ -82,8 +85,10 @@ export function Pagination ({
   onChange,
   ...rest
 }: PaginationProps) {
+  const controlled = pageProp !== undefined
+  const [innerPage, setInnerPage] = useState(defaultPage)
   const safeCount = Math.max(1, Math.trunc(pageCount) || 1)
-  const current = clampPage(page, safeCount)
+  const current = clampPage(controlled ? pageProp : innerPage, safeCount)
   const pages = pageWindow(current, safeCount, siblingCount)
   const [jumper, setJumper] = useState(String(current))
 
@@ -95,7 +100,9 @@ export function Pagination ({
 
   const go = (next: number) => {
     const clamped = clampPage(next, safeCount)
-    if (clamped !== current) onChange?.(clamped)
+    if (clamped === current) return
+    if (!controlled) setInnerPage(clamped)
+    onChange?.(clamped)
   }
 
   const submitJumper = () => {

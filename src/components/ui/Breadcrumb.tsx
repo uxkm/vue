@@ -4,7 +4,12 @@
  */
 'use client'
 
-import { useState, type HTMLAttributes, type ReactNode } from 'react'
+import {
+  useState,
+  type HTMLAttributes,
+  type MouseEvent,
+  type ReactNode
+} from 'react'
 import { cx } from '@/utils/cx'
 import { hasNodes } from '@/utils/react'
 
@@ -20,18 +25,30 @@ export interface BreadcrumbItem {
 }
 
 /** 경로 표시가 받는 값 */
-export interface BreadcrumbProps extends HTMLAttributes<HTMLElement> {
+export interface BreadcrumbProps extends Omit<HTMLAttributes<HTMLElement>, 'onSelect'> {
   items?: BreadcrumbItem[]
   ariaLabel?: string
   separator?: 'chevron' | 'slash' | 'dot'
   size?: 'sm' | 'md' | 'lg'
   /** 중간을 … 로 접을 때 최대 표시 개수(끝·시작 포함). 0 이하면 접지 않음 */
   maxItems?: number
+  /** 말줄임 펼침(제어) */
+  expanded?: boolean
+  /** 비제어 초기 펼침 */
+  defaultExpanded?: boolean
+  /** 펼침 상태가 바뀔 때 호출 */
+  onExpandedChange?: (expanded: boolean) => void
+  /** 링크 클릭 시 호출. 페이지에서 라우팅을 제어한다 */
+  onSelect?: (
+    item: BreadcrumbItem,
+    index: number,
+    event: MouseEvent<HTMLAnchorElement>
+  ) => void
 }
 
 /**
  * 현재 위치를 보여주는 경로.
- * items 순서대로. 마지막 또는 current 가 현재 페이지다.
+ * items 순서대로. expanded · onSelect 로 페이지에서 제어한다.
  */
 export function Breadcrumb ({
   items = [],
@@ -39,10 +56,21 @@ export function Breadcrumb ({
   separator = 'chevron',
   size = 'md',
   maxItems = 0,
+  expanded: expandedProp,
+  defaultExpanded = false,
+  onExpandedChange,
+  onSelect,
   className,
   ...rest
 }: BreadcrumbProps) {
-  const [expanded, setExpanded] = useState(false)
+  const controlled = expandedProp !== undefined
+  const [innerExpanded, setInnerExpanded] = useState(defaultExpanded)
+  const expanded = controlled ? expandedProp : innerExpanded
+
+  const setExpanded = (next: boolean) => {
+    if (!controlled) setInnerExpanded(next)
+    onExpandedChange?.(next)
+  }
 
   const isCurrent = (item: BreadcrumbItem, index: number) =>
     Boolean(item.current) || index === items.length - 1
@@ -125,6 +153,7 @@ export function Breadcrumb ({
                     )}
                     href={item.href}
                     aria-label={item.ariaLabel || undefined}
+                    onClick={(event) => onSelect?.(item, sourceIndex, event)}
                   >
                     {hasNodes(item.icon) && (
                       <span className="breadcrumb_icon">{item.icon}</span>

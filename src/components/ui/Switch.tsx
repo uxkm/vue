@@ -58,11 +58,10 @@ export function Switch ({
     className
   )
 
-  const checkedProps = onChange
-    ? { checked: Boolean(checked), onChange }
-    : checked != null
-      ? { defaultChecked: Boolean(checked) }
-      : { defaultChecked }
+  // checked 유무로 제어/비제어 판정. onChange 만으로는 제어 모드가 되지 않는다.
+  const checkedProps = checked !== undefined
+    ? { checked, onChange }
+    : { defaultChecked, onChange }
 
   return (
     <label

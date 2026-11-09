@@ -14,7 +14,8 @@ import { applyPageTranslation } from '@/lib/pageTranslate'
  * 화면은 한글 원문으로 렌더하고, 선택 언어가 원문이 아니면 DOM 텍스트를 번역한다.
  * locales 폴더 / 언어팩 JSON 없이 동작한다.
  *
- * @param {{ current: HTMLElement | null }} rootRef - 번역할 DOM 루트 (보통 app-layout)
+ * @param {object} props
+ * @param {{ current: HTMLElement | null } | null | undefined} props.rootRef - 번역할 DOM 루트 (보통 app-layout)
  * UI 노드는 렌더하지 않는다 (return null).
  */
 export function GlobalTranslator ({ rootRef }) {

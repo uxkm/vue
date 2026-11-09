@@ -2,8 +2,11 @@
  * 태그 라벨.
  * 색·filled/outline 등으로 짧은 분류 표시. TagGroup으로 묶을 수 있다.
  */
+'use client'
+
 import {
   createElement,
+  useState,
   type HTMLAttributes,
   type MouseEvent,
   type ReactNode
@@ -35,11 +38,15 @@ export interface TagProps
   add?: boolean
   closable?: boolean
   selected?: boolean
+  /** 비제어 초기 선택(checkable) */
+  defaultSelected?: boolean
   disabled?: boolean
   ripple?: boolean
   icon?: ReactNode
   children?: ReactNode
   onClick?: (event: MouseEvent<HTMLElement>) => void
+  /** checkable 선택 상태가 바뀔 때 호출. 페이지에서 선택값을 제어한다 */
+  onSelectedChange?: (selected: boolean, event: MouseEvent<HTMLElement>) => void
   onClose?: (event: MouseEvent<HTMLButtonElement>) => void
 }
 
@@ -74,13 +81,15 @@ export function Tag ({
   checkable = false,
   add = false,
   closable = false,
-  selected = false,
+  selected,
+  defaultSelected = false,
   disabled = false,
   ripple = false,
   icon,
   children,
   className,
   onClick,
+  onSelectedChange,
   onClose,
   ...rest
 }: TagProps) {
@@ -89,6 +98,9 @@ export function Tag ({
   const resolvedSize = VALID_SIZES.has(size) ? size : 'md'
   const interactive = checkable || add || Boolean(href)
   const splitControl = closable && interactive
+  const selectedControlled = selected !== undefined
+  const [innerSelected, setInnerSelected] = useState(defaultSelected)
+  const isSelected = selectedControlled ? Boolean(selected) : innerSelected
 
   const tagClass = cx(
     'tag',
@@ -98,7 +110,7 @@ export function Tag ({
     round && 'tag_round',
     checkable && 'tag_checkable',
     add && 'tag_add',
-    selected && 'is-selected',
+    isSelected && 'is-selected',
     disabled && 'is-disabled',
     className
   )
@@ -134,12 +146,17 @@ export function Tag ({
       )
     : null
 
-  /** 비활성이면 막고, 아니면 onClick */
+  /** 비활성이면 막고, checkable 이면 선택 토글 후 onClick */
   const handleClick = (event: MouseEvent<HTMLElement>) => {
     if (disabled) {
       event.preventDefault()
       event.stopPropagation()
       return
+    }
+    if (checkable) {
+      const next = !isSelected
+      if (!selectedControlled) setInnerSelected(next)
+      onSelectedChange?.(next, event)
     }
     onClick?.(event)
   }
@@ -162,7 +179,7 @@ export function Tag ({
             href: Control === 'a' && !disabled ? (href || undefined) : undefined,
             disabled: Control === 'button' ? disabled : undefined,
             'aria-disabled': Control === 'a' && disabled ? true : undefined,
-            'aria-pressed': checkable ? selected : undefined,
+            'aria-pressed': checkable ? isSelected : undefined,
             tabIndex: Control === 'a' && disabled ? -1 : undefined,
             'data-ripple': rippleAttr,
             onClick: handleClick
@@ -185,7 +202,7 @@ export function Tag ({
       href: rootTag === 'a' && !disabled ? (href || undefined) : undefined,
       disabled: rootTag === 'button' ? disabled : undefined,
       'aria-disabled': rootTag !== 'button' && disabled ? true : undefined,
-      'aria-pressed': checkable ? selected : undefined,
+      'aria-pressed': checkable ? isSelected : undefined,
       tabIndex: rootTag === 'a' && disabled ? -1 : undefined,
       'data-ripple': rippleAttr,
       onClick: handleClick

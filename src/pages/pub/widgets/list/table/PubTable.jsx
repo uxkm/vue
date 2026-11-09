@@ -9,8 +9,8 @@
 import { useCallback, useEffect, useLayoutEffect, useRef } from 'react'
 import { cx } from '@/utils/cx'
 import BranchRow from './BranchRow'
-import { folderLabel, itemLabel } from './labels'
-import { countLeaves, groupLabel, isGroupNode } from './tree'
+import { folderLabel, itemLabel } from '../lib/labels'
+import { countLeaves, groupLabel, isGroupNode } from '../lib/tree'
 import { useEllipsisTooltip } from './useEllipsisTooltip.jsx'
 
 /** 화면명 열 최대 너비 */

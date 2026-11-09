@@ -56,7 +56,7 @@ interface NormalizedItem {
 }
 
 /** Accordion props */
-export interface AccordionProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
+export interface AccordionProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'> {
   value?: AccordionValue | null
   defaultValue?: AccordionValue | null
   items?: AccordionItemData[]
@@ -337,17 +337,18 @@ export function Accordion ({
   )
   const openValue = isControlled ? value : innerValue
 
-  const panelMap = new Map<string, { content: ReactNode, className: string }>()
+  // 원본 타입 보존(1 과 '1' 충돌 방지)
+  const panelMap = new Map<AccordionValue, { content: ReactNode, className: string }>()
   for (const item of normalizedItems) {
     if (hasNodes(item.content)) {
-      panelMap.set(String(item.value), {
+      panelMap.set(item.value, {
         content: item.content,
         className: item.panelClassName
       })
     }
   }
   for (const panel of compound.panels) {
-    panelMap.set(String(panel.value), {
+    panelMap.set(panel.value, {
       content: panel.content,
       className: panel.className
     })
@@ -395,7 +396,7 @@ export function Accordion ({
         const slide = effect === 'slide'
         const triggerId = `${uid}-trigger-${index}`
         const panelId = `${uid}-panel-${index}`
-        const mapped = panelMap.get(String(item.value))
+        const mapped = panelMap.get(item.value)
         const panelBody = renderPanel
           ? renderPanel(item, { open })
           : hasMultiPanel

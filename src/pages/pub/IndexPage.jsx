@@ -7,10 +7,10 @@
  */
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { AutoSkeleton } from '@/comp'
-import FilterSheet from './widgets/FilterSheet'
-import FolderFilterBar from './widgets/FolderFilterBar'
-import PubHeader from './widgets/PubHeader'
 import {
+  FilterSheet,
+  FolderFilterBar,
+  PubHeader,
   folderFilterLabel,
   folderLabel,
   remarkHasContent,
@@ -19,23 +19,21 @@ import {
   itemLabel,
   typeLabel,
   statusLabel,
-  tabLabel
-} from './widgets/labels'
-import ProgressSummary from './widgets/ProgressSummary'
-import PubError from './widgets/PubError'
-import PubIndexSkeleton from './widgets/PubIndexSkeleton'
-import PubSearchBar from './widgets/PubSearchBar'
-import PubTable from './widgets/PubTable'
-import PubTabs from './widgets/PubTabs'
-import RemarkModal from './widgets/RemarkModal'
-import {
+  tabLabel,
+  ProgressSummary,
+  PubError,
+  PubIndexSkeleton,
+  PubSearchBar,
+  PubTable,
+  PubTabs,
+  RemarkModal,
   collectExpandKeys,
   collectLeaves,
   countLeaves,
-  filterDepthTree
-} from './widgets/tree'
+  filterDepthTree,
+  linkFieldSearchText
+} from './widgets/list'
 import { resolveSkeletonMode } from '@/config/skeleton'
-import { linkFieldSearchText } from './widgets/PathLinkCell'
 import { useSiteTitle } from '@/lib/siteTitle'
 
 /** 스켈레톤 설정 키 — 디자인 확정 시 src/config/skeleton.ts 에 'pub/index': 'manual' */

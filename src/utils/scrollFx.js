@@ -167,10 +167,9 @@ export function createStickyProgress (trackEl, onProgress) {
 
 /**
  * 페이지 공통 초기화
- * @param {Vue} vm
+ * @param {Element|null|undefined} root
  */
-export function bindHomeScrollFx (vm) {
-  var root = vm.$el
+export function bindHomeScrollFx (root) {
   if (!root || !root.querySelectorAll) {
     return function () {}
   }

@@ -2,6 +2,8 @@
  * 인라인 알림 배너.
  * info/success/warning/danger 색과 닫기 가능한 안내 메시지.
  */
+'use client'
+
 import { useState, type HTMLAttributes, type MouseEvent, type ReactNode } from 'react'
 import { cx } from '@/utils/cx'
 import { hasNodes } from '@/utils/react'
@@ -41,12 +43,18 @@ export interface AlertProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'
   icon?: ReactNode
   actions?: ReactNode
   children?: ReactNode
+  /** 넘기면 표시 상태를 페이지가 제어한다 */
+  open?: boolean
+  /** 비제어 초기 표시. 기본 true */
+  defaultOpen?: boolean
+  /** 표시 상태가 바뀔 때 호출 */
+  onOpenChange?: (open: boolean) => void
   onClose?: (event: MouseEvent<HTMLButtonElement>) => void
 }
 
 /**
  * 알림 박스.
- * color 종류(정보·성공·경고·위험), title 제목, closable 닫기.
+ * color 종류(정보·성공·경고·위험), title 제목, open · onOpenChange 로 표시를 제어한다.
  */
 export function Alert ({
   color,
@@ -61,11 +69,23 @@ export function Alert ({
   icon,
   actions,
   children,
+  open,
+  defaultOpen = true,
   className,
+  onOpenChange,
   onClose,
   ...rest
 }: AlertProps) {
-  const [visible, setVisible] = useState(true)
+  const controlled = open !== undefined
+  const [innerOpen, setInnerOpen] = useState(defaultOpen)
+  const visible = controlled ? open : innerOpen
+
+  const setVisible = (next: boolean, event?: MouseEvent<HTMLButtonElement>) => {
+    if (!controlled) setInnerOpen(next)
+    onOpenChange?.(next)
+    if (!next && event) onClose?.(event)
+  }
+
   if (!visible) return null
 
   const resolvedColor = COLOR_MAP[color || type || 'info'] || 'info'
@@ -104,10 +124,7 @@ export function Alert ({
           type="button"
           className="alert_close"
           aria-label="닫기"
-          onClick={(event) => {
-            setVisible(false)
-            onClose?.(event)
-          }}
+          onClick={(event) => setVisible(false, event)}
         >
           <Icon name="close" size="0.75em" />
         </button>

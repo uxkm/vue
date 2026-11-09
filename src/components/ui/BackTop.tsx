@@ -44,7 +44,12 @@ export interface BackTopProps extends Omit<ButtonHTMLAttributes<HTMLButtonElemen
   icon?: ReactNode | false
   /** 버튼 안 콘텐츠. 있으면 label · icon 대신 쓴다 */
   children?: ReactNode
-  /** 표시 상태가 바뀔 때 */
+  /**
+   * 표시 여부(제어). 넘기면 스크롤 계산 대신 페이지가 표시를 관리한다.
+   * 생략 시 visibilityHeight 기준 자동 표시.
+   */
+  visible?: boolean
+  /** 표시 상태가 바뀔 때(스크롤 기반 측정값) */
   onVisibleChange?: (visible: boolean) => void
 }
 
@@ -93,6 +98,7 @@ export function BackTop ({
   label = '맨 위로',
   icon,
   children,
+  visible: visibleProp,
   onVisibleChange,
   className,
   onClick,
@@ -100,7 +106,9 @@ export function BackTop ({
 }: BackTopProps) {
   const uid = useId().replace(/:/g, '')
   const floating = useFloatingContext()
-  const [visible, setVisible] = useState(false)
+  const controlled = visibleProp !== undefined
+  const [innerVisible, setInnerVisible] = useState(false)
+  const visible = controlled ? visibleProp : innerVisible
   const [targetMode, setTargetMode] = useState<'window' | 'container'>('window')
   const visibleRef = useRef(false)
 
@@ -114,10 +122,10 @@ export function BackTop ({
     const nextVisible = getScrollTop(scrollParent) >= visibilityHeight
     if (visibleRef.current !== nextVisible) {
       visibleRef.current = nextVisible
-      setVisible(nextVisible)
+      if (!controlled) setInnerVisible(nextVisible)
       onVisibleChange?.(nextVisible)
     }
-  }, [target, visibilityHeight, onVisibleChange])
+  }, [target, visibilityHeight, onVisibleChange, controlled])
 
   useLayoutEffect(() => {
     update()

@@ -1,6 +1,7 @@
 'use client'
 
-import { DemoBlock, Flex, GuideApiDocs, GuideLayout } from '@/comp'
+import { Flex } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { flexApiSections } from '@/pages/pub/data/guide/flexApiSections'
 
 const cells = (count, label = (index) => String(index + 1)) =>
@@ -13,14 +14,18 @@ const cells = (count, label = (index) => String(index + 1)) =>
 const SECTIONS = [
   {
     title: '정렬과 비율',
-    code: `<Flex justify="between" gap="sm">
+    code: wrapPageExample(`<Flex justify="between" gap="sm">
   <div className="flex_demo-cell">Start</div>
   <div className="flex_demo-cell">End</div>
 </Flex>
 <Flex ratio="2-1" gap="sm">
   <div className="flex_demo-cell">2</div>
   <div className="flex_demo-cell">1</div>
-</Flex>`,
+</Flex>`, {
+      name: 'FlexExample',
+      reactImports: [],
+      compImports: ['Flex']
+    }),
     preview: (
       <div className="typo_stack">
         <Flex justify="between" gap="sm">
@@ -36,8 +41,12 @@ const SECTIONS = [
   },
   {
     title: '균등 항목',
-    code: `<Flex cols={2}>{/* cells */}</Flex>
-<Flex cols={4}>…</Flex>`,
+    code: wrapPageExample(`<Flex cols={2}>{/* cells */}</Flex>
+<Flex cols={4}>…</Flex>`, {
+      name: 'FlexColsExample',
+      reactImports: [],
+      compImports: ['Flex']
+    }),
     preview: (
       <div className="typo_stack">
         <Flex cols={2}>{cells(2, 'cols 2')}</Flex>
@@ -47,7 +56,7 @@ const SECTIONS = [
   },
   {
     title: '비율 항목',
-    code: `<Flex ratio="1-2">
+    code: wrapPageExample(`<Flex ratio="1-2">
   <div className="flex_demo-cell">1</div>
   <div className="flex_demo-cell">2</div>
 </Flex>
@@ -55,7 +64,11 @@ const SECTIONS = [
   <div className="flex_demo-cell">1</div>
   <div className="flex_demo-cell">2</div>
   <div className="flex_demo-cell">1</div>
-</Flex>`,
+</Flex>`, {
+      name: 'FlexRatioExample',
+      reactImports: [],
+      compImports: ['Flex']
+    }),
     preview: (
       <div className="typo_stack">
         <Flex ratio="1-2">
@@ -72,9 +85,13 @@ const SECTIONS = [
   },
   {
     title: '간격',
-    code: `<Flex cols={3} gap="sm">…</Flex>
+    code: wrapPageExample(`<Flex cols={3} gap="sm">…</Flex>
 <Flex cols={3} gap="lg">…</Flex>
-<Flex cols={3} gap="none">…</Flex>`,
+<Flex cols={3} gap="none">…</Flex>`, {
+      name: 'FlexGapExample',
+      reactImports: [],
+      compImports: ['Flex']
+    }),
     preview: (
       <div className="typo_stack">
         <Flex cols={3} gap="sm">{cells(3, 'gap sm')}</Flex>
@@ -85,9 +102,13 @@ const SECTIONS = [
   },
   {
     title: '줄바꿈 · equal · autoFit',
-    code: `<Flex wrap gap="sm">{/* 8 cells */}</Flex>
+    code: wrapPageExample(`<Flex wrap gap="sm">{/* 8 cells */}</Flex>
 <Flex equal gap="sm">…</Flex>
-<Flex autoFit>…</Flex>`,
+<Flex autoFit>…</Flex>`, {
+      name: 'FlexWrapExample',
+      reactImports: [],
+      compImports: ['Flex']
+    }),
     preview: (
       <div className="typo_stack">
         <Flex wrap gap="sm">{cells(8)}</Flex>
@@ -98,11 +119,15 @@ const SECTIONS = [
   },
   {
     title: '세로',
-    code: `<Flex direction="column" gap="sm">
+    code: wrapPageExample(`<Flex direction="column" gap="sm">
   <div className="flex_demo-cell">1</div>
   <div className="flex_demo-cell">2</div>
   <div className="flex_demo-cell">3</div>
-</Flex>`,
+</Flex>`, {
+      name: 'FlexColumnExample',
+      reactImports: [],
+      compImports: ['Flex']
+    }),
     preview: (
       <Flex direction="column" gap="sm" style={{ maxWidth: '16rem' }}>
         {cells(3)}
@@ -128,6 +153,7 @@ export default function FlexGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName="FlexExample.jsx"
         >
           {section.preview}
         </DemoBlock>

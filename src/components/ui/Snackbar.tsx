@@ -2,6 +2,8 @@
  * 스낵바(짧은 토스트형 알림).
  * 하단에 잠깐 뜨는 메시지. 색·아이콘·닫기 지원.
  */
+'use client'
+
 import { useState, type HTMLAttributes, type ReactNode } from 'react'
 import { cx } from '@/utils/cx'
 import { hasNodes } from '@/utils/react'
@@ -26,12 +28,18 @@ export interface SnackbarProps extends HTMLAttributes<HTMLDivElement> {
   showIcon?: boolean
   icon?: ReactNode
   closable?: boolean
+  /** 넘기면 표시 상태를 페이지가 제어한다 */
+  open?: boolean
+  /** 비제어 초기 표시. 기본 true */
+  defaultOpen?: boolean
+  /** 표시 상태가 바뀔 때 호출 */
+  onOpenChange?: (open: boolean) => void
   onClose?: () => void
 }
 
 /**
  * 잠깐 보여 주는 알림 막대.
- * color 종류, message 문구. showIcon 으로 색별 아이콘, closable 이면 닫을 수 있다.
+ * color 종류, message 문구. open · onOpenChange 로 페이지에서 표시를 제어한다.
  */
 export function Snackbar ({
   color = 'info',
@@ -40,12 +48,24 @@ export function Snackbar ({
   showIcon = true,
   icon,
   closable = false,
+  open,
+  defaultOpen = true,
   className,
   children,
+  onOpenChange,
   onClose,
   ...rest
 }: SnackbarProps) {
-  const [visible, setVisible] = useState(true)
+  const controlled = open !== undefined
+  const [innerOpen, setInnerOpen] = useState(defaultOpen)
+  const visible = controlled ? open : innerOpen
+
+  const setVisible = (next: boolean) => {
+    if (!controlled) setInnerOpen(next)
+    onOpenChange?.(next)
+    if (!next) onClose?.()
+  }
+
   if (!visible) return null
   const resolved = color === 'danger' ? 'error' : color
   const defaultIconName = ICON_NAME[resolved] || 'info'
@@ -69,10 +89,7 @@ export function Snackbar ({
           type="button"
           className="snackbar_close"
           aria-label="닫기"
-          onClick={() => {
-            setVisible(false)
-            onClose?.()
-          }}
+          onClick={() => setVisible(false)}
         >
           <Icon name="close" size="0.75em" />
         </button>

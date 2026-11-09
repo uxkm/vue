@@ -4,16 +4,19 @@ Next.js (App Router) + React 퍼블리시 / UI 카탈로그 프로젝트입니�
 
 ## 환경
 
-| 항목 | 버전 |
+| 항목 | 버전 / 구성 |
 |------|------|
 | Node.js | `24.11.1` (`.nvmrc`, `>= 20` 가능) |
 | npm | `>= 10` |
-| Next.js | `15` |
+| Next.js | `15.5` (App Router) |
 | React | `19` |
+| 개발 번들러 | **Turbopack** (`npm run dev` / `ui`) |
+| 프로덕션 빌드 | **webpack** (`next build --webpack`, `output: 'export'` → `out/`) |
+| Sass | **sass-embedded** (Dart Sass native). 스타일 사전 빌드는 `scripts/build-styles.mjs` |
 
 언어는 **TypeScript(`.tsx`)와 바닐라 JS(`.jsx`)를 함께** 사용합니다. 공용 컴포넌트는 TSX, 화면은 JSX를 기본으로 합니다.
 
-이전 Vue/Vite 의존성 대응표는 [`src/lib/README.md`](src/lib/README.md)를 참고하세요.
+외부 라이브러리 래퍼는 [`src/lib/README.md`](src/lib/README.md)를 참고하세요.
 
 ```bash
 nvm use
@@ -21,15 +24,49 @@ npm install
 npm run dev
 ```
 
+HTTP는 인증서 없이 `http://localhost:8090` 으로 바로 됩니다. HTTPS는 아래 절을 참고하세요.
+
+## 로컬 HTTPS
+
+`certificates/`는 **git에 포함되지 않습니다** (`.gitignore`). 다른 PC에서 클론·다운로드하면 HTTPS가 자동으로 켜지지 않고, 인증서가 없으면 HTTP만 기동되며 콘솔에 `certificates/localhost*.pem 없음 — HTTPS 생략`이 표시됩니다.
+
+로컬 HTTPS(`https://localhost:8443`)를 쓰려면 [mkcert](https://github.com/FiloSottile/mkcert) 등으로 **그 PC의 터미널**에서 인증서를 생성하세요.  
+Windows **CMD 전용 명령이 아닙니다.** macOS·Linux는 Terminal(zsh/bash), Windows는 **PowerShell** 또는 CMD 모두 가능합니다(프로젝트 루트에서 실행).
+
+```bash
+# 1) mkcert 설치 (OS별)
+#   macOS:   brew install mkcert nss
+#   Windows: choco install mkcert   또는   scoop install mkcert
+#   Linux:   배포판별 — https://github.com/FiloSottile/mkcert#installation
+
+# 2) 신뢰 저장소 등록 + 인증서 생성 (프로젝트 루트)
+mkcert -install
+mkdir -p certificates
+mkcert -key-file certificates/localhost-key.pem \
+  -cert-file certificates/localhost.pem \
+  localhost 127.0.0.1 ::1
+```
+
+Windows PowerShell에서 `mkdir -p`가 안 되면 `New-Item -ItemType Directory -Force certificates` 를 쓰면 됩니다.
+
+필요한 파일:
+
+| 파일 | 설명 |
+|------|------|
+| `certificates/localhost-key.pem` | private key |
+| `certificates/localhost.pem` | 인증서 |
+
+`npm run dev` / `ui` / `start` 가 위 파일이 있으면 HTTPS `8443`도 함께 엽니다. 포트는 `PORT`, `HTTPS_PORT` 환경 변수로 바꿀 수 있습니다.
+
 ## 스크립트
 
 | 명령 | 설명 |
 |------|------|
-| `npm run dev` | 개발 서버 — **SCSS 직접** 로드 + HMR (HTTP `8090` / HTTPS `8443`) |
-| `npm run ui` | 개발 서버 — SCSS→CSS **감시·재빌드** 후 **`.min.css`** 로드 (JS·스타일 모두 실시간) |
-| `npm run build:styles` | SCSS → `css/*.css`(규칙당 1줄) + `css/*.min.css`(압축). 앱·빌드는 `.min.css` |
-| `npm run build` | 정적 사이트 생성 → **`out/`** (웹 서버에 이 폴더 업로드) |
-| `npm run start` | `out/` 로컬 미리보기 — HTTP `8090` + HTTPS `8443` |
+| `npm run dev` | 개발 서버(**Turbopack**) — **SCSS 직접** 로드 + HMR (HTTP `8090` / 인증서 있으면 HTTPS `8443`) |
+| `npm run ui` | 개발 서버(**Turbopack**) — SCSS→CSS **감시·재빌드** 후 **`.min.css`** 로드 (JS·스타일 모두 실시간) |
+| `npm run build:styles` | `sass-embedded`로 SCSS → `css/*.css`(규칙당 1줄) + `css/*.min.css`(압축). 앱·빌드는 `.min.css` |
+| `npm run build` | 스타일 빌드 후 **webpack**으로 정적 사이트 생성 → **`out/`** (웹 서버에 이 폴더 업로드) |
+| `npm run start` | `out/` 로컬 미리보기 — HTTP `8090` + (인증서 있으면) HTTPS `8443` |
 | `npm run start:http` | `out/` HTTP만 (`serve`) |
 | `npm run lint` | Next ESLint |
 | `npm run generate:registry` | pages 스캔 → `registry.js` 생성 (`dev`·`build` 시 자동). 가이드 메뉴는 `public/data/pub/guide-menu.json` |
@@ -48,7 +85,7 @@ npm run dev
 
 ### dependencies (런타임)
 
-대부분 Vue 시절 라이브러리의 React 대체이며, 래퍼는 [`src/lib/`](src/lib/README.md)에 있습니다.
+래퍼·연동은 [`src/lib/`](src/lib/README.md)를 참고하세요.
 
 | 패키지 | 용도 |
 |--------|------|
@@ -80,8 +117,11 @@ npm run dev
 | 패키지 | 용도 |
 |--------|------|
 | `@types/*` | TypeScript 타입 (aos, lodash-es, node, react, react-dom) |
-| `sass` | SCSS 컴파일 |
+| `sass-embedded` | Dart Sass 네이티브 컴파일러 (Next `sassOptions.implementation` · `build-styles`) |
+| `sass` | Dart Sass JS 패키지 (호환·도구용) |
+| `raw-loader` | Turbopack에서 `.md`를 문자열로 import (가이드 소개 README) |
 | `postcss` · `autoprefixer` | CSS 후처리 · 벤더 프리픽스 (`postcss.config.mjs`) |
+| `eslint` · `eslint-config-next` | 린트 (`npm run lint`) |
 | `typescript` | 타입 체크/컴파일 |
 
 ## 폴더 구조
@@ -90,7 +130,7 @@ npm run dev
 .
 ├── app/                 # Next.js App Router 라우트
 ├── public/              # 정적 파일 (빌드 번들 제외)
-├── scripts/             # 메뉴·레지스트리 생성 스크립트
+├── scripts/             # 레지스트리·스타일 빌드·HTTP(S) 서버
 └── src/                 # 소스 (컴포넌트·화면·스타일·유틸)
 ```
 
@@ -137,11 +177,16 @@ export default function B2bPage () {
 | `images/icon\|common\|pages` | 이미지 (호출: `@/utils/images` 또는 `/images/...`) |
 | `favicon.ico` / `favicon.svg` | 파비콘 |
 
-### `scripts/` — 코드 생성
+### `scripts/` — 코드 생성 · 서버
 
 | 파일 | 설명 |
 |------|------|
 | `registry.js` | `src/generated/registry.js` 동적 import 맵 생성 (`npm run generate:registry`) |
+| `build-styles.mjs` | SCSS → `src/styles/css/*.css` · `*.min.css` (`sass-embedded`) |
+| `style-entries.mjs` | 스타일 엔트리 목록 (build-styles · `next.config` 공유) |
+| `serve.mjs` | HTTP/HTTPS 개발·프로덕션 서버 (dev 시 Turbopack). HTTPS는 `certificates/localhost*.pem` 있을 때만 |
+| `ui.mjs` | 스타일 watch + `STYLE_MODE=css` 개발 서버 |
+| `serve-static.mjs` | `out/` 정적 미리보기 (HTTPS 조건 동일) |
 
 퍼블리시 목록은 `public/data/pub/` JSON만 편집합니다. (생성 스크립트 없음)
 
@@ -159,7 +204,7 @@ export default function B2bPage () {
 | `styles/` | SCSS. `common` · `components` · `pages` · `index.scss` |
 | `hooks/` | 공용 React 훅 (`useLocale`, `useClickOutside` 등) |
 | `locales/` | i18n 번역 JSON (`ko` · `th` · `vi` · `ru` · `en`) |
-| `lib/` | 외부 라이브러리 래퍼 / Vue→React 대응 (차트, 스와이퍼, i18n 등) |
+| `lib/` | 외부 라이브러리 래퍼 (차트, 스와이퍼, i18n 등) |
 | `utils/` | 유틸 (`cx`, `images`, `scrollFx` 등) |
 | `assets/` | 번들에 포함되는 소량 에셋 (예: `logo.svg`) |
 

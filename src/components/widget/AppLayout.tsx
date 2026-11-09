@@ -22,7 +22,7 @@ const SHOW_AT_TOP = 24
 
 /** 앱 레이아웃이 받는 값. 헤더·본문·푸터를 감싼다 */
 export interface AppLayoutProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
-  /** 헤더 전체 교체 (Vue #header 슬롯) */
+  /** 헤더 전체 교체 */
   header?: ReactNode
   headerBack?: ReactNode
   headerBrand?: ReactNode
@@ -35,9 +35,9 @@ export interface AppLayoutProps extends Omit<HTMLAttributes<HTMLDivElement>, 'ch
    * (Header hideNavOnScroll 슬롯이 있으면 그쪽 우선)
    */
   hideNavOnScroll?: boolean
-  /** 푸터 전체 교체 (Vue #footer 슬롯) */
+  /** 푸터 전체 교체 */
   footer?: ReactNode
-  /** 기본 AppFooter 내용 (Vue #footer-content 슬롯) */
+  /** 기본 AppFooter 내용 */
   footerContent?: ReactNode
   children?: ReactNode
 }

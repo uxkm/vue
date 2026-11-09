@@ -1,14 +1,19 @@
 'use client'
 
-import { DemoBlock, Divider, GuideApiDocs, GuideLayout, Space } from '@/comp'
+import { Divider, Space } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { dividerApiSections } from '@/pages/pub/data/guide/dividerApiSections'
 
 const SECTIONS = [
   {
     title: '기본',
-    code: `<p>위 콘텐츠</p>
+    code: wrapPageExample(`<p>위 콘텐츠</p>
 <Divider />
-<p>아래 콘텐츠</p>`,
+<p>아래 콘텐츠</p>`, {
+      name: 'DividerExample',
+      reactImports: [],
+      compImports: ['Divider']
+    }),
     preview: (
       <div className="typo_stack">
         <p>위 콘텐츠</p>
@@ -19,9 +24,13 @@ const SECTIONS = [
   },
   {
     title: '점선',
-    code: `<p>위 콘텐츠</p>
+    code: wrapPageExample(`<p>위 콘텐츠</p>
 <Divider dashed />
-<p>아래 콘텐츠</p>`,
+<p>아래 콘텐츠</p>`, {
+      name: 'DividerDashedExample',
+      reactImports: [],
+      compImports: ['Divider']
+    }),
     preview: (
       <div className="typo_stack">
         <p>위 콘텐츠</p>
@@ -32,8 +41,12 @@ const SECTIONS = [
   },
   {
     title: '텍스트 레이블',
-    code: `<Divider label="섹션 제목" />
-<Divider plain label="보조 설명" />`,
+    code: wrapPageExample(`<Divider label="섹션 제목" />
+<Divider plain label="보조 설명" />`, {
+      name: 'DividerLabelExample',
+      reactImports: [],
+      compImports: ['Divider']
+    }),
     preview: (
       <div className="typo_stack">
         <Divider label="섹션 제목" />
@@ -43,9 +56,13 @@ const SECTIONS = [
   },
   {
     title: '레이블 정렬',
-    code: `<Divider orient="left" label="왼쪽" />
+    code: wrapPageExample(`<Divider orient="left" label="왼쪽" />
 <Divider label="가운데" />
-<Divider orient="right" label="오른쪽" />`,
+<Divider orient="right" label="오른쪽" />`, {
+      name: 'DividerOrientExample',
+      reactImports: [],
+      compImports: ['Divider']
+    }),
     preview: (
       <div className="typo_stack">
         <Divider orient="left" label="왼쪽" />
@@ -56,13 +73,17 @@ const SECTIONS = [
   },
   {
     title: '세로',
-    code: `<Space>
+    code: wrapPageExample(`<Space>
   <span>항목 A</span>
   <Divider vertical />
   <span>항목 B</span>
   <Divider vertical dashed />
   <span>항목 C</span>
-</Space>`,
+</Space>`, {
+      name: 'DividerVerticalExample',
+      reactImports: [],
+      compImports: ['Divider', 'Space']
+    }),
     preview: (
       <Space>
         <span>항목 A</span>
@@ -92,6 +113,7 @@ export default function DividerGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName="DividerExample.jsx"
         >
           {section.preview}
         </DemoBlock>

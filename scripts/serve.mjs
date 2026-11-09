@@ -94,6 +94,8 @@ const httpServer = createHttpServer()
 /** Next 앱 인스턴스 — httpServer에 HMR/WebSocket 자동 연결 */
 const app = next({
   dev: isDev,
+  // Next 15.5: 개발은 Turbopack(stable), 프로덕션 빌드는 package.json 의 --webpack
+  ...(isDev ? { turbopack: true } : {}),
   dir: root,
   hostname: HOST === '0.0.0.0' ? 'localhost' : HOST,
   port: HTTP_PORT,
@@ -119,7 +121,7 @@ httpServer.on('request', async (req, res) => {
 /** 콘솔 Network URL용 LAN IP */
 const lan = lanAddress()
 /** 시작 로그용 모드 라벨 */
-const label = isDev ? 'development' : 'production'
+const label = isDev ? 'development · turbopack' : 'production'
 
 httpServer.once('error', (err) => onListenError('HTTP', HTTP_PORT, err))
 httpServer.listen(HTTP_PORT, HOST, () => {

@@ -3,7 +3,6 @@
  * count · allowHalf · clearable · readOnly · size · ripple을 공통 클래스로 표현한다.
  */
 import {
-  useEffect,
   useId,
   useMemo,
   useState,
@@ -40,8 +39,9 @@ function StarGraphic ({ half = false }: { half?: boolean }) {
 
 /** 별점이 받는 값 */
 export interface RateProps extends Omit<HTMLAttributes<HTMLElement>, 'onChange' | 'defaultValue'> {
-  value?: number
-  defaultValue?: number
+  /** 선택값. null 이면 미선택(제어). undefined 는 비제어 */
+  value?: number | null
+  defaultValue?: number | null
   count?: number
   allowHalf?: boolean
   clearable?: boolean
@@ -52,7 +52,8 @@ export interface RateProps extends Omit<HTMLAttributes<HTMLElement>, 'onChange' 
   legend?: ReactNode
   name?: string
   ripple?: boolean
-  onChange?: (value?: number) => void
+  /** 값 변경. clear 시 null */
+  onChange?: (value: number | null) => void
 }
 
 /**
@@ -81,15 +82,13 @@ export function Rate ({
   const resolvedCount = Number(count) > 0 ? Number(count) : 5
   const resolvedSize = VALID_SIZES.has(size) ? size : 'md'
   const isReadonly = readOnly || readonly
-  const [currentValue, setCurrentValue] = useState<number | undefined>(value ?? defaultValue)
+  const controlled = value !== undefined
+  const [innerValue, setInnerValue] = useState<number | null>(defaultValue ?? null)
+  const currentValue = controlled ? value : innerValue
   const stars = useMemo(
     () => Array.from({ length: resolvedCount }, (_, index) => index + 1),
     [resolvedCount]
   )
-
-  useEffect(() => {
-    if (value !== undefined) setCurrentValue(value)
-  }, [value])
 
   const classes = cx(
     'rate',
@@ -101,8 +100,8 @@ export function Rate ({
     className
   )
 
-  const update = (next?: number) => {
-    setCurrentValue(next)
+  const update = (next: number | null) => {
+    if (!controlled) setInnerValue(next)
     onChange?.(next)
   }
 
@@ -213,7 +212,7 @@ export function Rate ({
               {...rippleAttr}
               aria-label="별점 초기화"
               title="초기화"
-              onClick={() => update(undefined)}
+              onClick={() => update(null)}
             >
               <svg
                 className="rate_clear-icon"

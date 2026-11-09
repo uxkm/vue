@@ -35,10 +35,34 @@ const props = [
     description: '0 보다 크고 항목 수보다 작으면 가운데를 …(breadcrumb_ellipsis) 로 접습니다. 클릭하면 전체 경로를 펼칩니다. 권장 값은 3 이상입니다.'
   },
   {
+    name: 'expanded',
+    type: 'boolean',
+    default: '—',
+    description: '넘기면 말줄임 펼침을 부모가 제어합니다(제어). 넘기지 않으면 내부 상태로 동작합니다.'
+  },
+  {
+    name: 'defaultExpanded',
+    type: 'boolean',
+    default: 'false',
+    description: '비제어 모드의 초기 펼침 여부입니다. expanded 를 넘기면 무시됩니다.'
+  },
+  {
     name: 'ariaLabel',
     type: 'string',
     default: "'경로'",
     description: 'nav 의 aria-label 입니다.'
+  },
+  {
+    name: 'onExpandedChange',
+    type: '(expanded: boolean) => void',
+    default: '—',
+    description: '말줄임(…) 클릭으로 펼침 상태가 바뀔 때 호출됩니다. 제어 모드에서는 부모에서 expanded 를 바꿔야 합니다.'
+  },
+  {
+    name: 'onSelect',
+    type: '(item, index, event) => void',
+    default: '—',
+    description: '경로 링크 클릭 시 호출됩니다. 페이지에서 라우팅·선택을 제어할 때 사용합니다.'
   },
   {
     name: 'className · ...props',
@@ -123,7 +147,7 @@ const tokens = [
 export const breadcrumbApiSections = [
   {
     title: 'API · Props',
-    description: 'React · Next.js Breadcrumb props입니다. items 로 경로를 구성하고, separator · size · maxItems 로 표시를 바꿉니다.',
+    description: 'React · Next.js Breadcrumb props입니다. items 로 경로를 구성하고, separator · size · maxItems · expanded · onSelect 로 표시·제어를 바꿉니다.',
     tables: [{ columns, rows: props }]
   },
   {

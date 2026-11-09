@@ -1,15 +1,15 @@
 'use client'
 
 import { useRef, useState } from 'react'
+import { Affix, Button, Link, Space } from '@/comp'
 import {
-  Affix,
-  Button,
   DemoBlock,
   GuideApiDocs,
   GuideLayout,
-  Link,
-  Space
-} from '@/comp'
+  ensurePageModule,
+  pageExampleCode,
+  wrapPageExample
+} from '@/pages/pub/widgets/guide'
 import { affixApiSections } from '@/pages/pub/data/guide/affixApiSections'
 
 const DEMO_PARAS = Array.from({ length: 10 }, (_, index) => (
@@ -77,6 +77,51 @@ function ScrollBottomAffixDemo () {
   )
 }
 
+/** fixed · onChange 제어 — 스크롤 측정 + 강제 고정 토글 */
+function ControlledFixedDemo () {
+  const scrollerRef = useRef(null)
+  const [fixed, setFixed] = useState(false)
+
+  return (
+    <div className="demo-stack">
+      <div className="form_actions">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          label={fixed ? '고정 해제' : '강제 고정'}
+          onClick={() => setFixed((v) => !v)}
+        />
+        <span className="typo_caption">
+          fixed: <code>{String(fixed)}</code>
+        </span>
+      </div>
+      <div className="affix_demo-scroll" ref={scrollerRef}>
+        <div className="affix_demo-content">
+          <p>
+            <code>fixed</code> · <code>onChange</code>로 고정을 제어합니다.
+            스크롤하면 콜백으로 갱신되고, 버튼으로도 강제할 수 있습니다.
+          </p>
+        </div>
+        <Affix
+          target={() => scrollerRef.current}
+          offsetTop={0}
+          label="제어 Affix"
+          fixed={fixed}
+          onChange={setFixed}
+          actions={(
+            <>
+              <Button size="sm" variant="outline" label="취소" />
+              <Button size="sm" variant="filled" color="primary" label="적용" />
+            </>
+          )}
+        />
+        <div className="affix_demo-content">{DEMO_PARAS}</div>
+      </div>
+    </div>
+  )
+}
+
 /** 앵커 스킨 */
 function AnchorAffixDemo () {
   const scrollerRef = useRef(null)
@@ -113,7 +158,7 @@ const SECTIONS = [
         기본 스킨은 <code>bar</code>(<code>affix_bar</code>)이며, 루트는 <code>affix</code> · 너비 100%입니다.
       </>
     ),
-    code: `<Affix
+    code: wrapPageExample(`<Affix
   label="선택한 항목 3개"
   actions={(
     <>
@@ -121,7 +166,11 @@ const SECTIONS = [
       <Button size="sm" variant="filled" color="primary" label="적용" />
     </>
   )}
-/>`,
+/>`, {
+  name: 'AffixBasicExample',
+  reactImports: [],
+  compImports: ['Affix', 'Button']
+}),
     preview: (
       <Affix
         label="선택한 항목 3개"
@@ -144,37 +193,79 @@ const SECTIONS = [
         고정되면 <code>affix_target</code>에 <code>is-fixed</code>가 붙고 placeholder 높이가 맞춰집니다.
       </>
     ),
-    code: `import { useRef, useState } from 'react'
-import { Affix, Button } from '@/comp'
+    code: pageExampleCode({
+      name: 'AffixScrollExample',
+      reactImports: ['useRef', 'useState'],
+      compImports: ['Affix', 'Button'],
+      body: `const DEMO_PARAS = ${DEMO_PARAS_CODE}
 
-const DEMO_PARAS = ${DEMO_PARAS_CODE}
+const scrollerRef = useRef(null)
+const [fixed, setFixed] = useState(false)
 
-function ScrollTopAffixDemo () {
-  const scrollerRef = useRef(null)
-  const [fixed, setFixed] = useState(false)
-
-  return (
-    <div className="affix_demo-scroll" ref={scrollerRef}>
-      <div className="affix_demo-content">
-        <p>아래로 스크롤하면 바가 상단에 고정됩니다. 고정: {String(fixed)}</p>
-      </div>
-      <Affix
-        target={() => scrollerRef.current}
-        offsetTop={0}
-        label="선택한 항목 3개"
-        onChange={setFixed}
-        actions={(
-          <>
-            <Button size="sm" variant="outline" label="취소" />
-            <Button size="sm" variant="filled" color="primary" label="적용" />
-          </>
-        )}
-      />
-      <div className="affix_demo-content">{DEMO_PARAS}</div>
+return (
+  <div className="affix_demo-scroll" ref={scrollerRef}>
+    <div className="affix_demo-content">
+      <p>아래로 스크롤하면 바가 상단에 고정됩니다. 고정: {String(fixed)}</p>
     </div>
-  )
-}`,
+    <Affix
+      target={() => scrollerRef.current}
+      offsetTop={0}
+      label="선택한 항목 3개"
+      onChange={setFixed}
+      actions={(
+        <>
+          <Button size="sm" variant="outline" label="취소" />
+          <Button size="sm" variant="filled" color="primary" label="적용" />
+        </>
+      )}
+    />
+    <div className="affix_demo-content">{DEMO_PARAS}</div>
+  </div>
+)`
+    }),
     preview: <ScrollTopAffixDemo />
+  },
+  {
+    title: '고정 제어',
+    description: (
+      <>
+        <code>fixed</code> · <code>onChange</code>로 고정 상태를 페이지에서 제어합니다.
+        스크롤 측정 콜백과 함께 쓰면 강제 고정 토글도 가능합니다.
+      </>
+    ),
+    code: pageExampleCode({
+      name: 'AffixControlledExample',
+      reactImports: ['useRef', 'useState'],
+      compImports: ['Affix', 'Button'],
+      body: `const scrollerRef = useRef(null)
+const [fixed, setFixed] = useState(false)
+
+return (
+  <>
+    <Button
+      type="button"
+      variant="outline"
+      size="sm"
+      label={fixed ? '고정 해제' : '강제 고정'}
+      onClick={() => setFixed((v) => !v)}
+    />
+    <Affix
+      target={() => scrollerRef.current}
+      offsetTop={0}
+      label="제어 Affix"
+      fixed={fixed}
+      onChange={setFixed}
+      actions={(
+        <>
+          <Button size="sm" variant="outline" label="취소" />
+          <Button size="sm" variant="filled" color="primary" label="적용" />
+        </>
+      )}
+    />
+  </>
+)`
+    }),
+    preview: <ControlledFixedDemo />
   },
   {
     title: '오프셋 · 하단',
@@ -185,66 +276,67 @@ function ScrollTopAffixDemo () {
         데모는 모두 내부 스크롤(<code>data-target=&quot;container&quot;</code>) 기준이며, 문서 window 하단이 아닙니다.
       </>
     ),
-    code: `import { useRef, useState } from 'react'
-import { Affix, Button, Space } from '@/comp'
+    code: [
+      pageExampleCode({
+        name: 'AffixOffsetTopExample',
+        reactImports: ['useRef', 'useState'],
+        compImports: ['Affix', 'Button'],
+        body: `const DEMO_PARAS = ${DEMO_PARAS_CODE}
 
-const DEMO_PARAS = ${DEMO_PARAS_CODE}
+const scrollerRef = useRef(null)
+const [fixed, setFixed] = useState(false)
 
-function ScrollTopAffixDemo ({ offsetTop = 0, label = '선택한 항목 3개' }) {
-  const scrollerRef = useRef(null)
-  const [fixed, setFixed] = useState(false)
-
-  return (
-    <div className="affix_demo-scroll" ref={scrollerRef}>
-      <div className="affix_demo-content">
-        <p>아래로 스크롤하면 바가 상단에 고정됩니다. 고정: {String(fixed)}</p>
-      </div>
-      <Affix
-        target={() => scrollerRef.current}
-        offsetTop={offsetTop}
-        label={label}
-        onChange={setFixed}
-        actions={(
-          <>
-            <Button size="sm" variant="outline" label="취소" />
-            <Button size="sm" variant="filled" color="primary" label="적용" />
-          </>
-        )}
-      />
-      <div className="affix_demo-content">{DEMO_PARAS}</div>
+return (
+  <div className="affix_demo-scroll" ref={scrollerRef}>
+    <div className="affix_demo-content">
+      <p>아래로 스크롤하면 바가 상단에 고정됩니다. 고정: {String(fixed)}</p>
     </div>
-  )
-}
+    <Affix
+      target={() => scrollerRef.current}
+      offsetTop={12}
+      label="offsetTop=12"
+      onChange={setFixed}
+      actions={(
+        <>
+          <Button size="sm" variant="outline" label="취소" />
+          <Button size="sm" variant="filled" color="primary" label="적용" />
+        </>
+      )}
+    />
+    <div className="affix_demo-content">{DEMO_PARAS}</div>
+  </div>
+)`
+      }),
+      pageExampleCode({
+        name: 'AffixOffsetBottomExample',
+        reactImports: ['useRef', 'useState'],
+        compImports: ['Affix', 'Button'],
+        body: `const DEMO_PARAS = ${DEMO_PARAS_CODE}
 
-function ScrollBottomAffixDemo () {
-  const scrollerRef = useRef(null)
-  const [fixed, setFixed] = useState(false)
+const scrollerRef = useRef(null)
+const [fixed, setFixed] = useState(false)
 
-  return (
-    <div className="affix_demo-scroll" ref={scrollerRef}>
-      <div className="affix_demo-content">{DEMO_PARAS}</div>
-      <Affix
-        target={() => scrollerRef.current}
-        position="bottom"
-        offsetBottom={0}
-        label="하단 고정 바"
-        onChange={setFixed}
-        actions={<Button size="sm" variant="filled" color="primary" label="확인" />}
-      />
-      <div className="affix_demo-content">
-        <p>
-          기준: target 내부 스크롤 가시 영역 하단(data-target=&quot;container&quot;).
-          문서 window가 아닙니다. 고정: {String(fixed)}
-        </p>
-      </div>
+return (
+  <div className="affix_demo-scroll" ref={scrollerRef}>
+    <div className="affix_demo-content">{DEMO_PARAS}</div>
+    <Affix
+      target={() => scrollerRef.current}
+      position="bottom"
+      offsetBottom={0}
+      label="하단 고정 바"
+      onChange={setFixed}
+      actions={<Button size="sm" variant="filled" color="primary" label="확인" />}
+    />
+    <div className="affix_demo-content">
+      <p>
+        기준: target 내부 스크롤 가시 영역 하단(data-target=&quot;container&quot;).
+        문서 window가 아닙니다. 고정: {String(fixed)}
+      </p>
     </div>
-  )
-}
-
-<Space vertical block size={24}>
-  <ScrollTopAffixDemo offsetTop={12} label="offsetTop=12" />
-  <ScrollBottomAffixDemo />
-</Space>`,
+  </div>
+)`
+      })
+    ].join('\n\n'),
     preview: (
       <Space vertical block size={24}>
         <ScrollTopAffixDemo offsetTop={12} label="offsetTop=12" />
@@ -260,7 +352,7 @@ function ScrollBottomAffixDemo () {
         <code>children</code>으로 링크 등을 직접 넣습니다.
       </>
     ),
-    code: `import { useRef } from 'react'
+    code: ensurePageModule(`import { useRef } from 'react'
 import { Affix, Link } from '@/comp'
 
 const DEMO_PARAS = ${DEMO_PARAS_CODE}
@@ -289,7 +381,7 @@ function AnchorAffixDemo () {
       </div>
     </div>
   )
-}`,
+}`, 'AffixAnchorExample'),
     preview: <AnchorAffixDemo />
   },
   {
@@ -334,7 +426,7 @@ export default function AffixGuide () {
     <GuideLayout
       category="기타"
       title="Affix"
-      description="스크롤 시 상단·하단에 붙잡는 고정 막대. offsetTop · target · skin(bar · anchor) · label · actions를 지원합니다."
+      description="스크롤 시 상단·하단에 붙잡는 고정 막대. offsetTop · target · fixed · onChange · skin(bar · anchor) · label · actions를 지원합니다."
     >
       {SECTIONS.map((section) => (
         <DemoBlock
@@ -342,6 +434,7 @@ export default function AffixGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName={section.title === 'HTML 마크업' ? 'affix.html' : 'AffixExample.jsx'}
         >
           {section.preview}
         </DemoBlock>

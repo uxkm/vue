@@ -2,6 +2,8 @@
  * 달력.
  * Calendar · Month · Header · Weekdays · Wheel 등으로 월·주·일정·휠을 조합한다.
  */
+'use client'
+
 import {
   useEffect,
   useMemo,
@@ -39,7 +41,7 @@ function monthDays ({
   rangeEnd
 }: {
   partial?: number
-  selected?: number
+  selected?: number | null
   today?: number
   events?: number[]
   rangeStart?: number
@@ -163,6 +165,10 @@ export interface CalendarHeaderProps
   showNav?: boolean
   showPrev?: boolean
   showNext?: boolean
+  /** 이전 달 클릭. 페이지에서 월을 제어한다 */
+  onPrev?: () => void
+  /** 다음 달 클릭. 페이지에서 월을 제어한다 */
+  onNext?: () => void
   children?: ReactNode
 }
 
@@ -174,6 +180,8 @@ export function CalendarHeader ({
   showNav = true,
   showPrev,
   showNext,
+  onPrev,
+  onNext,
   children,
   className,
   ...rest
@@ -184,7 +192,12 @@ export function CalendarHeader ({
     <div className={cx('calendar_header', className)} {...rest}>
       {prev
         ? (
-          <button type="button" className="btn btn_ghost btn_icon-only btn_sm" aria-label={prevLabel}>
+          <button
+            type="button"
+            className="btn btn_ghost btn_icon-only btn_sm"
+            aria-label={prevLabel}
+            onClick={onPrev}
+          >
             ‹
           </button>
           )
@@ -192,7 +205,12 @@ export function CalendarHeader ({
       <span className="calendar_title">{title}</span>
       {next
         ? (
-          <button type="button" className="btn btn_ghost btn_icon-only btn_sm" aria-label={nextLabel}>
+          <button
+            type="button"
+            className="btn btn_ghost btn_icon-only btn_sm"
+            aria-label={nextLabel}
+            onClick={onNext}
+          >
             ›
           </button>
           )
@@ -207,6 +225,10 @@ export interface CalendarNavProps {
   prevLabel?: string
   nextLabel?: string
   className?: string
+  /** 이전 주 클릭 */
+  onPrev?: () => void
+  /** 다음 주 클릭 */
+  onNext?: () => void
 }
 
 /** 주간 탐색 바 */
@@ -214,15 +236,27 @@ export function CalendarNav ({
   label,
   prevLabel = '이전 주',
   nextLabel = '다음 주',
-  className
+  className,
+  onPrev,
+  onNext
 }: CalendarNavProps) {
   return (
     <div className={cx('calendar_nav', className)}>
-      <button type="button" className="btn btn_ghost btn_icon-only btn_sm" aria-label={prevLabel}>
+      <button
+        type="button"
+        className="btn btn_ghost btn_icon-only btn_sm"
+        aria-label={prevLabel}
+        onClick={onPrev}
+      >
         ‹
       </button>
       <span className="calendar_nav-label">{label}</span>
-      <button type="button" className="btn btn_ghost btn_icon-only btn_sm" aria-label={nextLabel}>
+      <button
+        type="button"
+        className="btn btn_ghost btn_icon-only btn_sm"
+        aria-label={nextLabel}
+        onClick={onNext}
+      >
         ›
       </button>
     </div>
@@ -332,7 +366,10 @@ export function CalendarGrid ({
 
 export interface CalendarMonthProps {
   days?: CalendarDayData[]
-  selected?: number
+  /** 선택일. null 이면 미선택. 넘기면 제어 */
+  selected?: number | null
+  /** 비제어 초기 선택일. days 없을 때 기본 15 */
+  defaultSelected?: number | null
   today?: number
   disabled?: number[]
   events?: number[]
@@ -342,12 +379,18 @@ export interface CalendarMonthProps {
   partial?: number
   week?: boolean
   readonly?: boolean
+  /**
+   * 날짜 셀 클릭. 페이지에서 선택일을 제어한다.
+   * otherMonth · disabled 셀은 호출되지 않는다.
+   */
+  onSelect?: (day: CalendarDayData, index: number) => void
 }
 
 /** 월(또는 주) 날짜 셀 그리드 */
 export function CalendarMonth ({
   days,
-  selected = 15,
+  selected: selectedProp,
+  defaultSelected,
   today = 12,
   disabled = [],
   events = [],
@@ -356,58 +399,148 @@ export function CalendarMonth ({
   weekends = false,
   partial,
   week = false,
-  readonly = false
+  readonly = false,
+  onSelect
 }: CalendarMonthProps) {
-  const resolved = useMemo(
-    () =>
-      days?.length
-        ? days
-        : monthDays({ partial, selected, today, events, rangeStart, rangeEnd }),
-    [days, partial, selected, today, events, rangeStart, rangeEnd]
-  )
+  const selectedControlled = selectedProp !== undefined
+  const [innerSelected, setInnerSelected] = useState<number | null>(() => {
+    if (defaultSelected !== undefined) return defaultSelected
+    // days 를 직접 주면 셀 플래그를 쓰고, 아니면 데모용 15
+    return days !== undefined ? null : 15
+  })
+  const selected = selectedControlled ? selectedProp : innerSelected
+
+  // days !== undefined 이면 빈 배열도 유지. selected 를 넘기거나 비제어 선택이 있으면 덮어쓴다.
+  const resolved = useMemo(() => {
+    const applySelected = (cells: CalendarDayData[]) => {
+      if (selectedControlled) {
+        return cells.map((cell) => ({
+          ...cell,
+          selected:
+            cell.day === selectedProp ||
+            cell.day === rangeStart ||
+            cell.day === rangeEnd
+        }))
+      }
+      if (selected == null && defaultSelected === undefined && days !== undefined) {
+        return cells
+      }
+      return cells.map((cell) => ({
+        ...cell,
+        selected:
+          cell.day === selected ||
+          cell.day === rangeStart ||
+          cell.day === rangeEnd
+      }))
+    }
+
+    if (days !== undefined) return applySelected(days)
+    return monthDays({
+      partial,
+      selected: selected !== undefined ? selected : 15,
+      today,
+      events,
+      rangeStart,
+      rangeEnd
+    })
+  }, [
+    days,
+    partial,
+    selected,
+    selectedProp,
+    selectedControlled,
+    defaultSelected,
+    today,
+    events,
+    rangeStart,
+    rangeEnd
+  ])
 
   return (
     <CalendarGrid week={week}>
-      {resolved.map((cell, index) => (
-        <CalendarDay
-          key={`${cell.day}-${index}`}
-          {...cell}
-          disabled={cell.disabled || disabled.includes(cell.day)}
-          sunday={cell.sunday ?? (weekends && index % 7 === 0)}
-          saturday={cell.saturday ?? (weekends && index % 7 === 6)}
-          readonly={readonly}
-        />
-      ))}
+      {resolved.map((cell, index) => {
+        const isDisabled = cell.disabled || disabled.includes(cell.day)
+        return (
+          <CalendarDay
+            key={`${cell.day}-${index}`}
+            {...cell}
+            disabled={isDisabled}
+            sunday={cell.sunday ?? (weekends && index % 7 === 0)}
+            saturday={cell.saturday ?? (weekends && index % 7 === 6)}
+            readonly={readonly}
+            onClick={
+              readonly || isDisabled
+                ? undefined
+                : () => {
+                    if (cell.otherMonth && !(cell.selected || cell.inRange)) return
+                    if (!selectedControlled) setInnerSelected(cell.day)
+                    onSelect?.(cell, index)
+                  }
+            }
+          />
+        )
+      })}
     </CalendarGrid>
   )
 }
 
 export interface CalendarFooterProps extends HTMLAttributes<HTMLDivElement> {
   children?: ReactNode
+  todayLabel?: string
+  clearLabel?: string
+  confirmLabel?: string
+  showDefaults?: boolean
+  /** 오늘 클릭 */
+  onToday?: () => void
+  /** 초기화 클릭 */
+  onClear?: () => void
+  /** 확인 클릭 */
+  onConfirm?: () => void
 }
 
 /** 하단 액션 영역 */
 export function CalendarFooter ({
   children,
   className,
+  todayLabel = '오늘',
+  clearLabel = '초기화',
+  confirmLabel = '확인',
+  showDefaults = true,
+  onToday,
+  onClear,
+  onConfirm,
   ...rest
 }: CalendarFooterProps) {
   return (
     <div className={cx('calendar_footer', className)} {...rest}>
-      <button type="button" className="btn btn_text color_primary btn_sm">
-        오늘
+      <button
+        type="button"
+        className="btn btn_text color_primary btn_sm"
+        onClick={onToday}
+      >
+        {todayLabel}
       </button>
       <div className="calendar_footer-actions">
-        {children ?? (
-          <>
-            <button type="button" className="btn btn_ghost btn_sm">
-              초기화
-            </button>
-            <button type="button" className="btn btn_filled color_primary btn_sm">
-              확인
-            </button>
-          </>
-        )}
+        {children ?? (showDefaults
+          ? (
+            <>
+              <button
+                type="button"
+                className="btn btn_ghost btn_sm"
+                onClick={onClear}
+              >
+                {clearLabel}
+              </button>
+              <button
+                type="button"
+                className="btn btn_filled color_primary btn_sm"
+                onClick={onConfirm}
+              >
+                {confirmLabel}
+              </button>
+            </>
+            )
+          : null)}
       </div>
     </div>
   )
@@ -442,6 +575,10 @@ export interface CalendarWheelProps {
   toolbarContent?: ReactNode
   footerContent?: ReactNode
   children?: ReactNode
+  /** 취소 클릭 */
+  onCancel?: () => void
+  /** 완료/확인 클릭 */
+  onConfirm?: () => void
 }
 
 /** iOS 스타일 휠 선택기 */
@@ -456,7 +593,9 @@ export function CalendarWheel ({
   ariaLabel,
   toolbarContent,
   footerContent,
-  children
+  children,
+  onCancel,
+  onConfirm
 }: CalendarWheelProps) {
   const showToolbar = toolbar && (toolbarContent || title || cancelLabel || confirmLabel)
   return (
@@ -468,7 +607,11 @@ export function CalendarWheel ({
               <>
                 {cancelLabel
                   ? (
-                    <button className="btn btn_text btn_sm" type="button">
+                    <button
+                      className="btn btn_text btn_sm"
+                      type="button"
+                      onClick={onCancel}
+                    >
                       {cancelLabel}
                     </button>
                     )
@@ -476,7 +619,11 @@ export function CalendarWheel ({
                 <span className="calendar_wheel-title">{title}</span>
                 {confirmLabel
                   ? (
-                    <button className="btn btn_text color_primary btn_sm" type="button">
+                    <button
+                      className="btn btn_text color_primary btn_sm"
+                      type="button"
+                      onClick={onConfirm}
+                    >
                       {confirmLabel}
                     </button>
                     )
@@ -503,10 +650,15 @@ export function CalendarWheel ({
 export interface CalendarWheelColumnProps {
   label?: string
   items?: Array<string | number>
+  /** 선택값(제어). 넘기면 페이지가 값을 관리한다 */
   selected?: string | number
+  /** 비제어 초기 선택 */
+  defaultSelected?: string | number
   showSteps?: boolean
   prevLabel?: string
   nextLabel?: string
+  /** 값이 바뀔 때 호출 */
+  onChange?: (value: string | number) => void
 }
 
 /** 휠 한 열 */
@@ -514,22 +666,30 @@ export function CalendarWheelColumn ({
   label,
   items = [],
   selected,
+  defaultSelected,
   showSteps = true,
   prevLabel = '이전',
-  nextLabel = '다음'
+  nextLabel = '다음',
+  onChange
 }: CalendarWheelColumnProps) {
-  const [active, setActive] = useState(selected)
+  const controlled = selected !== undefined
+  const [innerActive, setInnerActive] = useState(defaultSelected ?? selected)
+  const active = controlled ? selected : innerActive
   const listRef = useRef<HTMLUListElement>(null)
   const index = Math.max(
     0,
     items.findIndex((item) => String(item) === String(active))
   )
-  const move = (offset: number) =>
-    setActive(items[Math.max(0, Math.min(items.length - 1, index + offset))])
 
-  useEffect(() => {
-    setActive(selected)
-  }, [selected])
+  const setActive = (next: string | number) => {
+    if (!controlled) setInnerActive(next)
+    onChange?.(next)
+  }
+
+  const move = (offset: number) => {
+    const next = items[Math.max(0, Math.min(items.length - 1, index + offset))]
+    if (next !== undefined) setActive(next)
+  }
 
   useEffect(() => {
     const list = listRef.current

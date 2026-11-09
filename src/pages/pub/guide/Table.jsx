@@ -1,6 +1,7 @@
 'use client'
 
-import { Badge, DemoBlock, GuideApiDocs, GuideLayout, Table } from '@/comp'
+import { Badge, Table } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { tableApiSections } from '@/pages/pub/data/guide/tableApiSections'
 
 const MEMBERS = [
@@ -103,14 +104,18 @@ const SECTIONS = [
         <code>thead</code>·<code>tbody</code> children과 <code>columns</code> 너비 설정으로 표를 구성합니다.
       </>
     ),
-    code: `<Table columns={[
+    code: wrapPageExample(`<Table columns={[
   { width: '9rem', nowrap: true },
   { minWidth: '10rem' },
   { width: '7rem', nowrap: true }
 ]}>
   <thead>…</thead>
   <tbody>…</tbody>
-</Table>`,
+</Table>`, {
+      name: 'TableExample',
+      reactImports: [],
+      compImports: ['Table']
+    }),
     preview: (
       <Table columns={COLUMNS}>
         <Body badge />
@@ -124,9 +129,13 @@ const SECTIONS = [
         <code>striped</code>로 짝수 행 배경을 켭니다.
       </>
     ),
-    code: `<Table striped columns={columns}>
+    code: wrapPageExample(`<Table striped columns={columns}>
   …
-</Table>`,
+</Table>`, {
+      name: 'TableStripedExample',
+      reactImports: [],
+      compImports: ['Table']
+    }),
     preview: (
       <Table striped columns={COLUMNS}>
         <Body data={PRODUCTS} />
@@ -140,9 +149,13 @@ const SECTIONS = [
         <code>bordered</code>로 셀 테두리를 표시합니다.
       </>
     ),
-    code: `<Table bordered>
+    code: wrapPageExample(`<Table bordered>
   …
-</Table>`,
+</Table>`, {
+      name: 'TableBorderedExample',
+      reactImports: [],
+      compImports: ['Table']
+    }),
     preview: (
       <Table bordered>
         <Body />
@@ -156,9 +169,13 @@ const SECTIONS = [
         <code>compact</code>로 셀 패딩을 줄입니다.
       </>
     ),
-    code: `<Table compact columns={columns}>
+    code: wrapPageExample(`<Table compact columns={columns}>
   …
-</Table>`,
+</Table>`, {
+      name: 'TableCompactExample',
+      reactImports: [],
+      compImports: ['Table']
+    }),
     preview: (
       <Table compact columns={COLUMNS}>
         <Body data={PRODUCTS} />
@@ -172,9 +189,13 @@ const SECTIONS = [
         <code>hover</code>로 행 호버 강조를 켭니다.
       </>
     ),
-    code: `<Table hover columns={columns}>
+    code: wrapPageExample(`<Table hover columns={columns}>
   …
-</Table>`,
+</Table>`, {
+      name: 'TableHoverExample',
+      reactImports: [],
+      compImports: ['Table']
+    }),
     preview: (
       <Table hover columns={COLUMNS}>
         <Body badge />
@@ -184,9 +205,13 @@ const SECTIONS = [
   {
     title: '조합',
     description: 'bordered · compact · hover를 함께 쓸 수 있습니다.',
-    code: `<Table bordered compact hover>
+    code: wrapPageExample(`<Table bordered compact hover>
   …
-</Table>`,
+</Table>`, {
+      name: 'TableComboExample',
+      reactImports: [],
+      compImports: ['Table']
+    }),
     preview: (
       <Table bordered compact hover>
         <Body />
@@ -200,7 +225,7 @@ const SECTIONS = [
         <code>scroll</code>·<code>stickyTop</code>으로 헤더를 고정합니다.
       </>
     ),
-    code: `<Table
+    code: wrapPageExample(`<Table
   scroll
   scrollMaxHeight="14rem"
   stickyTop
@@ -208,7 +233,11 @@ const SECTIONS = [
   compact
 >
   …
-</Table>`,
+</Table>`, {
+      name: 'TableStickyTopExample',
+      reactImports: [],
+      compImports: ['Table']
+    }),
     preview: (
       <Table scroll scrollMaxHeight="14rem" stickyTop bordered compact>
         <Body data={LONG_ROWS} />
@@ -222,14 +251,18 @@ const SECTIONS = [
         <code>stickyLeft</code>로 왼쪽 열을 고정합니다. 넓은 표는 <code>style.minWidth</code>와 함께 씁니다.
       </>
     ),
-    code: `<Table
+    code: wrapPageExample(`<Table
   scroll
   stickyLeft
   columns={wideColumns}
   style={{ minWidth: '48rem' }}
 >
   …
-</Table>`,
+</Table>`, {
+      name: 'TableStickyLeftExample',
+      reactImports: [],
+      compImports: ['Table']
+    }),
     preview: (
       <Table scroll stickyLeft columns={WIDE_COLUMNS} style={{ minWidth: '48rem' }}>
         <WideBody />
@@ -243,7 +276,7 @@ const SECTIONS = [
         <code>stickyCols</code>와 <code>stickyLeftOffsets</code>로 여러 열을 고정합니다.
       </>
     ),
-    code: `<Table
+    code: wrapPageExample(`<Table
   scroll
   stickyLeft
   stickyCols={2}
@@ -252,7 +285,11 @@ const SECTIONS = [
   style={{ minWidth: '48rem' }}
 >
   …
-</Table>`,
+</Table>`, {
+      name: 'TableStickyColsExample',
+      reactImports: [],
+      compImports: ['Table']
+    }),
     preview: (
       <Table
         scroll
@@ -269,7 +306,7 @@ const SECTIONS = [
   {
     title: '상단·좌측 고정',
     description: '헤더와 좌측 열을 동시에 고정할 수 있습니다.',
-    code: `<Table
+    code: wrapPageExample(`<Table
   scroll
   scrollMaxHeight="14rem"
   stickyTop
@@ -282,7 +319,11 @@ const SECTIONS = [
   style={{ minWidth: '48rem' }}
 >
   …
-</Table>`,
+</Table>`, {
+      name: 'TableStickyBothExample',
+      reactImports: [],
+      compImports: ['Table']
+    }),
     preview: (
       <Table
         scroll
@@ -319,6 +360,7 @@ export default function TableGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName="TableExample.jsx"
         >
           {section.preview}
         </DemoBlock>

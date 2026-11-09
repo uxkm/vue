@@ -16,7 +16,8 @@ import {
 } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import * as sass from 'sass'
+import * as sass from 'sass-embedded'
+import { STYLE_ENTRIES } from './style-entries.mjs'
 
 /** 이 스크립트 파일이 있는 디렉터리 (scripts/) */
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -27,19 +28,8 @@ const stylesRoot = path.join(root, 'src/styles')
 /** 컴파일 결과 CSS 출력 루트 (src/styles/css) */
 const distRoot = path.join(stylesRoot, 'css')
 
-/**
- * 빌드 대상 SCSS 엔트리 목록 (파셜 _*.scss 제외).
- * JS/앱에서 import하는 진입점만 나열한다.
- */
-export const ENTRIES = [
-  'src/styles/index.scss',
-  'src/styles/pub.scss',
-  'src/styles/web.scss',
-  'src/styles/mobile.scss',
-  'src/styles/demo.scss',
-  'src/pages/web/home/02.scss',
-  'src/pages/web/home/skeleton/01Skeleton.scss'
-]
+/** 하위 호환 — STYLE_ENTRIES 와 동일 */
+export const ENTRIES = STYLE_ENTRIES
 
 /** 다른 스크립트에서 경로 상수 재사용용 */
 export { distRoot, root, stylesRoot }
@@ -151,6 +141,8 @@ function compileEntry (entryRel, { style, keepComments }) {
   return sass.compileString(src, {
     loadPaths: [stylesRoot],
     style,
+    // 비ASCII 주석 시 기본값이 CSS 선두 BOM 을 넣어 :root 토큰이 깨질 수 있음
+    charset: false,
     sourceMap: false,
     url: pathToFileURL(input)
   }).css

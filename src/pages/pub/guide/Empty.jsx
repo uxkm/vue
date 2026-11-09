@@ -1,14 +1,7 @@
 'use client'
 
-import {
-  Button,
-  DemoBlock,
-  Empty,
-  GuideApiDocs,
-  GuideLayout,
-  Icon,
-  Space
-} from '@/comp'
+import { Button, Empty, Icon, Space } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { emptyApiSections } from '@/pages/pub/data/guide/emptyApiSections'
 
 const SECTIONS = [
@@ -20,8 +13,12 @@ const SECTIONS = [
         아이콘·이미지가 없으면 문구만 보입니다.
       </>
     ),
-    code: `<Empty />
-<Empty description="표시할 항목이 없습니다" />`,
+    code: wrapPageExample(`<Empty />
+<Empty description="표시할 항목이 없습니다" />`, {
+      name: 'EmptyExample',
+      reactImports: [],
+      compImports: ['Empty']
+    }),
     preview: (
       <Space vertical block size={16} align="center">
         <Empty />
@@ -38,14 +35,18 @@ const SECTIONS = [
         <code>--empty-icon-color</code>를 따릅니다.
       </>
     ),
-    code: `<Empty
+    code: wrapPageExample(`<Empty
   description="받은 메일이 없습니다"
   icon={<Icon name="inbox" size="100%" />}
 />
 <Empty
   description="검색 결과가 없습니다"
   icon={<Icon name="search" size="100%" />}
-/>`,
+/>`, {
+      name: 'EmptyIconExample',
+      reactImports: [],
+      compImports: ['Empty', 'Icon']
+    }),
     preview: (
       <Space size={32} align="center" wrap>
         <Empty
@@ -68,9 +69,13 @@ const SECTIONS = [
         이미지·글자·여백이 바뀝니다.
       </>
     ),
-    code: `<Empty size="sm" description="작음" icon={<Icon name="inbox" size="100%" />} />
+    code: wrapPageExample(`<Empty size="sm" description="작음" icon={<Icon name="inbox" size="100%" />} />
 <Empty size="md" description="기본" icon={<Icon name="inbox" size="100%" />} />
-<Empty size="lg" description="큼" icon={<Icon name="inbox" size="100%" />} />`,
+<Empty size="lg" description="큼" icon={<Icon name="inbox" size="100%" />} />`, {
+      name: 'EmptySizeExample',
+      reactImports: [],
+      compImports: ['Empty', 'Icon']
+    }),
     preview: (
       <Space size={24} align="center" wrap>
         <Empty size="sm" description="작음" icon={<Icon name="inbox" size="100%" />} />
@@ -87,12 +92,16 @@ const SECTIONS = [
         목록·검색 결과처럼 짧은 문구만 필요할 때 씁니다.
       </>
     ),
-    code: `<Empty description="검색 결과 없음" simple />
+    code: wrapPageExample(`<Empty description="검색 결과 없음" simple />
 <Empty
   description="아이콘이 있어도 simple 이면 숨김"
   simple
   icon={<Icon name="inbox" size="100%" />}
-/>`,
+/>`, {
+      name: 'EmptySimpleExample',
+      reactImports: [],
+      compImports: ['Empty', 'Icon']
+    }),
     preview: (
       <Space vertical block size={16} align="center">
         <Empty description="검색 결과 없음" simple />
@@ -111,11 +120,15 @@ const SECTIONS = [
         <code>block</code>을 켜면 <code>empty_block</code>이 붙어 부모 가로를 채우고 가운데 정렬합니다.
       </>
     ),
-    code: `<Empty
+    code: wrapPageExample(`<Empty
   block
   description="이 영역에 표시할 데이터가 없습니다"
   icon={<Icon name="inbox" size="100%" />}
-/>`,
+/>`, {
+      name: 'EmptyBlockExample',
+      reactImports: [],
+      compImports: ['Empty', 'Icon']
+    }),
     preview: (
       <Empty
         block
@@ -132,7 +145,7 @@ const SECTIONS = [
         <code>footer</code>가 있으면 <code>footer</code>가 우선입니다. 버튼 등 후속 액션을 둡니다.
       </>
     ),
-    code: `<Empty
+    code: wrapPageExample(`<Empty
   description="표시할 항목이 없습니다"
   icon={<Icon name="inbox" size="100%" />}
 >
@@ -147,7 +160,11 @@ const SECTIONS = [
       <Button label="새로 만들기" size="sm" />
     </>
   }
-/>`,
+/>`, {
+      name: 'EmptyFooterExample',
+      reactImports: [],
+      compImports: ['Button', 'Empty', 'Icon']
+    }),
     preview: (
       <Space size={32} align="center" wrap>
         <Empty
@@ -204,7 +221,11 @@ const SECTIONS = [
         의미 있는 안내는 <code>description</code>(문구)에 담습니다.
       </>
     ),
-    code: `<Empty description="파일 목록이 비어 있습니다" icon={<Icon name="inbox" size="100%" />} />`,
+    code: wrapPageExample(`<Empty description="파일 목록이 비어 있습니다" icon={<Icon name="inbox" size="100%" />} />`, {
+      name: 'EmptyA11yExample',
+      reactImports: [],
+      compImports: ['Empty', 'Icon']
+    }),
     preview: (
       <Empty
         description="파일 목록이 비어 있습니다"
@@ -231,6 +252,9 @@ export default function EmptyGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName={
+            section.title.includes('HTML') ? 'empty.html' : 'EmptyExample.jsx'
+          }
         >
           {section.preview}
         </DemoBlock>

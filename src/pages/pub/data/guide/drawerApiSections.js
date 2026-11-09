@@ -11,10 +11,10 @@ const columns = [
 
 const props = [
   {
-    name: 'open',
+    name: 'open · defaultOpen',
     type: 'boolean',
-    default: 'false',
-    description: 'true 이면 가장자리에서 슬라이드로 열리고, false 이면 슬라이드로 닫힌 뒤 언마운트됩니다. 상태는 부모에서 관리합니다.'
+    default: '— · false',
+    description: '열림 상태입니다. open 을 넘기면 제어하고, 생략하면 defaultOpen 과 내부 상태로 동작합니다. 닫기 시 onOpenChange(false) · onClose 가 호출됩니다.'
   },
   {
     name: 'placement',
@@ -27,6 +27,18 @@ const props = [
     type: 'boolean',
     default: 'false',
     description: 'placement="bottom" 일 때만 유효합니다. true 이면 상단 핸들 바(drawer_handle)를 표시하고 드래그로 닫기·확장합니다. false 이면 바를 표시하지 않습니다.'
+  },
+  {
+    name: 'expanded',
+    type: 'boolean',
+    default: '—',
+    description: 'bottom + draggable 확장 높이(제어). 넘기면 부모가 확장 상태를 관리합니다. 넘기지 않으면 내부 상태로 동작합니다.'
+  },
+  {
+    name: 'defaultExpanded',
+    type: 'boolean',
+    default: 'false',
+    description: '비제어 모드의 초기 확장 여부입니다. expanded 를 넘기면 무시됩니다.'
   },
   {
     name: 'title',
@@ -66,6 +78,18 @@ const events = [
     type: '() => void',
     default: '—',
     description: '오버레이·닫기 버튼·(bottom+draggable) 아래로 드래그 닫기 시 호출됩니다. open 을 false 로 바꾸는 동작은 부모에서 처리합니다.'
+  },
+  {
+    name: 'onOpenChange',
+    type: '(open: boolean) => void',
+    default: '—',
+    description: '열림이 바뀔 때 호출됩니다(닫힐 때 false). onClose 와 함께 쓸 수 있습니다. open 을 false 로 바꾸는 동작은 부모에서 처리합니다.'
+  },
+  {
+    name: 'onExpandedChange',
+    type: '(expanded: boolean) => void',
+    default: '—',
+    description: 'bottom + draggable 에서 확장 상태가 바뀔 때 호출됩니다(드래그·페이지 토글). Drawer 가 닫힐 때도 false 로 호출되어 확장 상태를 초기화합니다. 제어 모드에서는 부모에서 expanded 를 바꿔야 합니다.'
   }
 ]
 

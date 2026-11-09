@@ -9,6 +9,7 @@ import {
   useState,
   type AnchorHTMLAttributes,
   type HTMLAttributes,
+  type MouseEvent,
   type ReactNode
 } from 'react'
 import { cx } from '@/utils/cx'
@@ -24,7 +25,7 @@ export interface NavbarItem {
 }
 
 /** 상단 바가 받는 값 */
-export interface NavbarProps extends HTMLAttributes<HTMLElement> {
+export interface NavbarProps extends Omit<HTMLAttributes<HTMLElement>, 'onSelect'> {
   /** 브랜드(로고) 문구. 기본 Logo */
   brand?: ReactNode
   brandHref?: string
@@ -39,6 +40,12 @@ export interface NavbarProps extends HTMLAttributes<HTMLElement> {
   open?: boolean
   defaultOpen?: boolean
   onOpenChange?: (open: boolean) => void
+  /** 링크 클릭 시 호출. 페이지에서 라우팅·선택을 제어한다 */
+  onSelect?: (key: string, item: NavbarItem, event: MouseEvent<HTMLAnchorElement>) => void
+  /** 선택 키(제어). 넘기면 해당 링크에 is-active */
+  selectedKey?: string | null
+  /** 비제어 초기 선택 키 */
+  defaultSelectedKey?: string | null
   toggleLabel?: string
   /** collapse 안을 직접 넣을 때 items 대신 사용 */
   children?: ReactNode
@@ -60,6 +67,9 @@ export function Navbar ({
   open: openProp,
   defaultOpen = false,
   onOpenChange,
+  onSelect,
+  selectedKey: selectedKeyProp,
+  defaultSelectedKey = null,
   toggleLabel = '메뉴 열기',
   className,
   children,
@@ -67,12 +77,24 @@ export function Navbar ({
 }: NavbarProps) {
   const collapseId = useId()
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen)
-  const isControlled = openProp != null
+  const isControlled = openProp !== undefined
   const isOpen = isControlled ? openProp : uncontrolledOpen
+  const selectedControlled = selectedKeyProp !== undefined
+  const [innerSelectedKey, setInnerSelectedKey] = useState(defaultSelectedKey)
+  const selectedKey = selectedControlled ? selectedKeyProp : innerSelectedKey
 
   const setOpen = (next: boolean) => {
     if (!isControlled) setUncontrolledOpen(next)
     onOpenChange?.(next)
+  }
+
+  const handleSelect = (
+    item: NavbarItem,
+    event: MouseEvent<HTMLAnchorElement>
+  ) => {
+    if (!selectedControlled) setInnerSelectedKey(item.key)
+    onSelect?.(item.key, item, event)
+    if (isOpen) setOpen(false)
   }
 
   const hasActions = hasNodes(actions)
@@ -134,17 +156,23 @@ export function Navbar ({
               {items.length > 0 && (
                 <nav className="navbar_nav" aria-label="주요 메뉴">
                   <ul className="navbar_list">
-                    {items.map((item) => (
-                      <li className="navbar_item" key={item.key}>
-                        <a
-                          href={item.href || '#'}
-                          className={cx('navbar_link', item.active && 'is-active')}
-                          aria-current={item.active ? 'page' : undefined}
-                        >
-                          {item.label}
-                        </a>
-                      </li>
-                    ))}
+                    {items.map((item) => {
+                      const active =
+                        item.active ||
+                        (selectedKey != null && selectedKey === item.key)
+                      return (
+                        <li className="navbar_item" key={item.key}>
+                          <a
+                            href={item.href || '#'}
+                            className={cx('navbar_link', active && 'is-active')}
+                            aria-current={active ? 'page' : undefined}
+                            onClick={(event) => handleSelect(item, event)}
+                          >
+                            {item.label}
+                          </a>
+                        </li>
+                      )
+                    })}
                   </ul>
                 </nav>
               )}

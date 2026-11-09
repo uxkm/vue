@@ -1,4 +1,11 @@
 .comp-guide {
+  --guide-nav-width: 240px;
+  --guide-nav-collapsed-width: 56px;
+  --guide-nav-toggle-size: 2.25rem;
+  --guide-nav-toggle-icon-size: 0.875rem;
+  --guide-nav-toggle-top: 14px;
+  --guide-nav-rail-btn-size: 2.25rem;
+
   display: flex;
   align-items: stretch;
   min-height: 100vh;
@@ -7,23 +14,31 @@
 .comp-guide__nav {
   position: sticky;
   top: 0;
+  z-index: 2;
   flex: 0 0 auto;
-  width: 240px;
+  width: var(--guide-nav-width);
   height: 100vh;
-  overflow: auto;
+  overflow: visible;
   border-right: 1px solid var(--color-border);
   background: var(--color-surface);
+  transition: width 0.2s ease;
 
   &.is-collapsed {
-    width: 72px;
+    width: var(--guide-nav-collapsed-width);
   }
 }
 
+.comp-guide__nav-body {
+  height: 100%;
+  overflow: auto;
+  overflow-x: hidden;
+}
+
+.comp-guide__nav.is-collapsed .comp-guide__nav-body {
+  overflow: visible;
+}
+
 .comp-guide__nav-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
   position: sticky;
   top: 0;
   z-index: 1;
@@ -38,27 +53,100 @@
   color: var(--color-text);
 }
 
+// Carousel 좌우 버튼과 같은 원형 토글 — 우측 라인 상단 (nav-head 상단 간격 유지)
 .comp-guide__toggle {
-  flex: 0 0 auto;
-  min-height: 28px;
-  padding: 0 8px;
+  position: absolute;
+  top: var(--guide-nav-toggle-top);
+  right: 0;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--guide-nav-toggle-size);
+  height: var(--guide-nav-toggle-size);
+  margin: 0;
+  padding: 0;
   border: 1px solid var(--color-border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--color-surface);
-  color: var(--color-text-muted);
-  font: inherit;
-  font-size: 12px;
-  font-weight: 600;
+  color: var(--color-text);
+  box-shadow: var(--shadow-sm);
+  transform: translateX(50%);
   cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
 
   &:hover {
-    color: var(--color-text);
+    background: var(--color-surface-raised);
+    color: var(--color-accent-text);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .icon {
+    width: var(--guide-nav-toggle-icon-size);
+    height: var(--guide-nav-toggle-icon-size);
+    flex-shrink: 0;
   }
 }
 
-.comp-guide__nav.is-collapsed .comp-guide__nav-head {
+// 접힘 레일 — 카테고리 아이콘 + 우측 Tooltip
+.comp-guide__rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 52px 8px 16px;
+}
+
+.comp-guide__rail .tooltip {
+  width: 100%;
   justify-content: center;
-  padding-inline: 8px;
+}
+
+.comp-guide__rail-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--guide-nav-rail-btn-size);
+  height: var(--guide-nav-rail-btn-size);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+
+  &:hover {
+    background: rgba(15, 118, 110, 0.08);
+    color: var(--color-text);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  &.is-active {
+    background: var(--color-accent-muted);
+    color: var(--color-accent-text);
+  }
+
+  .icon {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+  }
 }
 
 .comp-guide__list {
@@ -66,6 +154,9 @@
 }
 
 .comp-guide__top {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   margin-bottom: 4px;
 }
 
@@ -233,48 +324,51 @@
   min-height: 100vh;
 }
 
-.guide-intro__list {
-  margin: 0;
-  padding-left: 1.2em;
+.guide-md {
   color: var(--color-text);
   font-size: 14px;
   line-height: 1.7;
 }
 
-.guide-intro__grid {
-  display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+.guide-md__h1,
+.guide-md__h2,
+.guide-md__h3 {
+  margin: 1.6em 0 0.6em;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--color-text);
 }
 
-.guide-intro__card {
-  padding: 12px 14px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-panel);
-  background: var(--color-bg);
+.guide-md__h1 {
+  margin-top: 0;
+  font-size: 1.5rem;
+}
 
-  ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
+.guide-md__h2 {
+  padding-bottom: 0.35em;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 1.2rem;
+}
+
+.guide-md__h3 {
+  font-size: 1.05rem;
+}
+
+.guide-md__p {
+  margin: 0 0 0.9em;
+}
+
+.guide-md__list {
+  margin: 0 0 1em;
+  padding-left: 1.2em;
 
   li + li {
-    margin-top: 4px;
+    margin-top: 0.35em;
   }
 }
 
-.guide-intro__card-label {
-  margin: 0 0 8px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: var(--color-text-muted);
-}
-
-.guide-intro__link {
+.guide-md__link {
   color: var(--color-accent-text);
-  font-size: 13px;
   font-weight: 600;
   text-decoration: none;
 
@@ -283,26 +377,82 @@
   }
 }
 
-.guide-intro__more {
-  font-size: 12px;
-  color: var(--color-text-muted);
+.guide-md__pre {
+  margin: 0 0 1.1em;
+  padding: 12px 14px;
+  overflow: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-panel);
+  background: var(--color-surface);
+  font-size: 12.5px;
+  line-height: 1.55;
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
 }
 
-.guide-intro__cta {
-  display: inline-flex;
-  align-items: center;
-  min-height: 36px;
-  padding: 0 14px;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-size: 13px;
-  font-weight: 600;
-  text-decoration: none;
+.guide-md code {
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--color-surface) 70%, var(--color-border));
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.92em;
+}
 
-  &:hover {
-    border-color: var(--color-accent);
-    color: var(--color-accent-text);
+.guide-md__pre code {
+  padding: 0;
+  background: transparent;
+}
+
+.guide-md__table-wrap {
+  margin: 0 0 1.2em;
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-panel);
+}
+
+.guide-md__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th,
+  td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--color-border);
+    text-align: left;
+    vertical-align: top;
+    word-break: break-word;
+    overflow-wrap: anywhere;
   }
+
+  th {
+    background: var(--color-surface);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  tr:last-child td {
+    border-bottom: 0;
+  }
+
+  code {
+    white-space: pre-wrap;
+  }
+}
+
+// 2열 표(README 경로|설명 등): 첫 열 비율 고정, 설명 열이 남는 폭
+.guide-md__table:has(thead th:nth-child(2):last-child) {
+  table-layout: fixed;
+
+  th:first-child,
+  td:first-child {
+    width: 32%;
+    white-space: normal;
+  }
+}
+
+.guide-md__list--ordered {
+  list-style: decimal;
 }

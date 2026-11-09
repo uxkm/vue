@@ -1,16 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  Accordion,
-  AccordionItem,
-  Button,
-  DemoBlock,
-  GuideApiDocs,
-  GuideLayout,
-  Icon,
-  Space
-} from '@/comp'
+import { Accordion, AccordionItem, Button, Icon, Space } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { accordionApiSections } from '@/pages/pub/data/guide/accordionApiSections'
 
 const BASIC_ITEMS = [
@@ -93,7 +85,7 @@ function compoundCode (options = {}) {
     hasDisabled ? 'disabled={item.disabled}' : null
   ].filter(Boolean).join('\n      ')
 
-  return `${wrapStart}${itemsDecl}
+  const fragment = `${wrapStart}${itemsDecl}
 const [value, setValue] = useState('${initial}')
 const active = items.find((item) => item.value === value)
 
@@ -105,6 +97,15 @@ const active = items.find((item) => item.value === value)
   ))}
   <p>${panelPrefix}: {active?.label}</p>
 </Accordion>${wrapEnd}`
+
+  const compImports = ['Accordion', 'AccordionItem']
+  if (hasIcon) compImports.push('Icon')
+
+  return wrapPageExample(fragment, {
+    name: options.name || 'AccordionExample',
+    reactImports: ['useState'],
+    compImports
+  })
 }
 
 /** 메뉴 데이터 map + 아이콘 커스텀 · 패널 내용만 교체 */
@@ -267,7 +268,8 @@ const SECTIONS = [
         패널은 열린 <code>value</code>에 맞춰 텍스트만 바꾸거나, 컴포넌트(슬롯)·페이지를 교체해 넣습니다.
       </>
     ),
-    code: `const menu = [
+    code: [
+      wrapPageExample(`const menu = [
   { value: 'overview', label: '개요', icon: 'home' },
   { value: 'settings', label: '설정', icon: 'settings' },
   { value: 'activity', label: '활동(비활성)', disabled: true }
@@ -275,7 +277,6 @@ const SECTIONS = [
 const [value, setValue] = useState('overview')
 const active = menu.find((item) => item.value === value)
 
-// 1) 메뉴 map + 패널 내용만 교체
 <Accordion value={value} onChange={setValue}>
   {menu.map((item) => (
     <AccordionItem key={item.value} value={item.value} disabled={item.disabled}>
@@ -288,9 +289,18 @@ const active = menu.find((item) => item.value === value)
     </AccordionItem>
   ))}
   <p>콘텐츠: {active?.label}</p>
-</Accordion>
-
-// 2) value → 컴포넌트(슬롯)·페이지 교체
+</Accordion>`, {
+        name: 'AccordionCustomLabelExample',
+        reactImports: ['useState'],
+        compImports: ['Accordion', 'AccordionItem', 'Icon']
+      }),
+      wrapPageExample(`const menu = [
+  { value: 'overview', label: '개요', icon: 'home' },
+  { value: 'settings', label: '설정', icon: 'settings' },
+  { value: 'activity', label: '활동(비활성)', disabled: true }
+]
+const [value, setValue] = useState('overview')
+// OverviewPage · SettingsPage · ActivityPage 는 페이지/슬롯 컴포넌트
 const panels = {
   overview: OverviewPage,
   settings: SettingsPage,
@@ -310,7 +320,12 @@ const Panel = panels[value]
     </AccordionItem>
   ))}
   {Panel ? <Panel key={value} /> : null}
-</Accordion>`,
+</Accordion>`, {
+        name: 'AccordionSlotPanelExample',
+        reactImports: ['useState'],
+        compImports: ['Accordion', 'AccordionItem', 'Icon']
+      })
+    ].join('\n\n'),
     preview: (
       <Space vertical block size={24}>
         <CompoundAccordionDemo />
@@ -457,6 +472,7 @@ export default function AccordionGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName={section.title === 'HTML 마크업' ? 'accordion.html' : 'AccordionExample.jsx'}
         >
           {section.preview}
         </DemoBlock>

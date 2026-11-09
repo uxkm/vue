@@ -1,14 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import { Button, Space, Spin } from '@/comp'
 import {
-  Button,
   DemoBlock,
   GuideApiDocs,
   GuideLayout,
-  Space,
-  Spin
-} from '@/comp'
+  wrapPageExample
+} from '@/pages/pub/widgets/guide'
 import { spinApiSections } from '@/pages/pub/data/guide/spinApiSections'
 
 /** spinning 을 버튼으로 켜고 끄는 래퍼 예시 */
@@ -43,9 +42,13 @@ const SECTIONS = [
         <code>spinning={'{false}'}</code>이면 인디케이터를 숨깁니다.
       </>
     ),
-    code: `<Spin />
+    code: wrapPageExample(`<Spin />
 <Spin tip="불러오는 중…" />
-<Spin spinning={false} tip="숨김" />`,
+<Spin spinning={false} tip="숨김" />`, {
+      name: 'SpinExample',
+      reactImports: [],
+      compImports: ['Spin']
+    }),
     preview: (
       <Space size={24} align="center">
         <Spin />
@@ -62,10 +65,14 @@ const SECTIONS = [
         루트에 <code>color_{'{값}'}</code> 클래스가 붙습니다.
       </>
     ),
-    code: `<Spin color="primary" tip="primary" />
+    code: wrapPageExample(`<Spin color="primary" tip="primary" />
 <Spin color="success" tip="success" />
 <Spin color="warning" tip="warning" />
-<Spin color="danger" tip="danger" />`,
+<Spin color="danger" tip="danger" />`, {
+      name: 'SpinColorExample',
+      reactImports: [],
+      compImports: ['Spin']
+    }),
     preview: (
       <Space size={24} align="center" wrap>
         <Spin color="primary" tip="primary" />
@@ -83,9 +90,13 @@ const SECTIONS = [
         <code>sm</code> · <code>lg</code>일 때 루트에 <code>spin_sm</code> · <code>spin_lg</code>가 붙어 원 크기와 tip 글자 크기가 바뀝니다.
       </>
     ),
-    code: `<Spin size="sm" tip="sm" />
+    code: wrapPageExample(`<Spin size="sm" tip="sm" />
 <Spin size="md" tip="md" />
-<Spin size="lg" tip="lg" />`,
+<Spin size="lg" tip="lg" />`, {
+      name: 'SpinSizeExample',
+      reactImports: [],
+      compImports: ['Spin']
+    }),
     preview: (
       <Space size={24} align="center" wrap>
         <Spin size="sm" tip="sm" />
@@ -102,8 +113,12 @@ const SECTIONS = [
         <code>block</code>은 단독 스피너를 가로 전체 너비로 가운데 둡니다(<code>spin_block</code>).
       </>
     ),
-    code: `<Spin inline tip="저장 중…" />
-<Spin block tip="전체 너비" />`,
+    code: wrapPageExample(`<Spin inline tip="저장 중…" />
+<Spin block tip="전체 너비" />`, {
+      name: 'SpinLayoutExample',
+      reactImports: [],
+      compImports: ['Spin']
+    }),
     preview: (
       <Space vertical block size={14}>
         <Spin inline tip="저장 중…" />
@@ -119,9 +134,20 @@ const SECTIONS = [
         <code>block</code>은 래퍼에 <code>spin_wrap-block</code>(최소 높이)을, <code>blur</code>는 <code>spin_wrap-blur</code>를 붙입니다.
       </>
     ),
-    code: `<Spin spinning={spinning} tip="불러오는 중…" block blur>
+    code: wrapPageExample(`const [spinning, setSpinning] = useState(true)
+
+<Spin spinning={spinning} tip="불러오는 중…" block blur>
   <div>콘텐츠</div>
-</Spin>`,
+</Spin>
+<Button
+  variant="outline"
+  label={spinning ? '로딩 끄기' : '로딩 켜기'}
+  onClick={() => setSpinning((value) => !value)}
+/>`, {
+      name: 'SpinOverlayExample',
+      reactImports: ['useState'],
+      compImports: ['Button', 'Spin']
+    }),
     preview: <WrapDemo />
   },
   {
@@ -166,7 +192,14 @@ const SECTIONS = [
         인디케이터 원에는 <code>aria-hidden</code>을 둡니다.
       </>
     ),
-    code: `<Spin tip="파일 업로드 중" ariaLabel="파일 업로드 진행 중" />`,
+    code: wrapPageExample(
+      `<Spin tip="파일 업로드 중" ariaLabel="파일 업로드 진행 중" />`,
+      {
+        name: 'SpinA11yExample',
+        reactImports: [],
+        compImports: ['Spin']
+      }
+    ),
     preview: <Spin tip="파일 업로드 중" ariaLabel="파일 업로드 진행 중" />
   }
 ]
@@ -188,6 +221,9 @@ export default function SpinGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName={
+            section.title.includes('HTML') ? 'spin.html' : 'SpinExample.jsx'
+          }
         >
           {section.preview}
         </DemoBlock>

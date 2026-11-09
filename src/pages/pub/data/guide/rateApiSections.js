@@ -11,10 +11,16 @@ const columns = [
 
 const props = [
   {
-    name: 'value · defaultValue',
-    type: 'number',
+    name: 'value',
+    type: 'number | null',
     default: '—',
-    description: '현재 별점과 초기 별점입니다.'
+    description: '넘기면 제어 모드입니다. 부모가 별점을 소유하며, 변경은 onChange 로만 반영됩니다. null 은 미선택입니다.'
+  },
+  {
+    name: 'defaultValue',
+    type: 'number | null',
+    default: '—',
+    description: '비제어 초기 별점입니다. value 를 넘기지 않을 때 씁니다. null 은 미선택입니다.'
   },
   {
     name: 'count',
@@ -63,9 +69,9 @@ const props = [
 const events = [
   {
     name: 'onChange',
-    type: '(value?: number) => void',
+    type: '(value: number | null) => void',
     default: '—',
-    description: '별점 선택 또는 초기화 콜백입니다.'
+    description: '별점 선택 또는 초기화 콜백입니다. clear 시 null 을 전달합니다. 제어 모드에서는 부모가 value 를 갱신해야 화면이 바뀝니다.'
   }
 ]
 

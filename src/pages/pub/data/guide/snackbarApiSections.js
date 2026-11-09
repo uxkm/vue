@@ -41,6 +41,18 @@ const props = [
     description: 'true 이면 닫기(×) 버튼을 표시하고, 누르면 스낵바를 숨깁니다.'
   },
   {
+    name: 'open',
+    type: 'boolean',
+    default: '—',
+    description: '넘기면 표시 상태를 페이지가 제어합니다. false 이면 렌더하지 않습니다.'
+  },
+  {
+    name: 'defaultOpen',
+    type: 'boolean',
+    default: 'true',
+    description: '비제어 초기 표시 상태입니다. open 을 넘기지 않을 때 씁니다.'
+  },
+  {
     name: 'className · ...props',
     type: 'div attributes',
     default: '—',
@@ -50,10 +62,16 @@ const props = [
 
 const events = [
   {
+    name: 'onOpenChange',
+    type: '(open: boolean) => void',
+    default: '—',
+    description: '표시 상태가 바뀔 때 호출됩니다. 제어 모드에서는 부모가 open 을 갱신합니다.'
+  },
+  {
     name: 'onClose',
     type: '() => void',
     default: '—',
-    description: '닫기 버튼 클릭 시 스낵바가 숨겨진 뒤 호출됩니다.'
+    description: '닫기 요청 시 호출됩니다(onOpenChange(false) 와 함께). 실제 표시는 open 제어 부모가 결정합니다.'
   }
 ]
 

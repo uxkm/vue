@@ -19,8 +19,8 @@ const props = [
   {
     name: 'files · defaultFiles',
     type: 'UploadFileItem[]',
-    default: '[]',
-    description: '제어 파일 목록과 초기 목록입니다.'
+    default: '— · []',
+    description: '제어 파일 목록과 초기 목록입니다. onChange 도 같은 UploadFileItem[] 을 받아 왕복 제어할 수 있습니다.'
   },
   {
     name: 'multiple · accept',
@@ -53,6 +53,12 @@ const props = [
     description: '버튼·드롭존 문구와 도움말입니다.'
   },
   {
+    name: 'avatarSrc · avatarAlt',
+    type: 'string',
+    default: '—',
+    description: 'avatar 변형의 기본 미리보기. files[0].url 이 있으면 그쪽을 우선합니다.'
+  },
+  {
     name: 'className · ...props',
     type: 'string · file attributes',
     default: '—',
@@ -63,9 +69,21 @@ const props = [
 const events = [
   {
     name: 'onChange',
+    type: '(files: UploadFileItem[]) => void',
+    default: '—',
+    description: '선택·삭제 후 전체 목록을 받습니다. files prop 과 타입이 같아 페이지에서 제어 상태를 유지할 수 있습니다.'
+  },
+  {
+    name: 'onSelect',
     type: '(files: File[]) => void',
     default: '—',
-    description: '선택 또는 삭제 후 호출됩니다.'
+    description: '새로 선택된 File[] 만 전달합니다(추가 시점). 업로드 API 호출 등에 씁니다.'
+  },
+  {
+    name: 'onRemove',
+    type: '(item: UploadFileItem, index: number) => void',
+    default: '—',
+    description: '항목 삭제 직전·직후 목록 갱신과 함께 호출됩니다. 삭제 대상 확인에 씁니다.'
   },
   {
     name: 'onError',

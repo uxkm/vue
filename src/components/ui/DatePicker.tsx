@@ -46,6 +46,18 @@ export interface DatePickerProps
   value?: string
   defaultValue?: string
   onChange?: (value: string) => void
+  /** 패널 열림(제어) */
+  open?: boolean
+  /** 비제어 초기 열림 */
+  defaultOpen?: boolean
+  /** 패널 열림이 바뀔 때 호출 */
+  onOpenChange?: (open: boolean) => void
+  /** 표시 중인 월(제어). Date 또는 YYYY-MM-DD */
+  displayMonth?: Date | string
+  /** 비제어 초기 표시 월 */
+  defaultDisplayMonth?: Date | string
+  /** 표시 월이 바뀔 때 호출 */
+  onDisplayMonthChange?: (month: Date) => void
   placeholder?: string
   locale?: string
   size?: 'sm' | 'md' | 'lg'
@@ -68,11 +80,28 @@ export interface DatePickerProps
  * 날짜 입력.
  * value는 YYYY-MM-DD. clearable · min · max · 검증 상태를 지원한다.
  */
+function toMonthDate (value?: Date | string | null) {
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    return new Date(value.getFullYear(), value.getMonth(), 1)
+  }
+  if (typeof value === 'string') {
+    const parsed = parseValue(value)
+    if (parsed) return new Date(parsed.getFullYear(), parsed.getMonth(), 1)
+  }
+  return null
+}
+
 export function DatePicker ({
   id,
   value,
   defaultValue = '',
   onChange,
+  open: openProp,
+  defaultOpen = false,
+  onOpenChange,
+  displayMonth,
+  defaultDisplayMonth,
+  onDisplayMonthChange,
   placeholder = '날짜를 선택하세요',
   locale = 'ko-KR',
   size = 'md',
@@ -89,6 +118,7 @@ export function DatePicker ({
   className,
   panelAlign = 'start',
   ariaLabel = '날짜 선택',
+  onClick,
   ...props
 }: DatePickerProps) {
   const generatedId = useId().replace(/:/g, '')
@@ -97,25 +127,53 @@ export function DatePicker ({
   const controlled = value !== undefined
   const [innerValue, setInnerValue] = useState(defaultValue)
   const selectedValue = controlled ? value : innerValue
-  const [open, setOpen] = useState(false)
-  const [month, setMonth] = useState(() => parseValue(selectedValue) || new Date())
+  const openControlled = openProp !== undefined
+  const [innerOpen, setInnerOpen] = useState(defaultOpen)
+  const open = openControlled ? openProp : innerOpen
+  const monthControlled = displayMonth !== undefined
+  const [innerMonth, setInnerMonth] = useState(
+    () =>
+      toMonthDate(defaultDisplayMonth) ||
+      toMonthDate(displayMonth) ||
+      toMonthDate(selectedValue) ||
+      new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+  )
+  const month = monthControlled
+    ? (toMonthDate(displayMonth) || innerMonth)
+    : innerMonth
   const rootRef = useRef<HTMLDivElement>(null)
   const cells = useMemo(() => getCells(month), [month])
   const today = toValue(new Date())
 
+  const setOpen = (next: boolean) => {
+    if (!openControlled) setInnerOpen(next)
+    onOpenChange?.(next)
+  }
+
+  const setMonth = (next: Date | ((current: Date) => Date)) => {
+    const resolved = typeof next === 'function' ? next(month) : next
+    const normalized = new Date(resolved.getFullYear(), resolved.getMonth(), 1)
+    if (!monthControlled) setInnerMonth(normalized)
+    onDisplayMonthChange?.(normalized)
+  }
+
   useEffect(() => {
+    if (monthControlled) return
     const date = parseValue(selectedValue)
-    if (date) setMonth(date)
-  }, [selectedValue])
+    if (date) setInnerMonth(new Date(date.getFullYear(), date.getMonth(), 1))
+  }, [selectedValue, monthControlled])
 
   useEffect(() => {
     if (!open) return
     const close = (event: MouseEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) setOpen(false)
+      if (!rootRef.current?.contains(event.target as Node)) {
+        if (!openControlled) setInnerOpen(false)
+        onOpenChange?.(false)
+      }
     }
     document.addEventListener('click', close, true)
     return () => document.removeEventListener('click', close, true)
-  }, [open])
+  }, [open, openControlled, onOpenChange])
 
   useEffect(() => {
     if (!open) return
@@ -180,7 +238,10 @@ export function DatePicker ({
           aria-expanded={open}
           aria-controls={panelId}
           aria-invalid={error || undefined}
-          onClick={() => !disabled && setOpen(true)}
+          onClick={(event) => {
+            if (!disabled) setOpen(true)
+            onClick?.(event)
+          }}
         />
         {name ? <input type="hidden" name={name} value={selectedValue} /> : null}
         {clearable && selectedValue && !disabled
@@ -211,7 +272,7 @@ export function DatePicker ({
           aria-label="달력 열기"
           aria-controls={panelId}
           aria-expanded={open}
-          onClick={() => setOpen((current) => !current)}
+          onClick={() => setOpen(!open)}
         >
           <svg
             className="icon"

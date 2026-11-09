@@ -47,6 +47,24 @@ const props = [
     description: '선택한 날짜를 지우는 동작을 표시합니다.'
   },
   {
+    name: 'open',
+    type: 'boolean',
+    default: '—',
+    description: '넘기면 패널 열림을 페이지가 제어합니다. 열리면 루트에 is-open 이 붙습니다.'
+  },
+  {
+    name: 'defaultOpen',
+    type: 'boolean',
+    default: 'false',
+    description: '비제어 초기 패널 열림입니다. open 을 넘기지 않을 때 씁니다.'
+  },
+  {
+    name: 'displayMonth · defaultDisplayMonth',
+    type: 'Date | string',
+    default: '—',
+    description: '패널에 표시 중인 월입니다. Date 또는 YYYY-MM-DD. displayMonth 를 넘기면 페이지가 월을 제어합니다.'
+  },
+  {
     name: 'panelAlign',
     type: "'start' | 'end'",
     default: "'start'",
@@ -72,6 +90,18 @@ const events = [
     type: '(value: string) => void',
     default: '—',
     description: 'YYYY-MM-DD 값이 바뀔 때 호출됩니다.'
+  },
+  {
+    name: 'onOpenChange',
+    type: '(open: boolean) => void',
+    default: '—',
+    description: '패널 열림이 바뀔 때 호출됩니다. 제어 모드에서는 부모가 open 을 갱신합니다.'
+  },
+  {
+    name: 'onDisplayMonthChange',
+    type: '(month: Date) => void',
+    default: '—',
+    description: '이전/다음 달 이동 시 호출됩니다. displayMonth 제어 시 부모가 월을 갱신합니다.'
   }
 ]
 

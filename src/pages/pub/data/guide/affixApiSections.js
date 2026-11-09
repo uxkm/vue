@@ -59,10 +59,16 @@ const props = [
     description: 'affix_target 안 콘텐츠입니다. 있으면 label · actions 대신 렌더합니다. 앵커 링크 나열 등에 씁니다.'
   },
   {
+    name: 'fixed',
+    type: 'boolean',
+    default: '—',
+    description: '넘기면 고정 표시를 페이지가 제어합니다. 생략 시 offset · target 기준 자동 고정입니다.'
+  },
+  {
     name: 'onChange',
     type: '(fixed: boolean) => void',
     default: '—',
-    description: '고정 상태(is-fixed)가 바뀔 때 호출됩니다.'
+    description: '스크롤 기반 고정 상태(is-fixed)가 바뀔 때 호출됩니다. fixed 제어와 함께 쓸 수 있습니다.'
   },
   {
     name: 'className · …rest',

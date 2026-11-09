@@ -137,6 +137,7 @@ export const b2bScreenLoaders = {
 }
 
 export const componentLoaders = {
+  'accessibility': () => import('@/pages/pub/guide/Accessibility.jsx'),
   'accordion': () => import('@/pages/pub/guide/Accordion.jsx'),
   'affix': () => import('@/pages/pub/guide/Affix.jsx'),
   'alert': () => import('@/pages/pub/guide/Alert.jsx'),

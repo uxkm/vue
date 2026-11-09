@@ -1,6 +1,7 @@
 'use client'
 
-import { Container, DemoBlock, GuideApiDocs, GuideLayout } from '@/comp'
+import { Container } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { containerApiSections } from '@/pages/pub/data/guide/containerApiSections'
 
 const SIZE_LABELS = {
@@ -18,9 +19,13 @@ const Fill = ({ children }) => (
 const SECTIONS = [
   {
     title: '기본',
-    code: `<Container>
+    code: wrapPageExample(`<Container>
   <div className="container_demo-fill">기본 Container · 최대 72rem</div>
-</Container>`,
+</Container>`, {
+      name: 'ContainerExample',
+      reactImports: [],
+      compImports: ['Container']
+    }),
     preview: (
       <Container>
         <Fill>기본 Container · 최대 72rem</Fill>
@@ -34,13 +39,17 @@ const SECTIONS = [
         <code>size</code>로 최대 너비를 바꿉니다. sm · md · lg · xl.
       </>
     ),
-    code: `<div className="container_demo-sizes">
+    code: wrapPageExample(`<div className="container_demo-sizes">
   <Container><div className="container_demo-fill">기본 · 72rem</div></Container>
   <Container size="sm">…</Container>
   <Container size="md">…</Container>
   <Container size="lg">…</Container>
   <Container size="xl">…</Container>
-</div>`,
+</div>`, {
+      name: 'ContainerSizeExample',
+      reactImports: [],
+      compImports: ['Container']
+    }),
     preview: (
       <div className="container_demo-sizes">
         {(['', 'sm', 'md', 'lg', 'xl']).map((size) => (
@@ -53,9 +62,13 @@ const SECTIONS = [
   },
   {
     title: 'Fluid',
-    code: `<Container fluid>
+    code: wrapPageExample(`<Container fluid>
   <div className="container_demo-fill">Fluid · 최대 너비 제한 없음</div>
-</Container>`,
+</Container>`, {
+      name: 'ContainerFluidExample',
+      reactImports: [],
+      compImports: ['Container']
+    }),
     preview: (
       <Container fluid>
         <Fill>Fluid · 최대 너비 제한 없음</Fill>
@@ -64,9 +77,13 @@ const SECTIONS = [
   },
   {
     title: '시맨틱 루트',
-    code: `<Container as="main" size="lg">
+    code: wrapPageExample(`<Container as="main" size="lg">
   <div className="container_demo-fill">main 요소로 렌더링</div>
-</Container>`,
+</Container>`, {
+      name: 'ContainerAsExample',
+      reactImports: [],
+      compImports: ['Container']
+    }),
     preview: (
       <Container as="main" size="lg">
         <Fill>main 요소로 렌더링</Fill>
@@ -92,6 +109,7 @@ export default function ContainerGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName="ContainerExample.jsx"
         >
           {section.preview}
         </DemoBlock>

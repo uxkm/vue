@@ -7,12 +7,12 @@
     "dev": "npm run generate:registry && node scripts/serve.mjs --dev",
     "ui": "node scripts/ui.mjs",
     "build:styles": "node scripts/build-styles.mjs",
-    "build": "npm run generate:registry && node scripts/build-styles.mjs && STYLE_MODE=css next build",
+    "build": "npm run generate:registry && node scripts/build-styles.mjs && STYLE_MODE=css next build --webpack",
     "start": "node scripts/serve-static.mjs",
     "start:http": "npx --yes serve@14 out -l 8090",
     "lint": "next lint",
     "generate:registry": "node scripts/registry.mjs",
-    "clean": "rm -rf .next out next-env.d.ts src/styles/css src/styles/dist node_modules/.cache node_modules/.vite .cache .turbo",
+    "clean": "rm -rf .next out next-env.d.ts src/styles/css src/styles/dist node_modules/.cache .cache .turbo",
     "clean:modules": "rm -rf node_modules",
     "clean:all": "npm run clean && npm run clean:modules"
   },
@@ -58,7 +58,9 @@
     "eslint": "^9.0.0",
     "eslint-config-next": "^15.5.28",
     "postcss": "^8.5.32",
+    "raw-loader": "^4.0.2",
     "sass": "^1.83.0",
+    "sass-embedded": "^1.108.1",
     "typescript": "^5.7.2"
   },
   "overrides": {

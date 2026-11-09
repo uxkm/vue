@@ -130,7 +130,7 @@ export function Button ({
     (grow === 2 || grow === '2') && 'btn_grow-2',
     iconOnly && 'btn_icon-only',
     vertical && 'btn_vertical',
-    placeholder && 'is-placeholder',
+    placeholder && 'btn_select-placeholder',
     (disabled || ariaDisabled) && 'is-disabled',
     loading && 'is-loading',
     open && 'is-open',
@@ -190,40 +190,40 @@ export function Button ({
     }
   }
 
-  let content: ReactNode
-  if (iconOnly) {
-    content = children
-  } else {
-    content = (
-      <>
-        {hasNodes(iconBefore) && (
-          <span className="btn_icon btn_icon-before">{iconBefore}</span>
-        )}
-        <span className="btn_label">{hasNodes(children) ? children : label}</span>
-        {hasNodes(iconAfter) && (
-          <span className="btn_icon btn_icon-after">{iconAfter}</span>
-        )}
-        {showCaret && (
-          <span
-            className={cx(
-              'btn_icon',
-              'btn_icon-after',
-              variant === 'select' ? 'btn_select-caret' : 'btn_caret'
-            )}
-            aria-hidden="true"
-          >
-            {variant === 'select' ? (
-              <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                <path d="M6 9l6 6 6-6" />
-              </svg>
-            ) : (
-              '▾'
-            )}
-          </span>
-        )}
-      </>
-    )
-  }
+  const caret = showCaret ? (
+    <span
+      className={cx(
+        'btn_icon',
+        'btn_icon-after',
+        variant === 'select' ? 'btn_select-caret' : 'btn_caret'
+      )}
+      aria-hidden="true"
+    >
+      {variant === 'select' ? (
+        <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      ) : (
+        '▾'
+      )}
+    </span>
+  ) : null
+
+  const content: ReactNode = (
+    <>
+      {loading ? <span aria-hidden="true" className="btn_spinner" /> : null}
+      {hasNodes(iconBefore) ? (
+        <span className="btn_icon btn_icon-before">{iconBefore}</span>
+      ) : null}
+      {iconOnly
+        ? (hasNodes(children) ? children : null)
+        : <span className="btn_label">{hasNodes(children) ? children : label}</span>}
+      {hasNodes(iconAfter) ? (
+        <span className="btn_icon btn_icon-after">{iconAfter}</span>
+      ) : null}
+      {caret}
+    </>
+  )
 
   return createElement(
     rootTag,

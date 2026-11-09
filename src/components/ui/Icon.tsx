@@ -232,7 +232,42 @@ const paths = {
       <path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l2-2" />
     </>
   ),
-  'arrow-left': <path d="M19 12H5m7 7-7-7 7-7" />
+  'arrow-left': <path d="M19 12H5m7 7-7-7 7-7" />,
+  layers: (
+    <>
+      <path d="M12 2 2 7l10 5 10-5-10-5Z" />
+      <path d="m2 12 10 5 10-5" />
+      <path d="m2 17 10 5 10-5" />
+    </>
+  ),
+  layout: (
+    <>
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      <path d="M9 3v18M3 9h6" />
+    </>
+  ),
+  table: (
+    <>
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      <path d="M3 10h18M3 15h18M9 4v16M15 4v16" />
+    </>
+  ),
+  'message-circle': (
+    <>
+      <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22l5.9-2Z" />
+    </>
+  ),
+  compass: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="m16.2 7.8-2.5 6.4-6.4 2.5 2.5-6.4 6.4-2.5Z" />
+    </>
+  ),
+  'more-horizontal': (
+    <>
+      <path d="M5 12h.01M12 12h.01M19 12h.01" strokeWidth="3" strokeLinecap="round" />
+    </>
+  )
 } as const
 
 /** 제공 아이콘 이름 */
@@ -349,6 +384,8 @@ export interface IconProps
   square?: boolean
   pulse?: boolean
   ripple?: boolean
+  /** button 모드에서 비활성 */
+  disabled?: boolean
   ariaLabel?: string
   title?: string
   children?: ReactNode
@@ -372,6 +409,7 @@ export function Icon ({
   square = false,
   pulse = false,
   ripple = false,
+  disabled = false,
   ariaLabel = '',
   title = '',
   children,
@@ -381,7 +419,9 @@ export function Icon ({
   ...rest
 }: IconProps) {
   const resolvedLabel = ariaLabel || title || undefined
-  const hasWrapper = Boolean(button || circle || square)
+  // onClick 만 넘긴 경우에도 클릭 가능하도록 button 래퍼로 취급
+  const asButton = Boolean(button || (onClick && !circle && !square))
+  const hasWrapper = Boolean(asButton || circle || square)
   const customCssSize = toIconCssSize(size)
   const namedSize = !customCssSize && typeof size === 'string' && iconSizes.includes(size as IconSize)
     ? (size as IconSize)
@@ -393,7 +433,7 @@ export function Icon ({
 
   const iconClass = cx('icon', sizeClass, spin && 'icon_spin')
   const outerClass = cx(
-    button
+    asButton
       ? ['icon_button', frameSizeClass]
       : circle
         ? ['icon_circle', frameSizeClass]
@@ -494,13 +534,14 @@ export function Icon ({
     )
   }
 
-  if (button) {
+  if (asButton) {
     return (
       <button
         {...rest}
         type="button"
         className={outerClass}
         aria-label={resolvedLabel}
+        disabled={disabled}
         data-ripple={ripple ? 'true' : undefined}
         style={sizeStyle || style ? { ...sizeStyle, ...style } : undefined}
         onClick={onClick}
@@ -517,8 +558,20 @@ export function Icon ({
         className={outerClass}
         aria-label={resolvedLabel}
         aria-hidden={resolvedLabel ? undefined : true}
-        role={resolvedLabel ? 'img' : undefined}
+        role={resolvedLabel ? 'img' : onClick ? 'button' : undefined}
+        tabIndex={onClick ? 0 : undefined}
         style={sizeStyle || style ? { ...sizeStyle, ...style } : undefined}
+        onClick={onClick}
+        onKeyDown={
+          onClick
+            ? (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault()
+                  onClick(event as unknown as MouseEvent<HTMLElement>)
+                }
+              }
+            : undefined
+        }
       >
         {graphic}
       </span>

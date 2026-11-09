@@ -58,7 +58,7 @@ export interface ListProps extends HTMLAttributes<HTMLElement> {
 }
 
 /** ListItem이 받는 값 */
-export interface ListItemProps extends HTMLAttributes<HTMLElement> {
+export interface ListItemProps extends Omit<HTMLAttributes<HTMLElement>, 'title' | 'prefix'> {
   title?: ReactNode
   description?: ReactNode
   meta?: ReactNode

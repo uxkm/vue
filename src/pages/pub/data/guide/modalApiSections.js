@@ -11,10 +11,10 @@ const columns = [
 
 const props = [
   {
-    name: 'open',
+    name: 'open · defaultOpen',
     type: 'boolean',
-    default: 'false',
-    description: 'true 일 때만 모달을 렌더링합니다. 열고 닫는 상태는 부모에서 관리합니다.'
+    default: '— · false',
+    description: '열림 상태입니다. open 을 넘기면 제어하고, 생략하면 defaultOpen 과 내부 상태로 동작합니다. 닫기 시 onOpenChange(false) · onClose 가 호출됩니다.'
   },
   {
     name: 'title',
@@ -60,6 +60,12 @@ const events = [
     type: '() => void',
     default: '—',
     description: '오버레이(modal_backdrop)나 닫기 버튼(Icon close)을 누르면 호출됩니다. open 을 false 로 바꾸는 동작은 부모에서 처리합니다.'
+  },
+  {
+    name: 'onOpenChange',
+    type: '(open: boolean) => void',
+    default: '—',
+    description: '열림이 바뀔 때 호출됩니다(닫힐 때 false). onClose 와 함께 쓸 수 있습니다. open 을 false 로 바꾸는 동작은 부모에서 처리합니다.'
   }
 ]
 

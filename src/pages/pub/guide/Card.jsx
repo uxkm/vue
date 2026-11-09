@@ -1,21 +1,8 @@
 'use client'
 
-import {
-  Avatar,
-  Button,
-  Card,
-  CardBody,
-  CardDeck,
-  CardFooter,
-  CardHeader,
-  DemoBlock,
-  GuideApiDocs,
-  GuideLayout,
-  Link,
-  Stat,
-  Tag,
-  TagGroup
-} from '@/comp'
+import { useState } from 'react'
+import { Avatar, Button, Card, CardBody, CardDeck, CardFooter, CardHeader, Link, Stat, Tag, TagGroup } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { cardApiSections } from '@/pages/pub/data/guide/cardApiSections'
 
 const MediaIcon = (
@@ -53,6 +40,37 @@ const MoreIcon = (
   </svg>
 )
 
+/** href · onClick 으로 카드를 클릭 가능하게 만드는 예시 */
+function ClickableCardDemo () {
+  const [selected, setSelected] = useState('')
+
+  return (
+    <div className="demo-stack">
+      <CardDeck columns={2}>
+        <Card href="#card" hoverable>
+          <CardBody>
+            <h3 className="card_title">링크 카드</h3>
+            <p className="card_subtitle">클릭하면 상세 페이지로 이동합니다.</p>
+          </CardBody>
+        </Card>
+        <Card
+          hoverable
+          variant="shadow"
+          onClick={() => setSelected('알림')}
+        >
+          <CardBody>
+            <h3 className="card_title">클릭 카드</h3>
+            <p className="card_subtitle">onClick으로 페이지 상태를 갱신합니다.</p>
+          </CardBody>
+        </Card>
+      </CardDeck>
+      {selected
+        ? <p className="color_muted size_sm">선택: {selected}</p>
+        : null}
+    </div>
+  )
+}
+
 const SECTIONS = [
   {
     title: '기본',
@@ -61,14 +79,18 @@ const SECTIONS = [
         <code>card_header</code> · <code>card_body</code> · <code>card_footer</code> 구조를 가집니다.
       </>
     ),
-    code: `<Card style={{ maxWidth: 360 }}>
+    code: wrapPageExample(`<Card style={{ maxWidth: 360 }}>
   <CardHeader title="카드 제목" subtitle="부제목 또는 메타 정보" />
   <CardBody>카드 본문 영역입니다.</CardBody>
   <CardFooter>
     <Button variant="filled" color="primary" size="sm" label="확인" />
     <Button variant="ghost" size="sm" label="취소" />
   </CardFooter>
-</Card>`,
+</Card>`, {
+  name: 'CardBasicExample',
+  reactImports: [],
+  compImports: ['Button', 'Card', 'CardBody', 'CardFooter', 'CardHeader']
+}),
     preview: (
       <Card style={{ maxWidth: 360, width: '100%' }}>
         <CardHeader title="카드 제목" subtitle="부제목 또는 메타 정보" />
@@ -83,12 +105,16 @@ const SECTIONS = [
   {
     title: '간단',
     description: 'header나 footer 없이 body만 사용하는 단순 카드입니다.',
-    code: `<Card variant="shadow" size="compact">
+    code: wrapPageExample(`<Card variant="shadow" size="compact">
   <CardBody>
     <p className="card_title">알림</p>
     새로운 메시지가 도착했습니다.
   </CardBody>
-</Card>`,
+</Card>`, {
+  name: 'CardExample2',
+  reactImports: [],
+  compImports: ['Card', 'CardBody']
+}),
     preview: (
       <CardDeck columns={2}>
         <Card variant="shadow" size="compact">
@@ -106,10 +132,14 @@ const SECTIONS = [
   {
     title: '스킨',
     description: '기본은 테두리·그림자가 적용됩니다. variant로 외형을 조절합니다.',
-    code: `<Card><CardBody>기본 — 테두리 · 그림자</CardBody></Card>
+    code: wrapPageExample(`<Card><CardBody>기본 — 테두리 · 그림자</CardBody></Card>
 <Card variant="shadow"><CardBody>Shadow</CardBody></Card>
 <Card className="card_elevated"><CardBody>Elevated</CardBody></Card>
-<Card variant="flat"><CardBody>Ghost</CardBody></Card>`,
+<Card variant="flat"><CardBody>Ghost</CardBody></Card>`, {
+  name: 'CardExample3',
+  reactImports: [],
+  compImports: ['Card', 'CardBody']
+}),
     preview: (
       <CardDeck columns={2}>
         <Card><CardBody>기본 — 테두리 · 그림자</CardBody></Card>
@@ -122,9 +152,13 @@ const SECTIONS = [
   {
     title: '크기',
     description: 'size로 패딩과 제목 크기를 조절합니다.',
-    code: `<Card size="sm"><CardHeader title="Small" /><CardBody>…</CardBody></Card>
+    code: wrapPageExample(`<Card size="sm"><CardHeader title="Small" /><CardBody>…</CardBody></Card>
 <Card><CardHeader title="Medium" /><CardBody>…</CardBody></Card>
-<Card size="lg"><CardHeader title="Large" /><CardBody>…</CardBody></Card>`,
+<Card size="lg"><CardHeader title="Large" /><CardBody>…</CardBody></Card>`, {
+  name: 'CardSizeExample',
+  reactImports: [],
+  compImports: ['Card', 'CardBody', 'CardHeader']
+}),
     preview: (
       <CardDeck columns={2}>
         <Card size="sm">
@@ -149,9 +183,13 @@ const SECTIONS = [
         <code>card_accent</code>와 <code>color_*</code>로 왼쪽 강조선을 적용합니다.
       </>
     ),
-    code: `<Card className="card_accent color_primary">
+    code: wrapPageExample(`<Card className="card_accent color_primary">
   <CardBody><p className="card_title">정보</p>…</CardBody>
-</Card>`,
+</Card>`, {
+  name: 'CardExample5',
+  reactImports: [],
+  compImports: ['Card', 'CardBody']
+}),
     preview: (
       <CardDeck columns={2}>
         <Card className="card_accent color_primary">
@@ -188,14 +226,18 @@ const SECTIONS = [
         <code>card_media</code>로 상단 이미지·썸네일 영역을 추가합니다.
       </>
     ),
-    code: `<Card
+    code: wrapPageExample(`<Card
   hoverable
   variant="shadow"
   media={<div className="card_media card_media-placeholder" role="img" aria-label="썸네일" />}
 >
   <CardHeader title="프로젝트 Alpha" subtitle="업데이트 · 2일 전" />
   <CardBody>…</CardBody>
-</Card>`,
+</Card>`, {
+  name: 'CardExample6',
+  reactImports: [],
+  compImports: ['Card', 'CardBody', 'CardHeader']
+}),
     preview: (
       <Card
         hoverable
@@ -229,7 +271,7 @@ const SECTIONS = [
         <code>card_horizontal</code>로 미디어와 콘텐츠를 나란히 배치합니다. <code>card_inner</code>로 본문을 감쌉니다.
       </>
     ),
-    code: `<Card
+    code: wrapPageExample(`<Card
   variant="shadow"
   className="card_horizontal"
   media={<div className="card_media card_media-placeholder" />}
@@ -239,7 +281,11 @@ const SECTIONS = [
     <CardBody>…</CardBody>
     <CardFooter>…</CardFooter>
   </div>
-</Card>`,
+</Card>`, {
+  name: 'CardExample7',
+  reactImports: [],
+  compImports: ['Card', 'CardBody', 'CardFooter', 'CardHeader']
+}),
     preview: (
       <Card
         variant="shadow"
@@ -268,13 +314,17 @@ const SECTIONS = [
         <code>card_icon</code> · Stat으로 기능 소개·지표 카드를 구성합니다.
       </>
     ),
-    code: `<Card hoverable variant="shadow">
+    code: wrapPageExample(`<Card hoverable variant="shadow">
   <CardBody>
     <span className="card_icon color_primary" aria-hidden="true">…</span>
     <h3 className="card_title">빠른 성능</h3>
     <p className="card_subtitle">가벼운 번들, 빠른 로딩</p>
   </CardBody>
-</Card>`,
+</Card>`, {
+  name: 'CardIconExample',
+  reactImports: [],
+  compImports: ['Card', 'CardBody']
+}),
     preview: (
       <CardDeck>
         <Card hoverable variant="shadow">
@@ -306,7 +356,7 @@ const SECTIONS = [
         <code>card_avatar</code> · <code>card_extra</code>로 사용자 정보 카드를 만듭니다.
       </>
     ),
-    code: `<Card variant="shadow">
+    code: wrapPageExample(`<Card variant="shadow">
   <CardHeader extra={<Button variant="ghost" size="sm" iconOnly ariaLabel="더 보기">…</Button>}>
     <div className="card_header-row">
       <Avatar color="primary" label="홍" />
@@ -314,7 +364,11 @@ const SECTIONS = [
     </div>
   </CardHeader>
   …
-</Card>`,
+</Card>`, {
+  name: 'CardExample9',
+  reactImports: [],
+  compImports: ['Avatar', 'Button', 'Card', 'CardHeader']
+}),
     preview: (
       <Card variant="shadow" style={{ maxWidth: 320, width: '100%' }}>
         <CardHeader
@@ -350,31 +404,33 @@ const SECTIONS = [
     title: '클릭 가능',
     description: (
       <>
-        <code>href</code> 또는 <code>card_clickable</code>로 전체 카드를 링크로 만듭니다. <code>hoverable</code>과 함께 사용합니다.
+        <code>href</code> 또는 <code>onClick</code>으로 전체 카드를 클릭 가능하게 만듭니다. <code>hoverable</code>과 함께 사용합니다.
+        <code>href</code>면 <code>a</code>, <code>onClick</code>만 있으면 <code>button</code>으로 렌더링됩니다.
       </>
     ),
-    code: `<Card href="#card" hoverable className="card_clickable">
+    code: wrapPageExample(`const [selected, setSelected] = useState('')
+
+<Card href="#card" hoverable>
   <CardBody>
     <h3 className="card_title">링크 카드</h3>
     <p className="card_subtitle">클릭하면 상세 페이지로 이동합니다.</p>
   </CardBody>
-</Card>`,
-    preview: (
-      <CardDeck columns={2}>
-        <Card href="#card" hoverable>
-          <CardBody>
-            <h3 className="card_title">링크 카드</h3>
-            <p className="card_subtitle">클릭하면 상세 페이지로 이동합니다.</p>
-          </CardBody>
-        </Card>
-        <Card href="#card" hoverable variant="shadow">
-          <CardBody>
-            <h3 className="card_title">인터랙티브 카드</h3>
-            <p className="card_subtitle">링크 요소로 키보드 접근을 지원합니다.</p>
-          </CardBody>
-        </Card>
-      </CardDeck>
-    )
+</Card>
+<Card
+  hoverable
+  variant="shadow"
+  onClick={() => setSelected('알림')}
+>
+  <CardBody>
+    <h3 className="card_title">클릭 카드</h3>
+    <p className="card_subtitle">onClick으로 페이지 상태를 갱신합니다.</p>
+  </CardBody>
+</Card>`, {
+      name: 'CardExample',
+      reactImports: ['useState'],
+      compImports: ['Card', 'CardBody']
+    }),
+    preview: <ClickableCardDemo />
   },
   {
     title: '비활성',
@@ -383,12 +439,16 @@ const SECTIONS = [
         <code>disabled</code>로 비활성 상태를 표시합니다.
       </>
     ),
-    code: `<Card disabled style={{ maxWidth: 280 }}>
+    code: wrapPageExample(`<Card disabled style={{ maxWidth: 280 }}>
   <CardBody>
     <h3 className="card_title">비활성 카드</h3>
     <p className="card_subtitle">현재 이용할 수 없습니다.</p>
   </CardBody>
-</Card>`,
+</Card>`, {
+  name: 'CardDisabledExample',
+  reactImports: [],
+  compImports: ['Card', 'CardBody']
+}),
     preview: (
       <Card disabled style={{ maxWidth: 280, width: '100%' }}>
         <CardBody>
@@ -405,11 +465,15 @@ const SECTIONS = [
         <code>CardDeck</code>으로 여러 카드를 그리드로 배치합니다. <code>columns</code>로 2·3열을 고정할 수 있습니다.
       </>
     ),
-    code: `<CardDeck>
+    code: wrapPageExample(`<CardDeck>
   <Card hoverable><CardHeader title="Feature A" /><CardBody>…</CardBody></Card>
   <Card hoverable><CardHeader title="Feature B" /><CardBody>…</CardBody></Card>
   <Card hoverable><CardHeader title="Feature C" /><CardBody>…</CardBody></Card>
-</CardDeck>`,
+</CardDeck>`, {
+  name: 'CardExample11',
+  reactImports: [],
+  compImports: ['Card', 'CardBody', 'CardDeck', 'CardHeader']
+}),
     preview: (
       <CardDeck>
         <Card hoverable>
@@ -446,6 +510,7 @@ export default function CardGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName="CardExample.jsx"
         >
           {section.preview}
         </DemoBlock>

@@ -1,6 +1,6 @@
 import { useCallback, useState, type ReactNode } from 'react'
 
-/** Vue `$slots.x && $slots.x.length` 에 대응 — 렌더할 내용이 있는지 */
+/** children / 슬롯 노드에 렌더할 내용이 있는지 */
 export function hasNodes (node: unknown): boolean {
   if (node == null || node === false || node === true || node === '') return false
   if (Array.isArray(node)) return node.some(hasNodes)
@@ -17,7 +17,6 @@ export function firstNodes (...nodes: ReactNode[]): ReactNode {
 
 /**
  * value 가 주어지면 controlled, 없으면(undefined) 내부 state 로 동작
- * (Vue v-model 없이 단독으로 쓰던 데모 호환)
  */
 export function useControllable<T> (
   value: T | undefined,

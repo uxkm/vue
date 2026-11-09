@@ -4,7 +4,7 @@
  */
 'use client'
 
-import type { HTMLAttributes, ReactNode } from 'react'
+import { useState, type HTMLAttributes, type ReactNode } from 'react'
 import { cx } from '@/utils/cx'
 import { hasNodes } from '@/utils/react'
 import { Icon } from './Icon'
@@ -24,9 +24,11 @@ export interface StepItem {
 }
 
 /** 단계 표시가 받는 값. current 는 0부터 */
-export interface StepsProps extends HTMLAttributes<HTMLOListElement> {
+export interface StepsProps extends Omit<HTMLAttributes<HTMLOListElement>, 'onChange'> {
   items: StepItem[]
   current?: number
+  /** 비제어 초기 단계 */
+  defaultCurrent?: number
   direction?: 'horizontal' | 'vertical'
   size?: 'sm' | 'md' | 'lg'
   /** 숫자 대신 작은 점 */
@@ -58,7 +60,8 @@ function statusClass (status: StepStatus) {
  */
 export function Steps ({
   items,
-  current = 0,
+  current: currentProp,
+  defaultCurrent = 0,
   direction = 'horizontal',
   size = 'md',
   dot = false,
@@ -69,7 +72,15 @@ export function Steps ({
   onChange,
   ...rest
 }: StepsProps) {
+  const controlled = currentProp !== undefined
+  const [innerCurrent, setInnerCurrent] = useState(defaultCurrent)
+  const current = controlled ? currentProp : innerCurrent
   const hasIconItem = items.some((item) => hasNodes(item.icon))
+
+  const go = (index: number) => {
+    if (!controlled) setInnerCurrent(index)
+    onChange?.(index)
+  }
 
   return (
     <ol
@@ -94,8 +105,7 @@ export function Steps ({
         const canNavigate =
           navigable &&
           !item.disabled &&
-          status !== 'wait' &&
-          typeof onChange === 'function'
+          status !== 'wait'
 
         const indicatorInner = (() => {
           if (dot) return null
@@ -145,7 +155,7 @@ export function Steps ({
                   className={cx('steps_trigger', item.disabled && 'is-disabled')}
                   disabled={!canNavigate}
                   onClick={() => {
-                    if (canNavigate) onChange?.(index)
+                    if (canNavigate) go(index)
                   }}
                 >
                   {body}

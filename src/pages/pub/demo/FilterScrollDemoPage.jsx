@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from '@/lib/router'
-import { GUIDE_SECTION, useSiteTitle } from '@/lib/siteTitle'
+import { useGuideTitle } from '@/pages/pub/shared/guideTitle'
 import '@/styles/pub.scss'
 
 /**
@@ -32,7 +32,7 @@ function pad(n) {
  * 하위 칩이 많을 때 가로 스크롤이 생기는지 확인한다.
  */
 export default function FilterScrollDemoPage() {
-  useSiteTitle({ page: 'Filter Scroll', section: GUIDE_SECTION })
+  useGuideTitle('Filter Scroll')
   const [chipCount, setChipCount] = useState(40)
   const [metrics, setMetrics] = useState({
     scrollWidth: 0,

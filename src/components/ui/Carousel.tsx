@@ -51,6 +51,16 @@ export interface CarouselProps extends Omit<HTMLAttributes<HTMLDivElement>, 'chi
   loop?: boolean
   /** 초기 슬라이드 인덱스 */
   initialSlide?: number
+  /** 현재 슬라이드 인덱스(제어). 넘기면 페이지가 위치를 관리한다 */
+  index?: number
+  /** 슬라이드가 바뀔 때 호출 */
+  onIndexChange?: (index: number, swiper: SwiperInstance) => void
+  /** 자동재생 재생 중 여부(제어) */
+  playing?: boolean
+  /** 비제어 초기 재생. 기본은 autoplay */
+  defaultPlaying?: boolean
+  /** 재생/정지 상태가 바뀔 때 호출 */
+  onPlayingChange?: (playing: boolean) => void
   /** 한 화면 슬라이드 수 */
   slidesPerView?: number | 'auto'
   /** 한 번에 이동할 슬라이드 수 */
@@ -203,6 +213,11 @@ export function Carousel ({
   delay = 4000,
   loop = false,
   initialSlide = 0,
+  index,
+  onIndexChange,
+  playing: playingProp,
+  defaultPlaying,
+  onPlayingChange,
   slidesPerView = 1,
   slidesPerGroup = 1,
   spaceBetween = 0,
@@ -225,9 +240,24 @@ export function Carousel ({
   const rootRef = useRef<HTMLDivElement>(null)
   const swiperRef = useRef<HTMLDivElement>(null)
   const instanceRef = useRef<SwiperInstance | null>(null)
-  const [playing, setPlaying] = useState(!!autoplay)
+  const indexRef = useRef(index)
+  const onIndexChangeRef = useRef(onIndexChange)
+  indexRef.current = index
+  onIndexChangeRef.current = onIndexChange
+  const playingControlled = playingProp !== undefined
+  const [innerPlaying, setInnerPlaying] = useState(
+    () => defaultPlaying ?? !!autoplay
+  )
+  const playing = playingControlled ? playingProp : innerPlaying
+  const playingRef = useRef(playing)
+  playingRef.current = playing
   /** DOM 기준 장 수 — <Slides /> 같은 래퍼는 Children 으로는 1로 보이므로 layout 후 센다 */
   const [slideCount, setSlideCount] = useState(0)
+
+  const setPlaying = (next: boolean) => {
+    if (!playingControlled) setInnerPlaying(next)
+    onPlayingChange?.(next)
+  }
 
   const slides = normalizeSlideChildren(children)
   /** 1장이면 좌우·닷·재생/정지·자동재생을 쓰지 않는다 */
@@ -240,7 +270,8 @@ export function Carousel ({
   const showPagination = multiSlide && pagination !== false
   const showNavigation = multiSlide && navigation !== false
   const showAutoplayControls = multiSlide && (autoplay || autoplayToggle)
-  const enableAutoplay = multiSlide && autoplay
+  /** autoplay 또는 autoplayToggle 이면 Swiper autoplay 모듈을 켠다(토글만 켜도 재생 가능) */
+  const enableAutoplay = multiSlide && (autoplay || autoplayToggle)
 
   const syncCoverflowGap = useCallback(
     () => applyCoverflowGap(rootRef.current, swiperRef.current, isCoverflow, spaceBetween, sides),
@@ -274,7 +305,12 @@ export function Carousel ({
           : domSlideCount < Math.max(2, Math.ceil(Number(view) || 1) + 1 + (centered ? 1 : 0)))
     )
 
-    const startIndex = resolveInitialSlide(initialSlide, domSlideCount, canLoop)
+    // 초기 위치만 사용. 이후 index 변경은 별도 sync effect 가 담당한다.
+    const startIndex = resolveInitialSlide(
+      indexRef.current !== undefined ? indexRef.current : initialSlide,
+      domSlideCount,
+      canLoop
+    )
     instanceRef.current?.destroy(true, true)
 
     const paginationEl =
@@ -353,8 +389,29 @@ export function Carousel ({
 
     const swiper = new Swiper(host, options)
     instanceRef.current = swiper
-    setPlaying(!!enableAutoplay)
+    // autoplay 모듈은 켰지만 playing 이 false 면 즉시 정지(autoplayToggle 전용 등)
+    if (enableAutoplay && !playingRef.current) {
+      swiper.autoplay?.stop()
+    }
     onSwiper?.(swiper)
+
+    const emitIndex = () => {
+      if (swiper.destroyed) return
+      const next = typeof swiper.realIndex === 'number' ? swiper.realIndex : swiper.activeIndex
+      onIndexChangeRef.current?.(next, swiper)
+      // 제어 모드에서 부모가 값을 반영하지 않으면 prop 위치로 되돌린다.
+      const controlled = indexRef.current
+      if (controlled === undefined || controlled === next) return
+      requestAnimationFrame(() => {
+        if (swiper.destroyed) return
+        if (swiper.params.loop && typeof swiper.slideToLoop === 'function') {
+          swiper.slideToLoop(controlled, 0, false)
+        } else {
+          swiper.slideTo(controlled, 0, false)
+        }
+      })
+    }
+    swiper.on('slideChange', emitIndex)
 
     const raf = window.requestAnimationFrame(() => {
       if (swiper.destroyed) return
@@ -366,6 +423,7 @@ export function Carousel ({
 
     return () => {
       window.cancelAnimationFrame(raf)
+      swiper.off('slideChange', emitIndex)
       swiper.destroy(true, true)
       if (instanceRef.current === swiper) instanceRef.current = null
     }
@@ -398,6 +456,29 @@ export function Carousel ({
     slideCount
   ])
 
+  // 제어 index 가 바뀌면 Swiper 위치를 맞춘다(초기화 재생성 없이).
+  useEffect(() => {
+    if (index === undefined) return
+    const swiper = instanceRef.current
+    if (!swiper || swiper.destroyed) return
+    const current = typeof swiper.realIndex === 'number' ? swiper.realIndex : swiper.activeIndex
+    if (current === index) return
+    if (swiper.params.loop && typeof swiper.slideToLoop === 'function') {
+      swiper.slideToLoop(index)
+    } else {
+      swiper.slideTo(index)
+    }
+  }, [index])
+
+  // 제어 playing 이 바뀌면 autoplay API 를 맞춘다.
+  useEffect(() => {
+    if (!enableAutoplay) return
+    const autoplayApi = instanceRef.current?.autoplay
+    if (!autoplayApi) return
+    if (playing && !autoplayApi.running) autoplayApi.start()
+    if (!playing && autoplayApi.running) autoplayApi.stop()
+  }, [playing, enableAutoplay])
+
   useEffect(() => {
     if (!rootRef.current || typeof ResizeObserver === 'undefined') return
     const observer = new ResizeObserver(() => {
@@ -412,11 +493,8 @@ export function Carousel ({
   }, [syncCoverflowGap])
 
   function toggleAutoplay () {
-    const autoplayApi = instanceRef.current?.autoplay
-    if (!autoplayApi) return
-    if (autoplayApi.running) autoplayApi.stop()
-    else autoplayApi.start()
-    setPlaying(!!autoplayApi.running)
+    // 요청만 전달하고, 실제 start/stop 은 playing sync effect 가 prop 기준으로 맞춘다.
+    setPlaying(!playing)
   }
 
   const rootClass = cx(

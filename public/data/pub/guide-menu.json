@@ -3,6 +3,10 @@
     "id": "intro",
     "label": "소개"
   },
+  "accessibility": {
+    "id": "accessibility",
+    "label": "접근성"
+  },
   "componentGroups": [
     {
       "id": "basic",

@@ -11,10 +11,10 @@ const columns = [
 
 const props = [
   {
-    name: 'page',
+    name: 'page · defaultPage',
     type: 'number',
-    default: '1',
-    description: '현재 페이지(1부터)입니다. 범위를 벗어나면 1~pageCount 로 보정합니다.'
+    default: '— · 1',
+    description: '현재 페이지(1부터)입니다. page 를 넘기면 제어하고, 생략하면 defaultPage 와 내부 상태로 동작합니다. 범위를 벗어나면 1~pageCount 로 보정합니다.'
   },
   {
     name: 'pageCount',
@@ -32,7 +32,7 @@ const props = [
     name: 'onChange',
     type: '(page: number) => void',
     default: '—',
-    description: '페이지가 바뀔 때 호출됩니다. 이전/다음 · 번호 · jumper 모두 동일합니다.'
+    description: '페이지가 바뀔 때 호출됩니다. 이전/다음 · 번호 · jumper 모두 동일합니다. 비제어 모드에서도 내부 페이지가 갱신됩니다.'
   },
   {
     name: 'size',

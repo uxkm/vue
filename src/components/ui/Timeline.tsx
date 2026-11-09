@@ -59,7 +59,7 @@ export function Timeline ({
 }
 
 /** TimelineItem props */
-export interface TimelineItemProps extends LiHTMLAttributes<HTMLLIElement> {
+export interface TimelineItemProps extends Omit<LiHTMLAttributes<HTMLLIElement>, 'title' | 'color'> {
   color?: string
   title?: ReactNode
   description?: ReactNode

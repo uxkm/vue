@@ -41,6 +41,12 @@ const props = [
     description: '항목 선택 시 호출됩니다. value · defaultValue · onChange 중 하나라도 있으면 선택 모드로 동작하며, 루트에 dropdown_selectable 이 붙습니다.'
   },
   {
+    name: 'onSelect',
+    type: '(key: string, item: DropdownItem) => void',
+    default: '—',
+    description: '메뉴 항목 클릭 시 호출됩니다. 페이지에서 액션(라우팅·모달·로그아웃 등)을 제어할 때 씁니다. onChange 와 달리 넘겨도 셀렉트 모드로 바뀌지 않으며, 항목별 items[].onSelect 보다 먼저 호출됩니다.'
+  },
+  {
     name: 'placeholder',
     type: 'ReactNode',
     default: '—',

@@ -53,10 +53,16 @@ const props = [
     description: '버튼 안 콘텐츠입니다. 있으면 label · icon 대신 렌더합니다.'
   },
   {
+    name: 'visible',
+    type: 'boolean',
+    default: '—',
+    description: '넘기면 표시 여부를 페이지가 제어합니다. 생략 시 visibilityHeight 기준 자동 표시입니다.'
+  },
+  {
     name: 'onVisibleChange',
     type: '(visible: boolean) => void',
     default: '—',
-    description: '표시 상태(is-visible)가 바뀔 때 호출됩니다.'
+    description: '스크롤 기반 표시 상태(is-visible)가 바뀔 때 호출됩니다. visible 제어와 함께 쓸 수 있습니다.'
   },
   {
     name: 'className · …rest',

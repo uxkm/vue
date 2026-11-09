@@ -106,6 +106,7 @@ export const b2bScreenKeys = [
   "service/learning-platform"
 ]
 export const componentNames = [
+  "accessibility",
   "accordion",
   "affix",
   "alert",

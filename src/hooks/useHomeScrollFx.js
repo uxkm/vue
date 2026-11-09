@@ -13,24 +13,16 @@ export function useHomeScrollFx (options = {}) {
   useEffect(() => {
     if (loading) return undefined
 
-    const host = {
-      $el: rootRef.current,
-      $refs: {
-        scrollTrack: scrollTrackRef ? scrollTrackRef.current : null
-      }
-    }
-
     let unbindFx = null
     let unbindSticky = null
 
     // DOM 반영 후 바인딩
     const id = window.setTimeout(() => {
-      host.$el = rootRef.current
-      host.$refs.scrollTrack = scrollTrackRef ? scrollTrackRef.current : null
-      unbindFx = bindHomeScrollFx(host)
+      unbindFx = bindHomeScrollFx(rootRef.current)
 
-      if (host.$refs.scrollTrack) {
-        unbindSticky = createStickyProgress(host.$refs.scrollTrack, (p) => {
+      const track = scrollTrackRef ? scrollTrackRef.current : null
+      if (track) {
+        unbindSticky = createStickyProgress(track, (p) => {
           setStickyProgress(p)
           if (typeof onStickyProgress === 'function') onStickyProgress(p)
         })

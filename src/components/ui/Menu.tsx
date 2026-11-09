@@ -5,9 +5,12 @@
 'use client'
 
 import {
+  createContext,
+  useContext,
   useId,
   useState,
   type HTMLAttributes,
+  type MouseEvent,
   type ReactNode
 } from 'react'
 import { cx } from '@/utils/cx'
@@ -33,7 +36,7 @@ export interface MenuItem {
 }
 
 /** 메뉴가 받는 값 */
-export interface MenuProps extends HTMLAttributes<HTMLElement> {
+export interface MenuProps extends Omit<HTMLAttributes<HTMLElement>, 'onSelect'> {
   items?: MenuItem[]
   direction?: 'vertical' | 'horizontal'
   bordered?: boolean
@@ -41,7 +44,32 @@ export interface MenuProps extends HTMLAttributes<HTMLElement> {
   dark?: boolean
   label?: string
   children?: ReactNode
+  /** 선택 키(제어). 넘기면 해당 항목에 is-active */
+  selectedKey?: string | null
+  /** 비제어 초기 선택 키 */
+  defaultSelectedKey?: string
+  /** 항목 클릭 시 호출. 페이지에서 라우팅·액션을 제어한다 */
+  onSelect?: (key: string, item: MenuItem, event: MouseEvent<HTMLElement>) => void
+  /** 열린 서브메뉴 키 목록(제어) */
+  openKeys?: string[]
+  /** 비제어 초기 열린 서브메뉴 키 */
+  defaultOpenKeys?: string[]
+  /** 서브메뉴 열림이 바뀔 때 호출 */
+  onOpenChange?: (openKeys: string[]) => void
 }
+
+type MenuContextValue = {
+  selectedKey: string | null
+  openKeys: string[]
+  onSelect?: MenuProps['onSelect']
+  setOpenKey: (key: string, open: boolean) => void
+}
+
+const MenuContext = createContext<MenuContextValue>({
+  selectedKey: null,
+  openKeys: [],
+  setOpenKey: () => {}
+})
 
 function MenuLinkContent ({
   icon,
@@ -78,6 +106,14 @@ function MenuItems ({
   ))
 }
 
+function collectDefaultOpenKeys (items: MenuItem[], acc: string[] = []) {
+  for (const item of items) {
+    if (item.defaultOpen) acc.push(item.key)
+    if (item.children?.length) collectDefaultOpenKeys(item.children, acc)
+  }
+  return acc
+}
+
 function MenuItemNode ({
   item,
   idPrefix
@@ -87,7 +123,9 @@ function MenuItemNode ({
 }) {
   const subId = `${idPrefix}-${item.key}`
   const hasSub = Array.isArray(item.children) && item.children.length > 0
-  const [open, setOpen] = useState(Boolean(item.defaultOpen))
+  const { selectedKey, openKeys, onSelect, setOpenKey } = useContext(MenuContext)
+  const open = openKeys.includes(item.key)
+  const active = item.active || (selectedKey != null && selectedKey === item.key)
 
   if (item.type === 'divider') {
     return <li className="menu_divider" role="separator" />
@@ -116,15 +154,14 @@ function MenuItemNode ({
           'menu_item-submenu',
           item.disabled && 'is-disabled'
         )}
-        aria-expanded={open}
       >
         <button
           type="button"
-          className={cx('menu_link', item.active && 'is-active', item.disabled && 'is-disabled')}
+          className={cx('menu_link', active && 'is-active', item.disabled && 'is-disabled')}
           aria-expanded={open}
           aria-controls={subId}
           disabled={item.disabled}
-          onClick={() => setOpen((value) => !value)}
+          onClick={() => setOpenKey(item.key, !open)}
         >
           <MenuLinkContent
             icon={item.icon}
@@ -140,19 +177,27 @@ function MenuItemNode ({
     )
   }
 
+  const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (item.disabled) {
+      event.preventDefault()
+      return
+    }
+    onSelect?.(item.key, item, event)
+  }
+
   return (
     <li className={cx('menu_item', item.disabled && 'is-disabled')}>
       <a
         href={item.disabled ? undefined : item.href || '#'}
         className={cx(
           'menu_link',
-          item.active && 'is-active',
+          active && 'is-active',
           item.disabled && 'is-disabled'
         )}
-        aria-current={item.active ? 'page' : undefined}
+        aria-current={active ? 'page' : undefined}
         aria-disabled={item.disabled || undefined}
         tabIndex={item.disabled ? -1 : undefined}
-        onClick={item.disabled ? (event) => event.preventDefault() : undefined}
+        onClick={handleClick}
       >
         <MenuLinkContent icon={item.icon} label={item.label} extra={item.extra} />
       </a>
@@ -162,7 +207,7 @@ function MenuItemNode ({
 
 /**
  * 페이지 이동 메뉴.
- * direction 세로·가로, bordered · compact · dark, items 로 구성한다.
+ * selectedKey · onSelect · openKeys · onOpenChange 로 페이지에서 제어한다.
  */
 export function Menu ({
   items = [],
@@ -173,31 +218,68 @@ export function Menu ({
   label = '주요 메뉴',
   className,
   children,
+  selectedKey,
+  defaultSelectedKey,
+  onSelect,
+  openKeys,
+  defaultOpenKeys,
+  onOpenChange,
   ...rest
 }: MenuProps) {
   const idPrefix = useId()
+  const controlledSelected = selectedKey !== undefined
+  const [innerSelected, setInnerSelected] = useState<string | null>(defaultSelectedKey ?? null)
+  const currentSelected = controlledSelected ? (selectedKey ?? null) : innerSelected
+
+  const controlledOpen = openKeys !== undefined
+  const [innerOpenKeys, setInnerOpenKeys] = useState<string[]>(
+    () => defaultOpenKeys ?? collectDefaultOpenKeys(items)
+  )
+  const currentOpenKeys = controlledOpen ? openKeys! : innerOpenKeys
+
+  const handleSelect: MenuProps['onSelect'] = (key, item, event) => {
+    if (!controlledSelected) setInnerSelected(key)
+    onSelect?.(key, item, event)
+  }
+
+  const setOpenKey = (key: string, open: boolean) => {
+    const next = open
+      ? (currentOpenKeys.includes(key) ? currentOpenKeys : [...currentOpenKeys, key])
+      : currentOpenKeys.filter((value) => value !== key)
+    if (!controlledOpen) setInnerOpenKeys(next)
+    onOpenChange?.(next)
+  }
 
   return (
-    <nav
-      {...rest}
-      className={cx(
-        'menu',
-        direction === 'horizontal' ? 'menu_horizontal' : 'menu_vertical',
-        bordered && 'menu_bordered',
-        compact && 'menu_compact',
-        dark && 'menu_dark',
-        className
-      )}
-      aria-label={label}
+    <MenuContext.Provider
+      value={{
+        selectedKey: currentSelected,
+        openKeys: currentOpenKeys,
+        onSelect: handleSelect,
+        setOpenKey
+      }}
     >
-      {hasNodes(children) ? (
-        children
-      ) : (
-        <ul className="menu_list">
-          <MenuItems items={items} idPrefix={idPrefix} />
-        </ul>
-      )}
-    </nav>
+      <nav
+        {...rest}
+        className={cx(
+          'menu',
+          direction === 'horizontal' ? 'menu_horizontal' : 'menu_vertical',
+          bordered && 'menu_bordered',
+          compact && 'menu_compact',
+          dark && 'menu_dark',
+          className
+        )}
+        aria-label={label}
+      >
+        {hasNodes(children) ? (
+          children
+        ) : (
+          <ul className="menu_list">
+            <MenuItems items={items} idPrefix={idPrefix} />
+          </ul>
+        )}
+      </nav>
+    </MenuContext.Provider>
   )
 }
 

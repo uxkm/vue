@@ -17,10 +17,16 @@ const props = [
     description: '레이블 텍스트 또는 사용자 정의 레이블 콘텐츠입니다.'
   },
   {
-    name: 'checked · defaultChecked',
+    name: 'checked',
+    type: 'boolean',
+    default: '—',
+    description: '넘기면(checked !== undefined) 제어 모드입니다. 부모가 켜짐 상태를 관리합니다. onChange 유무와는 무관합니다.'
+  },
+  {
+    name: 'defaultChecked',
     type: 'boolean',
     default: 'false',
-    description: '제어 및 비제어 켜짐 상태입니다.'
+    description: '비제어 초기 켜짐 상태입니다. checked를 넘기지 않을 때 씁니다.'
   },
   {
     name: 'disabled · labelEnd',
@@ -59,7 +65,7 @@ const events = [
     name: 'onChange',
     type: '(event) => void',
     default: '—',
-    description: '켜짐 상태 변경 콜백입니다.'
+    description: '켜짐 상태 변경 콜백입니다. 제어 모드에서는 e.target.checked로 부모 state를 갱신합니다.'
   }
 ]
 

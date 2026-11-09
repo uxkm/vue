@@ -11,10 +11,16 @@ const columns = [
 
 const props = [
   {
-    name: 'value · defaultValue',
+    name: 'value',
+    type: 'number',
+    default: '—',
+    description: '넘기면 제어 모드입니다. 부모가 값을 소유하며, 변경은 onChange 로만 반영됩니다.'
+  },
+  {
+    name: 'defaultValue',
     type: 'number',
     default: '50',
-    description: '현재 값과 초기값입니다.'
+    description: '비제어 초기값입니다. value 를 넘기지 않을 때 씁니다.'
   },
   {
     name: 'min · max · step',
@@ -71,7 +77,7 @@ const events = [
     name: 'onChange',
     type: '(value: number) => void',
     default: '—',
-    description: '값 변경 콜백입니다.'
+    description: '값 변경 콜백입니다. 제어 모드에서는 부모가 value 를 갱신해야 화면이 바뀝니다.'
   }
 ]
 

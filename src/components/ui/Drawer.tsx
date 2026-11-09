@@ -37,11 +37,21 @@ const EXPAND_DISTANCE = 72
 /** 서랍이 받는 값 */
 export interface DrawerProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   open?: boolean
+  /** 비제어 초기 열림 */
+  defaultOpen?: boolean
   title?: ReactNode
   footer?: ReactNode
   placement?: DrawerPlacement
   /** bottom 전용. true 이면 상단 핸들 바를 보여주고 드래그로 닫기·확장 */
   draggable?: boolean
+  /** bottom + draggable 확장 상태(제어) */
+  expanded?: boolean
+  /** 비제어 초기 확장 */
+  defaultExpanded?: boolean
+  /** 확장 상태가 바뀔 때 호출 */
+  onExpandedChange?: (expanded: boolean) => void
+  /** 열림이 바뀔 때 호출(닫힐 때 false). onClose 와 함께 쓸 수 있다 */
+  onOpenChange?: (open: boolean) => void
   staticDemo?: boolean
   onClose?: () => void
 }
@@ -52,11 +62,16 @@ export interface DrawerProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title
  * bottom 에서 draggable 이면 핸들 바로 드래그한다.
  */
 export function Drawer ({
-  open = false,
+  open: openProp,
+  defaultOpen = false,
   title,
   footer,
   placement = 'right',
   draggable = false,
+  expanded: expandedProp,
+  defaultExpanded = false,
+  onExpandedChange,
+  onOpenChange,
   staticDemo = false,
   className,
   children,
@@ -79,11 +94,31 @@ export function Drawer ({
     height: 0
   })
 
+  const openControlled = openProp !== undefined
+  const [innerOpen, setInnerOpen] = useState(defaultOpen)
+  const open = openControlled ? openProp : innerOpen
+
   const [phase, setPhase] = useState<Phase>(() => (
     open ? (staticDemo ? 'shown' : 'enter-start') : 'hidden'
   ))
-  const [expanded, setExpanded] = useState(false)
+  const expandedControlled = expandedProp !== undefined
+  const [innerExpanded, setInnerExpanded] = useState(defaultExpanded)
+  const expanded = expandedControlled ? expandedProp : innerExpanded
+  const expandedRef = useRef(expanded)
+  expandedRef.current = expanded
   const [dragging, setDragging] = useState(false)
+  const wasOpenRef = useRef(open)
+
+  const setExpanded = (next: boolean) => {
+    if (!expandedControlled) setInnerExpanded(next)
+    onExpandedChange?.(next)
+  }
+
+  const requestClose = () => {
+    if (!openControlled) setInnerOpen(false)
+    onOpenChange?.(false)
+    onClose?.()
+  }
 
   if (open || phase === 'hidden') {
     placementRef.current = placement
@@ -96,6 +131,7 @@ export function Drawer ({
   useEffect(() => {
     if (staticDemo) {
       setPhase(open ? 'shown' : 'hidden')
+      wasOpenRef.current = open
       return
     }
     if (open) {
@@ -105,13 +141,20 @@ export function Drawer ({
           ? current
           : 'enter-start'
       ))
+      wasOpenRef.current = true
       return
     }
-    setExpanded(false)
+    // 실제로 열린 뒤 닫힐 때만 확장 상태를 초기화(초기 마운트 defaultExpanded 보존)
+    if (wasOpenRef.current) {
+      if (!expandedControlled) setInnerExpanded(false)
+      // 실제로 확장 중이었을 때만 false 를 알려 불필요한 콜백을 피한다
+      if (expandedRef.current) onExpandedChange?.(false)
+    }
+    wasOpenRef.current = false
     setPhase((current) => (
       current === 'hidden' ? current : 'leave'
     ))
-  }, [open, staticDemo])
+  }, [open, staticDemo, expandedControlled, onExpandedChange])
 
   // enter-start → 다음 프레임에 is-open 을 붙여 슬라이드 인
   useEffect(() => {
@@ -181,7 +224,7 @@ export function Drawer ({
     if (options.dismiss) {
       // transform 을 0 으로 지우지 않음 — leave 에서 현재 offset → 100% 이어감
       dragDismissRef.current = true
-      onClose?.()
+      requestClose()
       return
     }
     if (options.expand) setExpanded(true)
@@ -323,7 +366,7 @@ export function Drawer ({
       role="dialog"
       aria-modal="true"
     >
-      <div className="drawer_backdrop" onClick={onClose} />
+      <div className="drawer_backdrop" onClick={requestClose} />
       <div
         ref={panelRef}
         className={cx(
@@ -340,6 +383,7 @@ export function Drawer ({
             type="button"
             className="drawer_handle"
             aria-label="서랍 끌어 조절"
+            aria-expanded={expanded}
             {...dragHandlers}
           >
             <span className="drawer_handle-bar" />
@@ -349,7 +393,7 @@ export function Drawer ({
           {hasNodes(title)
             ? <strong className="drawer_title">{title}</strong>
             : <span className="drawer_title" />}
-          <button type="button" className="drawer_close" aria-label="닫기" onClick={onClose}>
+          <button type="button" className="drawer_close" aria-label="닫기" onClick={requestClose}>
             <Icon name="close" size="var(--drawer-close-icon-size)" />
           </button>
         </div>

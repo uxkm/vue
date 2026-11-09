@@ -11,11 +11,15 @@ const GUIDE_MENU_URL = '/data/pub/guide-menu.json'
 /** 가이드 홈 경로 (/guide) — JSON intro 는 라벨용 */
 export const guideHomePath = '/guide'
 
+/** 접근성 가이드 경로 (/guide/accessibility) */
+export const guideAccessibilityPath = '/guide/accessibility'
+
 /** @deprecated guideHomePath 사용. 예전 /components/intro id 호환 */
 export const guideHomeId = 'intro'
 
 const EMPTY = {
   intro: { id: guideHomeId, label: '소개' },
+  accessibility: { id: 'accessibility', label: '접근성' },
   guideMenu: [],
   guideDemoMenu: []
 }
@@ -32,6 +36,7 @@ export function loadGuideMenu () {
       })
       .then((data) => ({
         intro: data.intro || EMPTY.intro,
+        accessibility: data.accessibility || EMPTY.accessibility,
         guideMenu: Array.isArray(data.componentGroups) ? data.componentGroups : [],
         guideDemoMenu: Array.isArray(data.demoGroups) ? data.demoGroups : []
       }))

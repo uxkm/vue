@@ -50,16 +50,40 @@ const treeProps = [
 
 const treeNodeProps = [
   {
+    name: 'value',
+    type: 'string',
+    default: '—',
+    description: '노드 식별 값입니다. onSelect 에 전달됩니다.'
+  },
+  {
     name: 'label',
     type: 'string · ReactNode',
     default: '—',
     description: '노드 라벨'
   },
   {
-    name: 'expanded · selected · disabled · expandable',
+    name: 'expanded',
+    type: 'boolean',
+    default: '—',
+    description: '넘기면 펼침을 제어합니다(expanded !== undefined). 부모가 상태를 관리하고 onExpandedChange 로 갱신합니다.'
+  },
+  {
+    name: 'defaultExpanded',
+    type: 'boolean',
+    default: 'true',
+    description: '비제어 초기 펼침입니다. expanded 를 넘기지 않을 때 씁니다.'
+  },
+  {
+    name: 'selected · defaultSelected',
+    type: 'boolean',
+    default: '— · false',
+    description: '선택 상태입니다. selected 를 넘기면 제어하고, 생략하면 defaultSelected 와 내부 상태로 토글됩니다.'
+  },
+  {
+    name: 'disabled · expandable',
     type: 'boolean',
     default: 'false',
-    description: '확장·선택·비활성·확장 가능 상태'
+    description: '비활성·확장 가능 상태'
   },
   {
     name: 'plusToggle',
@@ -95,7 +119,19 @@ const treeNodeProps = [
     name: 'onExpandedChange',
     type: '(expanded: boolean) => void',
     default: '—',
-    description: '펼침 상태 변경 콜백'
+    description: '펼침 상태 변경 콜백입니다. 제어 모드에서는 부모가 expanded 를 갱신합니다.'
+  },
+  {
+    name: 'onSelectedChange',
+    type: '(selected: boolean, event) => void',
+    default: '—',
+    description: '선택 상태가 바뀔 때 호출됩니다. 제어 모드에서는 부모가 selected 를 갱신합니다.'
+  },
+  {
+    name: 'onSelect',
+    type: '(value: string | undefined, event) => void',
+    default: '—',
+    description: '노드 선택 시 호출됩니다. onSelectedChange 또는 onSelect 를 넘기면 라벨이 클릭 가능해집니다.'
   }
 ]
 

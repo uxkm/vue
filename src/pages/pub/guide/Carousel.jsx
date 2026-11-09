@@ -1,13 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  Carousel,
-  CarouselSlide,
-  DemoBlock,
-  GuideApiDocs,
-  GuideLayout
-} from '@/comp'
+import { Carousel, CarouselSlide } from '@/comp'
+import { DemoBlock, GuideApiDocs, GuideLayout, wrapPageExample } from '@/pages/pub/widgets/guide'
 import { carouselApiSections } from '@/pages/pub/data/guide/carouselApiSections'
 
 const SLIDES = [
@@ -46,6 +41,32 @@ function Slides ({ data = SLIDES.slice(0, 3), compact = false }) {
   )
 }
 
+/** index · onIndexChange · playing · onPlayingChange 로 슬라이드·재생을 제어하는 예시 */
+function ControlledIndexDemo () {
+  const [index, setIndex] = useState(0)
+  const [playing, setPlaying] = useState(true)
+
+  return (
+    <div className="demo-stack">
+      <Carousel
+        ariaLabel="제어 슬라이드"
+        autoplay
+        index={index}
+        onIndexChange={(next) => setIndex(next)}
+        playing={playing}
+        onPlayingChange={setPlaying}
+      >
+        <Slides />
+      </Carousel>
+      <p>
+        index: <code>{index}</code>
+        {' · '}
+        playing: <code>{String(playing)}</code>
+      </p>
+    </div>
+  )
+}
+
 /** 썸네일 갤러리 — 메인 + 썸네일 Swiper 연결 */
 function ThumbsGalleryDemo () {
   const [thumbs, setThumbs] = useState(null)
@@ -80,26 +101,28 @@ const SECTIONS = [
       <>
         Swiper 기반 캐러셀입니다. 루트는 <code>role=&quot;region&quot;</code> ·
         <code>aria-roledescription=&quot;carousel&quot;</code> · <code>ariaLabel</code>을 제공합니다.
-        슬라이드가 <strong>1장</strong>이면 좌우 버튼·페이지네이션·재생/정지를 렌더하지 않습니다.
+        <code>index</code> · <code>onIndexChange</code>로 현재 슬라이드를,
+        <code>playing</code> · <code>onPlayingChange</code>로 자동재생을 페이지에서 제어합니다.
       </>
     ),
-    code: `<Carousel ariaLabel="프로모션 슬라이드">
-  <CarouselSlide>
-    <article className="card card_accent color_primary card_elevated">
-      <div className="card_body">
-        <p className="typo_overline">이벤트</p>
-        <h3 className="card_title">신규 가입 혜택</h3>
-        <p className="typo_lead">첫 주문 20% 할인 쿠폰을 드립니다.</p>
-      </div>
-    </article>
-  </CarouselSlide>
+    code: wrapPageExample(`const [index, setIndex] = useState(0)
+const [playing, setPlaying] = useState(true)
+
+<Carousel
+  ariaLabel="프로모션 슬라이드"
+  autoplay
+  index={index}
+  onIndexChange={(next, swiper) => setIndex(next)}
+  playing={playing}
+  onPlayingChange={setPlaying}
+>
   <CarouselSlide>…</CarouselSlide>
-</Carousel>`,
-    preview: (
-      <Carousel ariaLabel="프로모션 슬라이드">
-        <Slides />
-      </Carousel>
-    )
+</Carousel>`, {
+      name: 'CarouselExample',
+      reactImports: ['useState'],
+      compImports: ['Carousel', 'CarouselSlide']
+    }),
+    preview: <ControlledIndexDemo />
   },
   {
     title: '단일 슬라이드',
@@ -109,7 +132,7 @@ const SECTIONS = [
         루트에 <code>is-single</code> · <code>data-single</code> · <code>data-count=&quot;1&quot;</code>이 붙습니다.
       </>
     ),
-    code: `<Carousel ariaLabel="단일 슬라이드" autoplay navigation pagination>
+    code: wrapPageExample(`<Carousel ariaLabel="단일 슬라이드" autoplay navigation pagination>
   <CarouselSlide>
     <article className="card card_accent color_primary card_elevated">
       <div className="card_body">
@@ -119,7 +142,11 @@ const SECTIONS = [
       </div>
     </article>
   </CarouselSlide>
-</Carousel>`,
+</Carousel>`, {
+  name: 'CarouselExample1',
+  reactImports: [],
+  compImports: ['Carousel', 'CarouselSlide']
+}),
     preview: (
       <Carousel ariaLabel="단일 슬라이드" autoplay navigation pagination>
         <Slides data={SLIDES.slice(0, 1)} />
@@ -133,9 +160,13 @@ const SECTIONS = [
         <code>effect=&quot;fade&quot;</code>로 페이드 전환합니다.
       </>
     ),
-    code: `<Carousel ariaLabel="페이드 슬라이드" effect="fade">
+    code: wrapPageExample(`<Carousel ariaLabel="페이드 슬라이드" effect="fade">
   <Slides />
-</Carousel>`,
+</Carousel>`, {
+  name: 'CarouselExample2',
+  reactImports: [],
+  compImports: ['Carousel', 'CarouselSlide']
+}),
     preview: (
       <Carousel ariaLabel="페이드 슬라이드" effect="fade">
         <Slides />
@@ -150,7 +181,7 @@ const SECTIONS = [
         재생·정지 토글이 함께 표시되며, <code>dotsOutside</code>면 닷이 슬라이드 밖에 놓입니다.
       </>
     ),
-    code: `<Carousel
+    code: wrapPageExample(`<Carousel
   ariaLabel="자동 재생 슬라이드"
   autoplay
   delay={4000}
@@ -158,7 +189,11 @@ const SECTIONS = [
   dotsOutside
 >
   <Slides />
-</Carousel>`,
+</Carousel>`, {
+  name: 'CarouselExample3',
+  reactImports: [],
+  compImports: ['Carousel', 'CarouselSlide']
+}),
     preview: (
       <Carousel ariaLabel="자동 재생 슬라이드" autoplay delay={4000} loop dotsOutside>
         <Slides />
@@ -172,9 +207,13 @@ const SECTIONS = [
         <code>loop</code>이면 끝과 처음을 순환합니다.
       </>
     ),
-    code: `<Carousel ariaLabel="루프 슬라이드" loop>
+    code: wrapPageExample(`<Carousel ariaLabel="루프 슬라이드" loop>
   <Slides />
-</Carousel>`,
+</Carousel>`, {
+  name: 'CarouselExample4',
+  reactImports: [],
+  compImports: ['Carousel', 'CarouselSlide']
+}),
     preview: (
       <Carousel ariaLabel="루프 슬라이드" loop>
         <Slides />
@@ -189,7 +228,7 @@ const SECTIONS = [
         <code>centered</code>로 여러 장을 보여 줍니다.
       </>
     ),
-    code: `<Carousel
+    code: wrapPageExample(`<Carousel
   ariaLabel="다중 슬라이드"
   multi
   slidesPerView="auto"
@@ -198,7 +237,11 @@ const SECTIONS = [
   navigation={false}
 >
   <Slides data={manySlides.slice(0, 4)} compact />
-</Carousel>`,
+</Carousel>`, {
+  name: 'CarouselExample5',
+  reactImports: [],
+  compImports: ['Carousel', 'CarouselSlide']
+}),
     preview: (
       <Carousel
         ariaLabel="다중 슬라이드"
@@ -219,9 +262,13 @@ const SECTIONS = [
         <code>spaceBetween</code>으로 장 사이 간격(px)을 둡니다.
       </>
     ),
-    code: `<Carousel ariaLabel="간격이 있는 슬라이드" spaceBetween={12} loop>
+    code: wrapPageExample(`<Carousel ariaLabel="간격이 있는 슬라이드" spaceBetween={12} loop>
   <Slides />
-</Carousel>`,
+</Carousel>`, {
+  name: 'CarouselExample6',
+  reactImports: [],
+  compImports: ['Carousel', 'CarouselSlide']
+}),
     preview: (
       <Carousel ariaLabel="간격이 있는 슬라이드" spaceBetween={12} loop>
         <Slides />
@@ -235,9 +282,13 @@ const SECTIONS = [
         기본은 점 페이지네이션입니다. <code>navigation={'{false}'}</code>로 화살표만 숨길 수 있습니다.
       </>
     ),
-    code: `<Carousel ariaLabel="페이지네이션 슬라이드" loop navigation={false}>
+    code: wrapPageExample(`<Carousel ariaLabel="페이지네이션 슬라이드" loop navigation={false}>
   <Slides />
-</Carousel>`,
+</Carousel>`, {
+  name: 'CarouselPaginationExample',
+  reactImports: [],
+  compImports: ['Carousel', 'CarouselSlide']
+}),
     preview: (
       <Carousel ariaLabel="페이지네이션 슬라이드" loop navigation={false}>
         <Slides />
@@ -251,9 +302,13 @@ const SECTIONS = [
         <code>pagination=&quot;fraction&quot;</code>이면 1 / N 형식으로 표시합니다.
       </>
     ),
-    code: `<Carousel ariaLabel="분수 페이지네이션" pagination="fraction">
+    code: wrapPageExample(`<Carousel ariaLabel="분수 페이지네이션" pagination="fraction">
   <Slides />
-</Carousel>`,
+</Carousel>`, {
+  name: 'CarouselPaginationExample2',
+  reactImports: [],
+  compImports: ['Carousel', 'CarouselSlide']
+}),
     preview: (
       <Carousel ariaLabel="분수 페이지네이션" pagination="fraction">
         <Slides />
@@ -268,9 +323,13 @@ const SECTIONS = [
         (<code>carousel_pagination-progress</code>).
       </>
     ),
-    code: `<Carousel ariaLabel="프로그레스 페이지네이션" pagination="progressbar" loop>
+    code: wrapPageExample(`<Carousel ariaLabel="프로그레스 페이지네이션" pagination="progressbar" loop>
   <Slides />
-</Carousel>`,
+</Carousel>`, {
+  name: 'CarouselPaginationExample3',
+  reactImports: [],
+  compImports: ['Carousel', 'CarouselSlide']
+}),
     preview: (
       <Carousel ariaLabel="프로그레스 페이지네이션" pagination="progressbar" loop>
         <Slides />
@@ -285,14 +344,18 @@ const SECTIONS = [
         (<code>carousel_pagination-custom</code>).
       </>
     ),
-    code: `<Carousel
+    code: wrapPageExample(`<Carousel
   ariaLabel="번호 페이지네이션"
   pagination="custom"
   loop
   navigation={false}
 >
   <Slides data={manySlides.slice(0, 4)} />
-</Carousel>`,
+</Carousel>`, {
+  name: 'CarouselPaginationExample4',
+  reactImports: [],
+  compImports: ['Carousel', 'CarouselSlide']
+}),
     preview: (
       <Carousel ariaLabel="번호 페이지네이션" pagination="custom" loop navigation={false}>
         <Slides data={SLIDES.slice(0, 4)} />
@@ -306,7 +369,7 @@ const SECTIONS = [
         <code>gridRows</code> · <code>slidesPerView</code> · <code>slidesPerGroup</code>으로 다행 그리드를 구성합니다.
       </>
     ),
-    code: `<Carousel
+    code: wrapPageExample(`<Carousel
   ariaLabel="그리드 1장씩"
   slidesPerView={3}
   gridRows={2}
@@ -323,7 +386,11 @@ const SECTIONS = [
   spaceBetween={16}
 >
   <Slides data={manySlides} compact />
-</Carousel>`,
+</Carousel>`, {
+  name: 'CarouselExample11',
+  reactImports: [],
+  compImports: ['Carousel', 'CarouselSlide']
+}),
     preview: (
       <div className="demo-stack">
         <div>
@@ -355,7 +422,7 @@ const SECTIONS = [
         기본 스타일은 <code>tilt</code>입니다.
       </>
     ),
-    code: `<Carousel
+    code: wrapPageExample(`<Carousel
   ariaLabel="커버플로우 슬라이드"
   effect="coverflow"
   coverflowSides={1}
@@ -364,7 +431,11 @@ const SECTIONS = [
   pagination={false}
 >
   <Slides data={manySlides} compact />
-</Carousel>`,
+</Carousel>`, {
+  name: 'CarouselExample12',
+  reactImports: [],
+  compImports: ['Carousel', 'CarouselSlide']
+}),
     preview: (
       <Carousel
         ariaLabel="커버플로우 슬라이드"
@@ -386,7 +457,7 @@ const SECTIONS = [
         <code>coverflowSides</code>로 좌우 노출 개수를 조절합니다.
       </>
     ),
-    code: `<Carousel
+    code: wrapPageExample(`<Carousel
   ariaLabel="커버플로우 축소 좌우 1"
   effect="coverflow"
   coverflowStyle="rise"
@@ -418,7 +489,11 @@ const SECTIONS = [
   pagination={false}
 >
   <Slides data={manySlides} compact />
-</Carousel>`,
+</Carousel>`, {
+  name: 'CarouselExample13',
+  reactImports: [],
+  compImports: ['Carousel', 'CarouselSlide']
+}),
     preview: (
       <div className="demo-stack">
         <div>
@@ -474,33 +549,30 @@ const SECTIONS = [
         썸네일 쪽은 <code>thumbsControl</code> · <code>onSwiper</code>를 사용합니다.
       </>
     ),
-    code: `import { useState } from 'react'
-import { Carousel, CarouselSlide } from '@/comp'
+    code: wrapPageExample(`const [thumbs, setThumbs] = useState(null)
 
-function ThumbsGalleryDemo () {
-  const [thumbs, setThumbs] = useState(null)
-
-  return (
-    <div className="carousel_gallery">
-      <Carousel ariaLabel="갤러리 메인" thumbs={thumbs} pagination={false}>
-        <Slides data={manySlides.slice(0, 8)} />
-      </Carousel>
-      <Carousel
-        ariaLabel="갤러리 썸네일"
-        className="carousel_thumbs"
-        slidesPerView={4}
-        spaceBetween={8}
-        pagination={false}
-        navigation={false}
-        thumbsControl
-        watchSlidesProgress
-        onSwiper={setThumbs}
-      >
-        <Slides data={manySlides.slice(0, 8)} compact />
-      </Carousel>
-    </div>
-  )
-}`,
+<div className="carousel_gallery">
+  <Carousel ariaLabel="갤러리 메인" thumbs={thumbs} pagination={false}>
+    <Slides data={manySlides.slice(0, 8)} />
+  </Carousel>
+  <Carousel
+    ariaLabel="갤러리 썸네일"
+    className="carousel_thumbs"
+    slidesPerView={4}
+    spaceBetween={8}
+    pagination={false}
+    navigation={false}
+    thumbsControl
+    watchSlidesProgress
+    onSwiper={setThumbs}
+  >
+    <Slides data={manySlides.slice(0, 8)} compact />
+  </Carousel>
+</div>`, {
+      name: 'CarouselThumbsExample',
+      reactImports: ['useState'],
+      compImports: ['Carousel', 'CarouselSlide']
+    }),
     preview: <ThumbsGalleryDemo />
   },
   {
@@ -510,9 +582,13 @@ function ThumbsGalleryDemo () {
         <code>size</code>는 sm · md · lg입니다. 기본은 <code>md</code>입니다.
       </>
     ),
-    code: `<Carousel ariaLabel="Small" size="sm"><Slides /></Carousel>
+    code: wrapPageExample(`<Carousel ariaLabel="Small" size="sm"><Slides /></Carousel>
 <Carousel ariaLabel="Medium"><Slides /></Carousel>
-<Carousel ariaLabel="Large" size="lg"><Slides /></Carousel>`,
+<Carousel ariaLabel="Large" size="lg"><Slides /></Carousel>`, {
+  name: 'CarouselSizeExample',
+  reactImports: [],
+  compImports: ['Carousel', 'CarouselSlide']
+}),
     preview: (
       <div className="demo-stack">
         <Carousel ariaLabel="Small" size="sm">
@@ -569,7 +645,7 @@ export default function CarouselGuide () {
     <GuideLayout
       category="기타"
       title="Carousel"
-      description="여러 콘텐츠를 가로로 탐색하는 Swiper 기반 캐러셀입니다. effect · pagination · loop · autoplay · multi · coverflow · thumbs를 조합합니다."
+      description="여러 콘텐츠를 가로로 탐색하는 Swiper 기반 캐러셀입니다. index · onIndexChange · playing · onPlayingChange · effect · pagination · loop · autoplay를 조합합니다."
     >
       {SECTIONS.map((section) => (
         <DemoBlock
@@ -577,6 +653,7 @@ export default function CarouselGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName={section.title === 'HTML 마크업' ? 'carousel.html' : 'CarouselExample.jsx'}
         >
           {section.preview}
         </DemoBlock>

@@ -1,14 +1,14 @@
 'use client'
 
 import { useRef, useState } from 'react'
+import { BackTop, Button, Icon, Space } from '@/comp'
 import {
-  BackTop,
   DemoBlock,
   GuideApiDocs,
   GuideLayout,
-  Icon,
-  Space
-} from '@/comp'
+  pageExampleCode,
+  wrapPageExample
+} from '@/pages/pub/widgets/guide'
 import { backTopApiSections } from '@/pages/pub/data/guide/backTopApiSections'
 
 const DEMO_PARAS = Array.from({ length: 12 }, (_, index) => (
@@ -80,6 +80,47 @@ function WindowBackTopDemo () {
   )
 }
 
+/** visible · onVisibleChange 제어 — 스크롤 측정 + 강제 표시 토글 */
+function ControlledVisibleDemo () {
+  const scrollerRef = useRef(null)
+  const [visible, setVisible] = useState(false)
+
+  return (
+    <div className="demo-stack">
+      <div className="form_actions">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          label={visible ? '숨기기' : '강제 표시'}
+          onClick={() => setVisible((v) => !v)}
+        />
+        <span className="typo_caption">
+          visible: <code>{String(visible)}</code>
+        </span>
+      </div>
+      <div className="back_top_demo-wrap">
+        <div className="back_top_demo-scroll" ref={scrollerRef}>
+          <div className="back_top_demo-content">
+            <p>
+              <code>visible</code> · <code>onVisibleChange</code>로 표시를 제어합니다.
+              스크롤 임계값을 넘기면 콜백으로 갱신되고, 버튼으로도 강제할 수 있습니다.
+            </p>
+            {DEMO_PARAS}
+          </div>
+        </div>
+        <BackTop
+          target={() => scrollerRef.current}
+          visibilityHeight={120}
+          label="맨 위로"
+          visible={visible}
+          onVisibleChange={setVisible}
+        />
+      </div>
+    </div>
+  )
+}
+
 const SECTIONS = [
   {
     title: '기본 사용',
@@ -90,17 +131,11 @@ const SECTIONS = [
         루트는 <code>back_top</code>, 표시 시 <code>is-visible</code>이 붙습니다.
       </>
     ),
-    code: `import { BackTop, Icon } from '@/comp'
-
-<BackTop label="맨 위로" />
-
-{/* 마크업 동등 */}
-<div className="back_top" data-back-top="" data-target="window">
-  <button type="button" className="back_top_btn back_top_primary" aria-label="맨 위로">
-    <Icon name="chevron-down" className="back_top_icon" aria-hidden />
-    <span className="back_top_label">맨 위로</span>
-  </button>
-</div>`,
+    code: wrapPageExample(`<BackTop label="맨 위로" />`, {
+      name: 'BackTopExample',
+      reactImports: [],
+      compImports: ['BackTop']
+    }),
     preview: (
       <div className="back_top" data-back-top="" data-target="window" style={{ position: 'static', opacity: 1, visibility: 'visible', pointerEvents: 'auto', transform: 'none' }}>
         <button type="button" className="back_top_btn back_top_primary" aria-label="맨 위로">
@@ -119,36 +154,36 @@ const SECTIONS = [
         버튼은 데모 래퍼 우하단에 붙습니다.
       </>
     ),
-    code: `import { useRef, useState } from 'react'
-import { BackTop } from '@/comp'
+    code: pageExampleCode({
+      name: 'BackTopScrollExample',
+      reactImports: ['useRef', 'useState'],
+      compImports: ['BackTop'],
+      body: `const DEMO_PARAS = ${DEMO_PARAS_CODE}
 
-const DEMO_PARAS = ${DEMO_PARAS_CODE}
+const scrollerRef = useRef(null)
+const [visible, setVisible] = useState(false)
 
-function ScrollBackTopDemo () {
-  const scrollerRef = useRef(null)
-  const [visible, setVisible] = useState(false)
-
-  return (
-    <div className="back_top_demo-wrap">
-      <div className="back_top_demo-scroll" ref={scrollerRef}>
-        <div className="back_top_demo-content">
-          <p>
-            아래로 스크롤하면 우하단에 버튼이 나타납니다.
-            기준: target 내부 스크롤(data-target=&quot;container&quot;).
-            표시: {String(visible)}
-          </p>
-          {DEMO_PARAS}
-        </div>
+return (
+  <div className="back_top_demo-wrap">
+    <div className="back_top_demo-scroll" ref={scrollerRef}>
+      <div className="back_top_demo-content">
+        <p>
+          아래로 스크롤하면 우하단에 버튼이 나타납니다.
+          기준: target 내부 스크롤(data-target=&quot;container&quot;).
+          표시: {String(visible)}
+        </p>
+        {DEMO_PARAS}
       </div>
-      <BackTop
-        target={() => scrollerRef.current}
-        visibilityHeight={120}
-        label="맨 위로"
-        onVisibleChange={setVisible}
-      />
     </div>
-  )
-}`,
+    <BackTop
+      target={() => scrollerRef.current}
+      visibilityHeight={120}
+      label="맨 위로"
+      onVisibleChange={setVisible}
+    />
+  </div>
+)`
+    }),
     preview: <ScrollBackTopDemo />
   },
   {
@@ -160,28 +195,64 @@ function ScrollBackTopDemo () {
         이 가이드 페이지를 스크롤하면 화면(뷰포트) 우하단에 <code>position: fixed</code>로 나타납니다.
       </>
     ),
-    code: `import { useState } from 'react'
-import { BackTop } from '@/comp'
+    code: pageExampleCode({
+      name: 'BackTopWindowExample',
+      reactImports: ['useState'],
+      compImports: ['BackTop'],
+      body: `const [visible, setVisible] = useState(false)
 
-function WindowBackTopDemo () {
-  const [visible, setVisible] = useState(false)
-
-  return (
-    <div className="back_top_demo-window">
-      <p>
-        이 가이드 문서(페이지)를 스크롤하면 뷰포트 우하단에 버튼이 나타납니다.
-        target 생략 시 window(data-target=&quot;window&quot;)입니다. 내부 스크롤 박스가 아닙니다.
-        표시: {String(visible)}
-      </p>
-      <BackTop
-        visibilityHeight={280}
-        label="맨 위로(문서)"
-        onVisibleChange={setVisible}
-      />
-    </div>
-  )
-}`,
+return (
+  <div className="back_top_demo-window">
+    <p>
+      이 가이드 문서(페이지)를 스크롤하면 뷰포트 우하단에 버튼이 나타납니다.
+      target 생략 시 window(data-target=&quot;window&quot;)입니다. 내부 스크롤 박스가 아닙니다.
+      표시: {String(visible)}
+    </p>
+    <BackTop
+      visibilityHeight={280}
+      label="맨 위로(문서)"
+      onVisibleChange={setVisible}
+    />
+  </div>
+)`
+    }),
     preview: <WindowBackTopDemo />
+  },
+  {
+    title: '표시 제어',
+    description: (
+      <>
+        <code>visible</code> · <code>onVisibleChange</code>로 표시를 페이지에서 제어합니다.
+        스크롤 측정 콜백과 함께 쓰면 강제 표시 토글도 가능합니다.
+      </>
+    ),
+    code: pageExampleCode({
+      name: 'BackTopControlledExample',
+      reactImports: ['useRef', 'useState'],
+      compImports: ['BackTop', 'Button'],
+      body: `const scrollerRef = useRef(null)
+const [visible, setVisible] = useState(false)
+
+return (
+  <>
+    <Button
+      type="button"
+      variant="outline"
+      size="sm"
+      label={visible ? '숨기기' : '강제 표시'}
+      onClick={() => setVisible((v) => !v)}
+    />
+    <BackTop
+      target={() => scrollerRef.current}
+      visibilityHeight={120}
+      label="맨 위로"
+      visible={visible}
+      onVisibleChange={setVisible}
+    />
+  </>
+)`
+    }),
+    preview: <ControlledVisibleDemo />
   },
   {
     title: '임계값 · 스킨 · 크기',
@@ -192,57 +263,71 @@ function WindowBackTopDemo () {
         데모는 모두 내부 스크롤(<code>data-target=&quot;container&quot;</code>) 기준입니다.
       </>
     ),
-    code: `import { useRef, useState } from 'react'
-import { BackTop, Space } from '@/comp'
+    code: [
+      pageExampleCode({
+        name: 'BackTopGhostSmExample',
+        reactImports: ['useRef', 'useState'],
+        compImports: ['BackTop'],
+        body: `const DEMO_PARAS = ${DEMO_PARAS_CODE}
 
-const DEMO_PARAS = ${DEMO_PARAS_CODE}
+const scrollerRef = useRef(null)
+const [visible, setVisible] = useState(false)
 
-function ScrollBackTopDemo ({
-  visibilityHeight = 120,
-  variant = 'primary',
-  size = 'md',
-  label = '맨 위로'
-}) {
-  const scrollerRef = useRef(null)
-  const [visible, setVisible] = useState(false)
-
-  return (
-    <div className="back_top_demo-wrap">
-      <div className="back_top_demo-scroll" ref={scrollerRef}>
-        <div className="back_top_demo-content">
-          <p>
-            아래로 스크롤하면 우하단에 버튼이 나타납니다.
-            기준: target 내부 스크롤(data-target=&quot;container&quot;).
-            표시: {String(visible)}
-          </p>
-          {DEMO_PARAS}
-        </div>
+return (
+  <div className="back_top_demo-wrap">
+    <div className="back_top_demo-scroll" ref={scrollerRef}>
+      <div className="back_top_demo-content">
+        <p>
+          아래로 스크롤하면 우하단에 버튼이 나타납니다.
+          기준: target 내부 스크롤(data-target=&quot;container&quot;).
+          표시: {String(visible)}
+        </p>
+        {DEMO_PARAS}
       </div>
-      <BackTop
-        target={() => scrollerRef.current}
-        visibilityHeight={visibilityHeight}
-        variant={variant}
-        size={size}
-        label={label}
-        onVisibleChange={setVisible}
-      />
     </div>
-  )
-}
+    <BackTop
+      target={() => scrollerRef.current}
+      visibilityHeight={80}
+      variant="ghost"
+      size="sm"
+      label="Top"
+      onVisibleChange={setVisible}
+    />
+  </div>
+)`
+      }),
+      pageExampleCode({
+        name: 'BackTopLgExample',
+        reactImports: ['useRef', 'useState'],
+        compImports: ['BackTop'],
+        body: `const DEMO_PARAS = ${DEMO_PARAS_CODE}
 
-<Space vertical block size={24}>
-  <ScrollBackTopDemo
-    visibilityHeight={80}
-    variant="ghost"
-    size="sm"
-    label="Top"
-  />
-  <ScrollBackTopDemo
-    visibilityHeight={160}
-    size="lg"
-    label="위로"
-  />
-</Space>`,
+const scrollerRef = useRef(null)
+const [visible, setVisible] = useState(false)
+
+return (
+  <div className="back_top_demo-wrap">
+    <div className="back_top_demo-scroll" ref={scrollerRef}>
+      <div className="back_top_demo-content">
+        <p>
+          아래로 스크롤하면 우하단에 버튼이 나타납니다.
+          기준: target 내부 스크롤(data-target=&quot;container&quot;).
+          표시: {String(visible)}
+        </p>
+        {DEMO_PARAS}
+      </div>
+    </div>
+    <BackTop
+      target={() => scrollerRef.current}
+      visibilityHeight={160}
+      size="lg"
+      label="위로"
+      onVisibleChange={setVisible}
+    />
+  </div>
+)`
+      })
+    ].join('\n\n'),
     preview: (
       <Space vertical block size={24}>
         <ScrollBackTopDemo
@@ -267,37 +352,37 @@ function ScrollBackTopDemo ({
         <code>icon={'{false}'}</code>면 아이콘을 숨기고 라벨만 씁니다.
       </>
     ),
-    code: `import { useRef, useState } from 'react'
-import { BackTop } from '@/comp'
+    code: pageExampleCode({
+      name: 'BackTopIconOnlyExample',
+      reactImports: ['useRef', 'useState'],
+      compImports: ['BackTop'],
+      body: `const DEMO_PARAS = ${DEMO_PARAS_CODE}
 
-const DEMO_PARAS = ${DEMO_PARAS_CODE}
+const scrollerRef = useRef(null)
+const [visible, setVisible] = useState(false)
 
-function IconOnlyBackTopDemo () {
-  const scrollerRef = useRef(null)
-  const [visible, setVisible] = useState(false)
-
-  return (
-    <div className="back_top_demo-wrap">
-      <div className="back_top_demo-scroll" ref={scrollerRef}>
-        <div className="back_top_demo-content">
-          <p>
-            아래로 스크롤하면 우하단에 버튼이 나타납니다.
-            기준: target 내부 스크롤(data-target=&quot;container&quot;).
-            표시: {String(visible)}
-          </p>
-          {DEMO_PARAS}
-        </div>
+return (
+  <div className="back_top_demo-wrap">
+    <div className="back_top_demo-scroll" ref={scrollerRef}>
+      <div className="back_top_demo-content">
+        <p>
+          아래로 스크롤하면 우하단에 버튼이 나타납니다.
+          기준: target 내부 스크롤(data-target=&quot;container&quot;).
+          표시: {String(visible)}
+        </p>
+        {DEMO_PARAS}
       </div>
-      <BackTop
-        target={() => scrollerRef.current}
-        visibilityHeight={100}
-        label={null}
-        aria-label="맨 위로"
-        onVisibleChange={setVisible}
-      />
     </div>
-  )
-}`,
+    <BackTop
+      target={() => scrollerRef.current}
+      visibilityHeight={100}
+      label={null}
+      aria-label="맨 위로"
+      onVisibleChange={setVisible}
+    />
+  </div>
+)`
+    }),
     preview: (
       <ScrollBackTopDemo
         visibilityHeight={100}
@@ -373,7 +458,7 @@ export default function BackTopGuide () {
     <GuideLayout
       category="기타"
       title="BackTop"
-      description="스크롤 시 나타나는 맨 위 버튼. visibilityHeight · target · variant · size · label · icon을 지원합니다."
+      description="스크롤 시 나타나는 맨 위 버튼. visibilityHeight · target · visible · onVisibleChange · variant · size · label · icon을 지원합니다."
     >
       {SECTIONS.map((section) => (
         <DemoBlock
@@ -381,6 +466,7 @@ export default function BackTopGuide () {
           title={section.title}
           description={section.description}
           code={section.code}
+          fileName={section.title === 'HTML 마크업' ? 'back-top.html' : 'BackTopExample.jsx'}
         >
           {section.preview}
         </DemoBlock>
