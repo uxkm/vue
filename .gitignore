@@ -10,7 +10,11 @@ yarn-error.log*
 
 # Editor directories and files
 .idea
-.vscode
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/tasks.json
+!.vscode/launch.json
 *.suo
 *.ntvs*
 *.njsproj
@@ -36,3 +40,8 @@ out/
 node_modules/.vite/
 .cache/
 node_modules/.cache/
+
+# Playwright / accessibility reports
+/reports/a11y/
+/test-results/
+/playwright-report/

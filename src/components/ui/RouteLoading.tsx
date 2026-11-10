@@ -26,7 +26,7 @@ export function RouteLoading ({ meta }: RouteLoadingProps) {
   return (
     <>
       <PageChrome meta={meta} />
-      <div className="page-loading page-container" aria-busy="true" aria-label="불러오는 중">
+      <div className="page-loading page-container" role="status" aria-busy="true" aria-label="불러오는 중">
         <PageSkeleton type="card" />
       </div>
     </>

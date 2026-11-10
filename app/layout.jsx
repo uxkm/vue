@@ -5,7 +5,7 @@ const SITE_TITLE = '멀티캠퍼스 기업교육'
 const SITE_DESCRIPTION =
   '삼성계열 기업교육 전문기업, 기업과 개인의 성장을 이끄는 AX 교육부터 리더십, 러닝플랫폼, 외국어, 법정의무교육까지'
 
-/** 사이트 탭 제목과 설명, 아이콘, OG — 기본은 사이트명만. 화면별 타이틀은 클라이언트에서 설정 */
+/** 사이트 탭 제목과 설명, 아이콘, OG — 기본은 사이트명만. 화면별 제목은 각 라우트 metadata에서 설정 */
 export const metadata = {
   title: {
     default: SITE_TITLE,
@@ -29,13 +29,10 @@ export const metadata = {
   }
 }
 
-/** 모바일 뷰포트 — 확대/축소 비활성 */
+/** 모바일 뷰포트 — 사용자 확대를 허용한다. */
 export const viewport = {
   width: 'device-width',
-  initialScale: 1,
-  minimumScale: 1,
-  maximumScale: 1,
-  userScalable: false
+  initialScale: 1
 }
 
 /** 모든 화면의 공통 문서. 글꼴과 AppProviders 를 감싼다 */

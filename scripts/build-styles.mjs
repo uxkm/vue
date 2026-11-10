@@ -54,7 +54,7 @@ function toDistMinCss (cssPath) {
 
 /**
  * foundations/helpers 를 소스 앞에 주입할지 여부.
- * next.config additionalData 와 맞춤: styles 루트 엔트리(index/pub/web/mobile/demo)는 미주입.
+ * styles 루트 엔트리(index/pub/web/mobile/demo)는 helpers 미주입.
  */
 function needsHelpers (entryRel) {
   const f = entryRel.replace(/\\/g, '/')
@@ -354,7 +354,7 @@ export function watchStyles (onRebuild) {
       if (ok > 0) onRebuild?.()
     }, 120)
   }
-  for (const dir of [stylesRoot, path.join(root, 'src/pages')]) {
+  for (const dir of [stylesRoot, path.join(root, 'src/screens')]) {
     if (!existsSync(dir)) continue
     fsWatch(dir, { recursive: true }, (_type, filename) => {
       if (!filename) return
@@ -364,7 +364,7 @@ export function watchStyles (onRebuild) {
       kick()
     })
   }
-  console.log('[styles] watching src/styles, src/pages …')
+  console.log('[styles] watching src/styles, src/screens …')
 }
 
 /** CLI로 직접 실행했는지 여부 (import만 한 경우는 false) */

@@ -94,7 +94,7 @@ const httpServer = createHttpServer()
 /** Next 앱 인스턴스 — httpServer에 HMR/WebSocket 자동 연결 */
 const app = next({
   dev: isDev,
-  // Next 15.5: 개발은 Turbopack(stable), 프로덕션 빌드는 package.json 의 --webpack
+  // 개발·빌드 모두 Next.js 16의 기본 번들러인 Turbopack 사용
   ...(isDev ? { turbopack: true } : {}),
   dir: root,
   hostname: HOST === '0.0.0.0' ? 'localhost' : HOST,

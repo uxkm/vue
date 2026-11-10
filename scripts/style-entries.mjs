@@ -7,7 +7,5 @@ export const STYLE_ENTRIES = [
   'src/styles/pub.scss',
   'src/styles/web.scss',
   'src/styles/mobile.scss',
-  'src/styles/demo.scss',
-  'src/pages/web/home/02.scss',
-  'src/pages/web/home/skeleton/01Skeleton.scss'
+  'src/styles/demo.scss'
 ]

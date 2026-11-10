@@ -1,8 +1,9 @@
+'use client'
+
 /**
  * 트리.
  * Tree · TreeNode로 계층 노드를 접고 펼치며 선택·메타를 표시한다.
  */
-'use client'
 
 import {
   useState,

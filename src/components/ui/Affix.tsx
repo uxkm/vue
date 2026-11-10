@@ -1,8 +1,9 @@
+'use client'
+
 /**
  * 고정(Affix).
  * target 기준(window=문서 뷰포트 · HTMLElement=내부 스크롤 가시 영역)으로 상단·하단에 붙잡는다.
  */
-'use client'
 
 import {
   useCallback,
@@ -180,7 +181,8 @@ export function Affix ({
   }, [offsetTop, offsetBottom, position, target, onChange, controlled, fixedProp])
 
   useLayoutEffect(() => {
-    update()
+    const frame = requestAnimationFrame(update)
+    return () => cancelAnimationFrame(frame)
   }, [update])
 
   useEffect(() => {

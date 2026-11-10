@@ -1,8 +1,9 @@
+'use client'
+
 /**
  * 메뉴 목록.
  * 세로·가로 방향의 네비게이션 링크 묶음. 서브메뉴·그룹·구분선을 지원한다.
  */
-'use client'
 
 import {
   createContext,
@@ -177,7 +178,7 @@ function MenuItemNode ({
     )
   }
 
-  const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
+  const handleClick = (event: MouseEvent<HTMLElement>) => {
     if (item.disabled) {
       event.preventDefault()
       return
@@ -187,8 +188,8 @@ function MenuItemNode ({
 
   return (
     <li className={cx('menu_item', item.disabled && 'is-disabled')}>
-      <a
-        href={item.disabled ? undefined : item.href || '#'}
+      {item.href ? <a
+        href={item.href}
         className={cx(
           'menu_link',
           active && 'is-active',
@@ -200,7 +201,14 @@ function MenuItemNode ({
         onClick={handleClick}
       >
         <MenuLinkContent icon={item.icon} label={item.label} extra={item.extra} />
-      </a>
+      </a> : <button
+        type="button"
+        className={cx('menu_link', active && 'is-active', item.disabled && 'is-disabled')}
+        disabled={item.disabled}
+        onClick={handleClick}
+      >
+        <MenuLinkContent icon={item.icon} label={item.label} extra={item.extra} />
+      </button>}
     </li>
   )
 }

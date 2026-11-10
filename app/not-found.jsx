@@ -1,4 +1,4 @@
-import NotFoundView from '@/pages/error/NotFound'
+import NotFoundView from '@/screens/error/NotFound'
 
 /** 404 탭 제목 */
 export const metadata = {

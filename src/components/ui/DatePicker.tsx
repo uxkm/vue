@@ -1,3 +1,7 @@
+'use client'
+
+import { useEscapeKey } from '@/hooks/useEscapeKey'
+
 /**
  * 날짜 선택.
  * 트리거 입력과 달력 패널로 YYYY-MM-DD 값을 고른다.
@@ -157,11 +161,12 @@ export function DatePicker ({
     onDisplayMonthChange?.(normalized)
   }
 
-  useEffect(() => {
-    if (monthControlled) return
+  const [previousValue, setPreviousValue] = useState(selectedValue)
+  if (previousValue !== selectedValue) {
+    setPreviousValue(selectedValue)
     const date = parseValue(selectedValue)
-    if (date) setInnerMonth(new Date(date.getFullYear(), date.getMonth(), 1))
-  }, [selectedValue, monthControlled])
+    if (!monthControlled && date) setInnerMonth(new Date(date.getFullYear(), date.getMonth(), 1))
+  }
 
   useEffect(() => {
     if (!open) return
@@ -202,6 +207,8 @@ export function DatePicker ({
   const moveMonth = (offset: number) =>
     setMonth((current) => new Date(current.getFullYear(), current.getMonth() + offset, 1))
 
+  useEscapeKey(rootRef, () => setOpen(false), open)
+
   const classes = cx(
     'date_picker',
     size !== 'md' && `date_picker_${size}`,
@@ -217,10 +224,8 @@ export function DatePicker ({
   return (
     <div
       ref={rootRef}
+      role="group"
       className={classes}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') setOpen(false)
-      }}
     >
       <div className="date_picker_trigger">
         <input

@@ -1,8 +1,9 @@
+'use client'
+
 /**
  * 인라인 알림 배너.
  * info/success/warning/danger 색과 닫기 가능한 안내 메시지.
  */
-'use client'
 
 import { useState, type HTMLAttributes, type MouseEvent, type ReactNode } from 'react'
 import { cx } from '@/utils/cx'

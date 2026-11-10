@@ -1,12 +1,21 @@
+import { routeMetadata } from '@/lib/routeMetadata'
 import { webScreenStaticParams } from '@/lib/staticParams'
-import WebScreenPageClient from './page.client'
+import { RegistryPage } from '@/lib/RegistryPage'
+import { webScreenLoaders, webScreenMeta } from '@/generated/registry-web'
 
-/** 빌드할 WEB 하위 화면 주소 목록 */
+// 정적 export에 등록되지 않은 경로는 개발 환경에서도 404로 처리한다.
+export const dynamicParams = false
+
 export function generateStaticParams () {
   return webScreenStaticParams()
 }
 
-/** WEB 하위 화면 서버 진입. 실제 화면은 클라이언트 RegistryPage 가 고른다 */
-export default function WebScreenPage () {
-  return <WebScreenPageClient />
+export default async function Page ({ params }) {
+  const { menuId, screen } = await params
+  return <RegistryPage loaders={webScreenLoaders} metaMap={webScreenMeta} routeKey={`${menuId}/${screen}`} />
+}
+
+export async function generateMetadata ({ params }) {
+  const { menuId, screen } = await params
+  return routeMetadata(`/web/${menuId}/${screen}`)
 }

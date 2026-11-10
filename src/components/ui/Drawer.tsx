@@ -1,3 +1,5 @@
+'use client'
+
 /**
  * 서랍(Drawer) 패널.
  * 화면 가장자리(left/right/top/bottom)에서 슬라이드로 열리는 오버레이.
@@ -80,7 +82,7 @@ export function Drawer ({
 }: DrawerProps) {
   const panelRef = useRef<HTMLDivElement>(null)
   /** 닫힘 애니메이션 동안 placement 가 기본값으로 바뀌어도 열렸던 방향 유지 */
-  const placementRef = useRef<DrawerPlacement>(placement)
+  const [retainedPlacement, setRetainedPlacement] = useState<DrawerPlacement>(placement)
   /** 드래그로 닫을 때 현재 offset → 100% 로 이어서 애니메이트 */
   const dragDismissRef = useRef(false)
   const dragRef = useRef({
@@ -105,7 +107,6 @@ export function Drawer ({
   const [innerExpanded, setInnerExpanded] = useState(defaultExpanded)
   const expanded = expandedControlled ? expandedProp : innerExpanded
   const expandedRef = useRef(expanded)
-  expandedRef.current = expanded
   const [dragging, setDragging] = useState(false)
   const wasOpenRef = useRef(open)
 
@@ -120,41 +121,27 @@ export function Drawer ({
     onClose?.()
   }
 
-  if (open || phase === 'hidden') {
-    placementRef.current = placement
-  }
-  const activePlacement = placementRef.current
+  if ((open || phase === 'hidden') && retainedPlacement !== placement) setRetainedPlacement(placement)
+  const activePlacement = open || phase === 'hidden' ? placement : retainedPlacement
   const showHandle = draggable && activePlacement === 'bottom'
   const canDrag = showHandle && !staticDemo
 
-  // open 변화에 맞춰 슬라이드 단계 진입
+  // props에서 파생한 애니메이션 단계는 렌더가 커밋되기 전에 맞춘다.
+  const [observed, setObserved] = useState({ open, staticDemo })
+  if (observed.open !== open || observed.staticDemo !== staticDemo) {
+    setObserved({ open, staticDemo })
+    if (staticDemo) setPhase(open ? 'shown' : 'hidden')
+    else if (open) setPhase('enter-start')
+    else if (phase !== 'hidden') setPhase('leave')
+    if (!staticDemo && observed.open && !open && !expandedControlled) setInnerExpanded(false)
+  }
+
   useEffect(() => {
-    if (staticDemo) {
-      setPhase(open ? 'shown' : 'hidden')
-      wasOpenRef.current = open
-      return
-    }
-    if (open) {
-      dragDismissRef.current = false
-      setPhase((current) => (
-        current === 'shown' || current === 'enter' || current === 'enter-start'
-          ? current
-          : 'enter-start'
-      ))
-      wasOpenRef.current = true
-      return
-    }
-    // 실제로 열린 뒤 닫힐 때만 확장 상태를 초기화(초기 마운트 defaultExpanded 보존)
-    if (wasOpenRef.current) {
-      if (!expandedControlled) setInnerExpanded(false)
-      // 실제로 확장 중이었을 때만 false 를 알려 불필요한 콜백을 피한다
-      if (expandedRef.current) onExpandedChange?.(false)
-    }
-    wasOpenRef.current = false
-    setPhase((current) => (
-      current === 'hidden' ? current : 'leave'
-    ))
-  }, [open, staticDemo, expandedControlled, onExpandedChange])
+    if (open) dragDismissRef.current = false
+    else if (!staticDemo && wasOpenRef.current && expandedRef.current) onExpandedChange?.(false)
+    wasOpenRef.current = open
+    expandedRef.current = expanded
+  }, [open, staticDemo, expanded, onExpandedChange])
 
   // enter-start → 다음 프레임에 is-open 을 붙여 슬라이드 인
   useEffect(() => {
@@ -366,7 +353,7 @@ export function Drawer ({
       role="dialog"
       aria-modal="true"
     >
-      <div className="drawer_backdrop" onClick={requestClose} />
+      <div className="drawer_backdrop" aria-hidden="true" onClick={requestClose} />
       <div
         ref={panelRef}
         className={cx(

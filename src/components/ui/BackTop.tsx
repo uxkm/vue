@@ -1,9 +1,10 @@
+'use client'
+
 /**
  * 맨 위로(BackTop).
  * target 기준(window=문서 뷰포트 · HTMLElement=내부 스크롤)으로
  * visibilityHeight 이상 스크롤되면 나타나고, 클릭 시 해당 target 상단으로 이동한다.
  */
-'use client'
 
 import {
   useCallback,
@@ -128,7 +129,8 @@ export function BackTop ({
   }, [target, visibilityHeight, onVisibleChange, controlled])
 
   useLayoutEffect(() => {
-    update()
+    const frame = requestAnimationFrame(update)
+    return () => cancelAnimationFrame(frame)
   }, [update])
 
   useEffect(() => {

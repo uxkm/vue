@@ -1,8 +1,9 @@
+'use client'
+
 /**
  * 상단 내비게이션 바.
  * brand · 링크 items · actions · 모바일 토글을 한 줄로 구성한다.
  */
-'use client'
 
 import {
   useId,

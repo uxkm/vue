@@ -1,12 +1,23 @@
+import { routeMetadata } from '@/lib/routeMetadata'
 import { b2bMenuStaticParams } from '@/lib/staticParams'
-import B2bMenuPageClient from './page.client'
+import { RegistryPage } from '@/lib/RegistryPage'
+import { b2bIndexLoaders, b2bIndexMeta } from '@/generated/registry-b2b'
+import RouteRedirect from '@/comp/providers/RouteRedirect'
 
-/** 빌드할 B2B 메뉴 주소 목록 */
+// 정적 export에 등록되지 않은 경로는 개발 환경에서도 404로 처리한다.
+export const dynamicParams = false
+
 export function generateStaticParams () {
   return b2bMenuStaticParams()
 }
 
-/** B2B 메뉴 서버 진입. 실제 화면은 클라이언트 RegistryPage 가 고른다 */
-export default function B2bMenuPage () {
-  return <B2bMenuPageClient />
+export default async function Page ({ params }) {
+  const { menuId } = await params
+  if (menuId === 'main') return <RouteRedirect href="/b2b" />
+  return <RegistryPage loaders={b2bIndexLoaders} metaMap={b2bIndexMeta} routeKey={menuId} />
+}
+
+export async function generateMetadata ({ params }) {
+  const { menuId } = await params
+  return routeMetadata(`/b2b/${menuId}`)
 }

@@ -1,8 +1,9 @@
+'use client'
+
 /**
  * 드롭다운 메뉴.
  * 트리거 클릭 시 items 목록을 펼친다. placement · 선택값 · 스크롤 · 바깥 클릭 닫기를 지원한다.
  */
-'use client'
 
 import {
   useEffect,

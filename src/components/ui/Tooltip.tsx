@@ -1,8 +1,9 @@
+'use client'
+
 /**
  * 툴팁.
  * 대상 위·아래·좌·우에 짧은 도움말을 띄운다. 말풍선 화살표·방향을 지원한다.
  */
-'use client'
 
 import {
   useState,

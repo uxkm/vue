@@ -1,10 +1,11 @@
+'use client'
+
 /**
  * 플로팅(Floating).
  * 우측(또는 지정 모서리)에 고정되는 액션 스택.
  * BackTop · 커스텀 버튼을 담으며, order 로 순서를 바꾼다.
  * BackTop 이 안에 있으면 고정 기준·배치는 Floating 이 된다.
  */
-'use client'
 
 import {
   Children,

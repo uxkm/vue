@@ -1,9 +1,10 @@
+'use client'
+
 /**
  * 한 줄 입력.
  * size · clearable · prefix/suffix · error 상태를 공통 클래스로 표현한다.
  */
 import {
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -79,9 +80,11 @@ export function Input ({
     : String(innerValue ?? '')
   const hasAddon = prefix != null || suffix != null
 
-  useEffect(() => {
+  const [previousValue, setPreviousValue] = useState(value)
+  if (previousValue !== value) {
+    setPreviousValue(value)
     if (controlled) setInnerValue(value ?? '')
-  }, [controlled, value])
+  }
 
   const inputClasses = useMemo(
     () =>

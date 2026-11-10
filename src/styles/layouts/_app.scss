@@ -55,6 +55,7 @@
 
     // 언어 드롭다운 등이 열릴 때 nav-bar 위로 올림
     &:has(.lang-switcher.is-open),
+    &:has(.lang-switcher__status),
     &:has(.dropdown.is-open) {
       z-index: 3;
     }
@@ -168,7 +169,7 @@
     // react-router NavLink: `.is-active` (+ legacy `.router-link-exact-active` alias)
     &.is-active,
     &.router-link-exact-active {
-      color: var(--color-accent-text);
+      color: var(--color-accent-text-hover);
       background: var(--color-accent-muted);
     }
   }

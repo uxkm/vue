@@ -189,6 +189,8 @@ export function Table<T extends Record<string, ReactNode> = Record<string, React
       {...rest}
       className={cx('table_wrap', scroll && 'table_wrap-scroll', className)}
       style={wrapStyle}
+      role={rest.role || (scroll ? 'region' : undefined)}
+      aria-label={rest['aria-label'] || (scroll ? '표 스크롤 영역' : undefined)}
       tabIndex={scroll ? 0 : tabIndex}
     >
       <table className={tableClass} style={tableStyle}>

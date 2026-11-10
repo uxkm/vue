@@ -1,8 +1,13 @@
+'use client'
+
+import { useLatestRef } from '@/hooks/useLatestRef'
+
 /**
  * 파일 업로드.
  * button · drag · list · picture-card · avatar 변형을 공통 클래스로 표현한다.
  */
 import {
+  useCallback,
   useEffect,
   useId,
   useRef,
@@ -194,12 +199,11 @@ export function Upload ({
   const [dragActive, setDragActive] = useState(false)
   const controlled = controlledFiles !== undefined
   const files = controlled ? controlledFiles : innerFiles
-  const filesRef = useRef(files)
-  filesRef.current = files
+  const filesRef = useLatestRef(files)
   /** avatar 미리보기: 제어 files 의 url 을 우선하고, 없으면 avatarSrc */
   const avatarPreview = files[0]?.url || avatarSrc
 
-  const pruneStaleUrls = () => {
+  const pruneStaleUrls = useCallback(() => {
     const active = new Set(
       filesRef.current.map((item) => item.url).filter((url): url is string => Boolean(url))
     )
@@ -211,12 +215,12 @@ export function Upload ({
     })
     createdUrls.current = kept
     if (stale.length) revokeUploadObjectUrls(stale)
-  }
+  }, [filesRef])
 
   // files 에 더 이상 없는 object URL 만 해제(제어 부모가 삭제를 거부해도 미리보기가 깨지지 않음)
   useEffect(() => {
     pruneStaleUrls()
-  }, [files])
+  }, [files, pruneStaleUrls])
 
   useEffect(() => () => revokeUploadObjectUrls(createdUrls.current), [])
 
@@ -276,13 +280,6 @@ export function Upload ({
     update(files.filter((_, itemIndex) => itemIndex !== index))
   }
 
-  const openWithKeyboard = (event: KeyboardEvent<HTMLElement>) => {
-    if (!disabled && (event.key === 'Enter' || event.key === ' ')) {
-      event.preventDefault()
-      inputRef.current?.click()
-    }
-  }
-
   const input = (
     <input
       {...props}
@@ -290,7 +287,6 @@ export function Upload ({
       id={resolvedInputId}
       className="upload_input"
       type="file"
-      tabIndex={-1}
       disabled={disabled}
       multiple={multiple}
       accept={accept}
@@ -320,8 +316,6 @@ export function Upload ({
           (error || message) && 'is-error'
         )}
         htmlFor={resolvedInputId}
-        tabIndex={disabled ? undefined : 0}
-        onKeyDown={openWithKeyboard}
         onDragEnter={(event: DragEvent<HTMLLabelElement>) => {
           event.preventDefault()
           if (!disabled) setDragActive(true)
@@ -374,9 +368,7 @@ export function Upload ({
         <label
           className="upload_card upload_card-trigger"
           htmlFor={resolvedInputId}
-          tabIndex={disabled ? undefined : 0}
-          onKeyDown={openWithKeyboard}
-        >
+            >
           {input}
           {trigger ?? (
             <>
@@ -392,8 +384,6 @@ export function Upload ({
       <label
         className="upload_avatar"
         htmlFor={resolvedInputId}
-        tabIndex={disabled ? undefined : 0}
-        onKeyDown={openWithKeyboard}
       >
         {input}
         {trigger ?? (
@@ -413,8 +403,6 @@ export function Upload ({
       <label
         className="upload_trigger"
         htmlFor={resolvedInputId}
-        tabIndex={disabled ? undefined : 0}
-        onKeyDown={openWithKeyboard}
       >
         {input}
         {trigger ?? (

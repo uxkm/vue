@@ -1,3 +1,5 @@
+'use client'
+
 /**
  * 별점 입력.
  * count · allowHalf · clearable · readOnly · size · ripple을 공통 클래스로 표현한다.

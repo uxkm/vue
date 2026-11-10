@@ -1,3 +1,5 @@
+'use client'
+
 /**
  * 목록.
  * List · ListItem으로 불릿·번호·정의·카드형 항목을 조합한다.

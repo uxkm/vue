@@ -117,6 +117,7 @@ export function PageLoading ({
         <div
           {...rest}
           className={cx('page-loading', className)}
+          role={rest.role || 'status'}
           aria-busy="true"
           aria-label={label}
         >
@@ -141,6 +142,7 @@ export function PageLoading ({
     <div
       {...rest}
       className={cx(loading && 'page-loading', className)}
+      role={rest.role || (loading ? 'status' : undefined)}
       aria-busy={loading || undefined}
       aria-label={loading ? label : undefined}
     >

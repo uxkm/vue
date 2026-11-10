@@ -1,8 +1,9 @@
+'use client'
+
 /**
  * 모달 대화상자.
  * open 시 오버레이와 제목·본문·푸터를 중앙에 띄운다. 닫기 버튼은 Icon 을 쓴다.
  */
-'use client'
 
 import { useState, type HTMLAttributes, type ReactNode } from 'react'
 import { cx } from '@/utils/cx'
@@ -55,7 +56,7 @@ export function Modal ({
 
   return (
     <div {...rest} className={cx('modal', 'is-open', staticDemo && 'modal_demo-static', size === 'sm' && 'modal_sm', size === 'lg' && 'modal_lg', className)} role="dialog" aria-modal="true">
-      <div className="modal_backdrop" onClick={requestClose} />
+      <div className="modal_backdrop" aria-hidden="true" onClick={requestClose} />
       <div className="modal_dialog">
         <div className="modal_header">
           {hasNodes(title)
@@ -65,7 +66,7 @@ export function Modal ({
             <Icon name="close" size="var(--modal-close-icon-size)" />
           </button>
         </div>
-        <div className="modal_body">{children}</div>
+        <div className="modal_body" role="region" aria-label="대화상자 내용" tabIndex={0}>{children}</div>
         {hasNodes(footer) && <div className="modal_footer modal_footer-end">{footer}</div>}
       </div>
     </div>

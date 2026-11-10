@@ -1,8 +1,9 @@
+'use client'
+
 /**
  * 탭.
  * tabs 배열 · Tab/TabPanel 조합 · renderTab/renderPanel 로 메뉴·패널을 구성한다.
  */
-'use client'
 
 import {
   Children,

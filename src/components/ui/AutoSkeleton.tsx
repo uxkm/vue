@@ -334,8 +334,11 @@ export function AutoSkeleton ({
 
   // 마운트 후에만 캐시 적용 → 서버 HTML 과 첫 페인트 일치
   useLayoutEffect(() => {
-    applyCache(readCache(id))
-    setReady(true)
+    const frame = requestAnimationFrame(() => {
+      applyCache(readCache(id))
+      setReady(true)
+    })
+    return () => cancelAnimationFrame(frame)
   }, [id, applyCache])
 
   useLayoutEffect(() => {
@@ -343,9 +346,7 @@ export function AutoSkeleton ({
     const root = rootRef.current
     if (!root) return
 
-    capture()
-
-    let raf = 0
+    let raf = requestAnimationFrame(capture)
     const ro = typeof ResizeObserver !== 'undefined'
       ? new ResizeObserver(() => {
         cancelAnimationFrame(raf)

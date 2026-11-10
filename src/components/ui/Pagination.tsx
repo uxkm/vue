@@ -1,11 +1,11 @@
+'use client'
+
 /**
  * 페이지네이션.
  * 현재 페이지·전체 페이지 수로 번호·이전/다음을 그린다.
  */
-'use client'
 
 import {
-  useEffect,
   useState,
   type ChangeEvent,
   type FormEvent,
@@ -92,9 +92,11 @@ export function Pagination ({
   const pages = pageWindow(current, safeCount, siblingCount)
   const [jumper, setJumper] = useState(String(current))
 
-  useEffect(() => {
+  const [previousPage, setPreviousPage] = useState(current)
+  if (previousPage !== current) {
+    setPreviousPage(current)
     setJumper(String(current))
-  }, [current])
+  }
 
   if (hideOnSinglePage && safeCount <= 1) return null
 

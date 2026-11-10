@@ -1,8 +1,11 @@
+'use client'
+
+import { useLatestRef } from '@/hooks/useLatestRef'
+
 /**
  * Swiper 기반 캐러셀.
  * Storybook(기타/Carousel)과 동일한 props · 마크업 계약을 따른다.
  */
-'use client'
 
 import {
   Children,
@@ -240,17 +243,14 @@ export function Carousel ({
   const rootRef = useRef<HTMLDivElement>(null)
   const swiperRef = useRef<HTMLDivElement>(null)
   const instanceRef = useRef<SwiperInstance | null>(null)
-  const indexRef = useRef(index)
-  const onIndexChangeRef = useRef(onIndexChange)
-  indexRef.current = index
-  onIndexChangeRef.current = onIndexChange
+  const indexRef = useLatestRef(index)
+  const onIndexChangeRef = useLatestRef(onIndexChange)
   const playingControlled = playingProp !== undefined
   const [innerPlaying, setInnerPlaying] = useState(
     () => defaultPlaying ?? !!autoplay
   )
   const playing = playingControlled ? playingProp : innerPlaying
-  const playingRef = useRef(playing)
-  playingRef.current = playing
+  const playingRef = useLatestRef(playing)
   /** DOM 기준 장 수 — <Slides /> 같은 래퍼는 Children 으로는 1로 보이므로 layout 후 센다 */
   const [slideCount, setSlideCount] = useState(0)
 
@@ -330,6 +330,13 @@ export function Carousel ({
       loop: canLoop,
       grabCursor: hasControls,
       keyboard: { enabled: hasControls },
+      a11y: {
+        prevSlideMessage: '이전 슬라이드',
+        nextSlideMessage: '다음 슬라이드',
+        firstSlideMessage: '첫 슬라이드입니다',
+        lastSlideMessage: '마지막 슬라이드입니다',
+        paginationBulletMessage: '{{index}}번 슬라이드로 이동'
+      },
       observer: true,
       observeParents: true,
       watchSlidesProgress: !!(watchSlidesProgress || thumbsControl || isCoverflow)
@@ -400,10 +407,12 @@ export function Carousel ({
       const next = typeof swiper.realIndex === 'number' ? swiper.realIndex : swiper.activeIndex
       onIndexChangeRef.current?.(next, swiper)
       // 제어 모드에서 부모가 값을 반영하지 않으면 prop 위치로 되돌린다.
-      const controlled = indexRef.current
-      if (controlled === undefined || controlled === next) return
+      if (indexRef.current === undefined) return
       requestAnimationFrame(() => {
         if (swiper.destroyed) return
+        // 부모의 상태 커밋이 끝난 뒤 확인해야 수락한 이동을 이전 위치로 되돌리지 않는다.
+        const controlled = indexRef.current
+        if (controlled === undefined || controlled === next) return
         if (swiper.params.loop && typeof swiper.slideToLoop === 'function') {
           swiper.slideToLoop(controlled, 0, false)
         } else {
@@ -429,6 +438,9 @@ export function Carousel ({
     }
   }, [
     centered,
+    indexRef,
+    onIndexChangeRef,
+    playingRef,
     coverflowEffect,
     sides,
     coverflowStyle,
@@ -537,14 +549,16 @@ export function Carousel ({
       >
         <div className="swiper-wrapper">{slides}</div>
         {showNavigation && (
-          <div
+          <button
+            type="button"
             className="swiper-button-prev"
             aria-label="이전 슬라이드"
             data-ripple={ripple ? 'surface' : 'false'}
           />
         )}
         {showNavigation && (
-          <div
+          <button
+            type="button"
             className="swiper-button-next"
             aria-label="다음 슬라이드"
             data-ripple={ripple ? 'surface' : 'false'}

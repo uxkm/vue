@@ -1,12 +1,21 @@
+import { routeMetadata } from '@/lib/routeMetadata'
 import { b2bScreenStaticParams } from '@/lib/staticParams'
-import B2bScreenPageClient from './page.client'
+import { RegistryPage } from '@/lib/RegistryPage'
+import { b2bScreenLoaders, b2bScreenMeta } from '@/generated/registry-b2b'
 
-/** 빌드할 B2B 하위 화면 주소 목록 */
+// 정적 export에 등록되지 않은 경로는 개발 환경에서도 404로 처리한다.
+export const dynamicParams = false
+
 export function generateStaticParams () {
   return b2bScreenStaticParams()
 }
 
-/** B2B 하위 화면 서버 진입 */
-export default function B2bScreenPage () {
-  return <B2bScreenPageClient />
+export default async function Page ({ params }) {
+  const { menuId, screen } = await params
+  return <RegistryPage loaders={b2bScreenLoaders} metaMap={b2bScreenMeta} routeKey={`${menuId}/${screen}`} />
+}
+
+export async function generateMetadata ({ params }) {
+  const { menuId, screen } = await params
+  return routeMetadata(`/b2b/${menuId}/${screen}`)
 }

@@ -298,10 +298,14 @@ function EmbeddedSvg ({
   rest
 }: SharedSvgProps & { src: string }) {
   const [data, setData] = useState<EmbeddedSvgData | null>(null)
+  const [previousSrc, setPreviousSrc] = useState(src)
+  if (previousSrc !== src) {
+    setPreviousSrc(src)
+    setData(null)
+  }
 
   useEffect(() => {
     let alive = true
-    setData(null)
     loadEmbeddedSvg(src).then((next) => {
       if (alive) setData(next)
     })

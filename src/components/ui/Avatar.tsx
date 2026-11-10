@@ -4,7 +4,7 @@
  * 아바타.
  * 이니셜·이미지·아이콘으로 사용자/엔티티를 표시한다. 상태 점·그룹을 지원한다.
  */
-import { useEffect, useState, type HTMLAttributes, type ReactNode } from 'react'
+import { useState, type HTMLAttributes, type ReactNode } from 'react'
 import { cx } from '@/utils/cx'
 import { hasNodes } from '@/utils/react'
 
@@ -68,9 +68,11 @@ export function Avatar ({
       ? children
       : (initials ?? label)
 
-  useEffect(() => {
+  const [previousSrc, setPreviousSrc] = useState(src)
+  if (previousSrc !== src) {
+    setPreviousSrc(src)
     setImageError(false)
-  }, [src])
+  }
 
   return (
     <span

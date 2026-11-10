@@ -1,8 +1,9 @@
+'use client'
+
 /**
  * 브레드크럼.
  * 경로 단계(href·current)를 CSS 구분자와 함께 나열한다.
  */
-'use client'
 
 import {
   useState,

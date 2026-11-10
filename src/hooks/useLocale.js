@@ -1,6 +1,8 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useHydrated } from '@/hooks/useHydrated'
+
+import { useCallback, useState } from 'react'
 import {
   SUPPORTED_LOCALES,
   DEFAULT_LOCALE,
@@ -8,6 +10,7 @@ import {
   setAppLocale
 } from '@/lib/i18n'
 import { useAppStore } from '@/lib/store'
+import { resetTranslationService } from '@/lib/pageTranslate'
 
 /**
  * 현재 언어 + 전환 API.
@@ -17,15 +20,14 @@ export function useLocale () {
   const storeLocale = useAppStore((s) => s.locale)
   const setStoreLocale = useAppStore((s) => s.setLocale)
   const localeProgress = useAppStore((s) => s.localeProgress)
-  const [hydrated, setHydrated] = useState(false)
+  const translationError = useAppStore((s) => s.translationError)
+  const requestRetry = useAppStore((s) => s.retryTranslation)
+  const hydrated = useHydrated()
   const [localeLoading, setLocaleLoading] = useState(false)
   const [localeError, setLocaleError] = useState('')
   /** 언어 저장 중 또는 페이지 번역 진행 중 */
   const localeBusy = localeLoading || localeProgress != null
 
-  useEffect(() => {
-    setHydrated(true)
-  }, [])
 
   const locale = hydrated
     ? normalizeLocale(storeLocale || DEFAULT_LOCALE)
@@ -35,6 +37,8 @@ export function useLocale () {
     async (next) => {
       setLocaleLoading(true)
       setLocaleError('')
+      resetTranslationService()
+      useAppStore.getState().setTranslationError('')
       try {
         const applied = await setAppLocale(next)
         setStoreLocale(applied)
@@ -49,6 +53,12 @@ export function useLocale () {
     [setStoreLocale]
   )
 
+  const retryTranslation = useCallback(() => {
+    resetTranslationService()
+    setLocaleError('')
+    requestRetry()
+  }, [requestRetry])
+
   return {
     locale,
     setLocale,
@@ -57,7 +67,8 @@ export function useLocale () {
     localeLoading,
     localeBusy,
     localeProgress,
-    localeError,
+    localeError: localeError || translationError,
+    retryTranslation,
     isKo: locale === 'ko',
     isTh: locale === 'th',
     isVi: locale === 'vi',

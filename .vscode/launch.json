@@ -1,0 +1,34 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Next.js: 개발 서버 디버깅",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/serve.mjs",
+      "args": [
+        "--dev"
+      ],
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "npm: generate:registry",
+      "console": "integratedTerminal",
+      "autoAttachChildProcesses": true,
+      "skipFiles": [
+        "<node_internals>/**",
+        "**/node_modules/**"
+      ],
+      "serverReadyAction": {
+        "pattern": "Local HTTP:\\s+(https?://\\S+)",
+        "uriFormat": "%s",
+        "action": "openExternally"
+      }
+    },
+    {
+      "name": "Next.js: UI 모드 디버깅",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run ui",
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}

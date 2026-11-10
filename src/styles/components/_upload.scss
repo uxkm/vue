@@ -64,6 +64,11 @@
     border: 0;
   }
 
+  :is(.upload_trigger, .upload_dropzone, .upload_card-trigger, .upload_avatar):focus-within {
+    outline: 2px solid var(--color-accent-text);
+    outline-offset: 2px;
+  }
+
   &_trigger {
     position: relative;
     display: inline-flex;

@@ -21,10 +21,16 @@ const SKIP_SELECTOR = [
 /** @type {WeakMap<Text, { origin: string, locale: string, translated: string }>} */
 const nodeState = new WeakMap()
 
-/** @type {Map<string, string | Promise<string>>} */
+/** @type {Map<string, string>} */
 const textCache = new Map()
 
 const FETCH_TIMEOUT_MS = 4000
+let serviceUnavailable = false
+
+/** 장애 후 자동 재요청은 중단하고, 사용자 요청으로만 다시 시작한다. */
+export function resetTranslationService () {
+  serviceUnavailable = false
+}
 
 function cacheKey (locale, text) {
   return locale + '\0' + text
@@ -99,164 +105,122 @@ function collectTextNodes (root, options = {}) {
   return out
 }
 
-async function fetchWithTimeout (url, ms) {
+/** Google 응답과 본문 읽기까지 제한 시간을 적용한다. */
+async function translateViaGoogle (text, locale, signal) {
   const ctrl = new AbortController()
-  const timer = setTimeout(() => ctrl.abort(), ms)
+  const abort = () => ctrl.abort()
+  signal?.addEventListener('abort', abort, { once: true })
+  if (signal?.aborted) ctrl.abort()
+  const timer = setTimeout(abort, FETCH_TIMEOUT_MS)
   try {
-    return await fetch(url, { signal: ctrl.signal })
+    const url = 'https://translate.googleapis.com/translate_a/single?' +
+      new URLSearchParams({ client: 'gtx', sl: 'ko', tl: locale, dt: 't', q: text })
+    const res = await fetch(url, { signal: ctrl.signal })
+    if (!res.ok) throw new Error('translate http ' + res.status)
+    const data = await res.json()
+    const parts = Array.isArray(data?.[0]) ? data[0] : []
+    const value = parts.map((row) => typeof row?.[0] === 'string' ? row[0] : '').join('')
+    if (!value.trim()) throw new Error('Invalid translation response')
+    return value
   } finally {
     clearTimeout(timer)
+    signal?.removeEventListener('abort', abort)
   }
 }
 
-/** Google gtx — locales 없이 브라우저에서 번역 */
-async function translateViaGoogle (text, locale) {
-  const url =
-    'https://translate.googleapis.com/translate_a/single?client=gtx&sl=ko&tl=' +
-    encodeURIComponent(locale) +
-    '&dt=t&q=' +
-    encodeURIComponent(text)
-  const res = await fetchWithTimeout(url, FETCH_TIMEOUT_MS)
-  if (!res.ok) throw new Error('translate http ' + res.status)
-  const data = await res.json()
-  const parts = Array.isArray(data?.[0]) ? data[0] : []
-  return parts.map((row) => row?.[0] || '').join('') || text
-}
-
-async function translateText (text, locale) {
-  const trimmed = text
-  if (!trimmed.trim() || locale === 'ko') return trimmed
-
-  const key = cacheKey(locale, trimmed)
-  const cached = textCache.get(key)
-  if (typeof cached === 'string') return cached
-  if (cached && typeof cached.then === 'function') return cached
-
-  const pending = translateViaGoogle(trimmed, locale)
-    .then((value) => {
-      textCache.set(key, value)
-      return value
-    })
-    .catch((err) => {
-      textCache.delete(key)
-      console.warn('[pageTranslate] fail:', trimmed.slice(0, 32), err?.message || err)
-      // 실패 시 원문 유지 (다음 시도 가능하도록 캐시하지 않음)
-      return trimmed
-    })
-
-  textCache.set(key, pending)
-  return pending
-}
-
-async function mapPool (items, limit, worker) {
-  const ret = new Array(items.length)
-  let i = 0
-  const runners = Array.from({ length: Math.min(limit, items.length) || 0 }, async () => {
-    while (i < items.length) {
-      const idx = i++
-      ret[idx] = await worker(items[idx], idx)
+function restoreOriginal (root) {
+  for (const node of collectTextNodes(root, { includeTranslated: true })) {
+    const state = nodeState.get(node)
+    if (!state) continue
+    // React가 이미 새 문구를 렌더했다면 이전 원문으로 덮어쓰지 않는다.
+    if (node.nodeValue !== state.translated && node.nodeValue !== state.origin) {
+      nodeState.delete(node)
+      continue
     }
+    state.locale = 'ko'
+    state.translated = state.origin
+    if (node.nodeValue !== state.origin) node.nodeValue = state.origin
+  }
+}
+
+function isNewText (node) {
+  if (shouldSkip(node)) return false
+  const state = nodeState.get(node)
+  return !state || node.nodeValue !== state.translated
+}
+
+/** 번역기 자신의 치환과 언어 선택 UI의 진행률 변경은 재실행하지 않는다. */
+export function hasTranslatableMutation (records) {
+  return records.some((record) => {
+    if (record.type === 'characterData') return isNewText(record.target)
+    return [...record.addedNodes].some((node) => {
+      if (node.nodeType === Node.TEXT_NODE) return isNewText(node)
+      return node.nodeType === Node.ELEMENT_NODE && collectTextNodes(node).some(isNewText)
+    })
   })
-  await Promise.all(runners)
-  return ret
 }
 
 /**
- * root 아래 텍스트를 locale 로 맞춘다.
- * @param {ParentNode} root
+ * @param {HTMLElement} root
  * @param {string} locale
  * @param {{ signal?: AbortSignal, onProgress?: (info: { done: number, total: number, percent: number }) => void }} [options]
  */
-export async function applyPageTranslation (root, locale, options = {}) {
-  if (!root || typeof document === 'undefined') return
-  const signal = options.signal
-  const onProgress = options.onProgress
-
-  const report = (done, total) => {
-    const safeTotal = Math.max(total, 1)
-    const percent = Math.min(100, Math.round((done / safeTotal) * 100))
-    onProgress?.({ done, total: safeTotal, percent })
-  }
-
+export async function applyPageTranslation (root, locale, { signal, onProgress } = {}) {
+  if (signal?.aborted) return { status: 'aborted' }
   if (locale === 'ko') {
-    report(0, 1)
-    const nodes = collectTextNodes(root, { includeTranslated: true })
-    for (const node of nodes) {
-      const state = nodeState.get(node)
-      if (state && node.nodeValue !== state.origin) {
-        node.nodeValue = state.origin
-        state.locale = 'ko'
-        state.translated = state.origin
-      }
-    }
-    report(1, 1)
-    return
+    restoreOriginal(root)
+    return { status: 'original' }
+  }
+  if (serviceUnavailable) {
+    restoreOriginal(root)
+    return { status: 'unavailable' }
   }
 
-  const nodes = collectTextNodes(root)
-  // 유니크 원문만 먼저 번역해 요청 수 축소
-  const unique = [...new Set(
-    nodes.map((node) => {
-      const current = node.nodeValue ?? ''
-      const state = nodeState.get(node)
-      if (state && (current === state.translated || current === state.origin)) {
-        return state.origin
-      }
-      return current
-    }).filter(Boolean)
-  )]
-
-  // fetch 단계 90% + DOM 적용 10%
-  const fetchTotal = unique.length
-  let fetchDone = 0
-  report(0, Math.max(fetchTotal, 1))
-
-  await mapPool(unique, 5, async (text) => {
-    if (signal?.aborted) return
-    await translateText(text, locale)
-    fetchDone += 1
-    // 0~90
-    const percent = fetchTotal
-      ? Math.min(90, Math.round((fetchDone / fetchTotal) * 90))
-      : 90
-    onProgress?.({ done: fetchDone, total: Math.max(fetchTotal, 1), percent })
-  })
-
-  if (signal?.aborted) return
-
-  const applyTotal = nodes.length || 1
-  let applyDone = 0
-
-  for (const node of nodes) {
-    if (signal?.aborted) return
+  const snapshots = collectTextNodes(root).map((node) => {
     const current = node.nodeValue ?? ''
-    let state = nodeState.get(node)
-
-    if (
-      !state ||
-      (current !== state.translated && current !== state.origin)
-    ) {
-      state = { origin: current, locale: 'ko', translated: current }
-      nodeState.set(node, state)
-    }
-
-    if (!(state.locale === locale && node.nodeValue === state.translated)) {
-      const next = await translateText(state.origin, locale)
-      if (signal?.aborted) return
-      if (node.parentNode && next != null) {
-        node.nodeValue = next
-        state.locale = locale
-        state.translated = next
+    const state = nodeState.get(node)
+    const origin = state && (current === state.translated || current === state.origin)
+      ? state.origin : current
+    return { node, current, origin }
+  })
+  const unique = [...new Set(snapshots.map(({ origin }) => origin))]
+  const results = new Map()
+  let index = 0
+  let done = 0
+  // 동시에 최대 2개만 요청하며, 장애 감지 후 나머지 대기 요청은 보내지 않는다.
+  await Promise.all(Array.from({ length: Math.min(2, unique.length) }, async () => {
+    while (index < unique.length && !signal?.aborted && !serviceUnavailable) {
+      const text = unique[index++]
+      const key = cacheKey(locale, text)
+      try {
+        const translated = textCache.get(key) ?? await translateViaGoogle(text, locale, signal)
+        if (signal?.aborted) return
+        textCache.set(key, translated)
+        results.set(text, translated)
+        done += 1
+        onProgress?.({ done, total: unique.length, percent: Math.round(done / unique.length * 90) })
+      } catch {
+        if (!signal?.aborted) serviceUnavailable = true
+        return
       }
     }
-
-    applyDone += 1
-    // 90~100
-    const percent = 90 + Math.round((applyDone / applyTotal) * 10)
-    onProgress?.({ done: applyDone, total: applyTotal, percent: Math.min(100, percent) })
+  }))
+  if (signal?.aborted) return { status: 'aborted' }
+  if (serviceUnavailable) {
+    restoreOriginal(root)
+    return { status: 'unavailable' }
   }
 
-  onProgress?.({ done: applyTotal, total: applyTotal, percent: 100 })
+  // 요청 단계의 결과를 재사용한다. 실패한 문구를 DOM 적용 단계에서 다시 요청하지 않는다.
+  for (const { node, current, origin } of snapshots) {
+    if (!root.contains(node) || node.nodeValue !== current) continue
+    const translated = results.get(origin)
+    if (translated == null) continue
+    nodeState.set(node, { origin, locale, translated })
+    if (current !== translated) node.nodeValue = translated
+  }
+  onProgress?.({ done: unique.length, total: unique.length, percent: 100 })
+  return { status: 'translated' }
 }
 
 export const NO_TRANSLATE_ATTR = 'data-no-translate'

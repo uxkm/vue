@@ -5,7 +5,7 @@
  * back·brand·nav·actions·layout 등을 AppLayout 공통 헤더에 반영한다.
  *
  * - 일반 페이지: 이 Header 또는 PageHeader
- * - /pub 목록: `@/pages/pub/widgets/list` 의 PubHeader
+ * - /pub 목록: `@/screens/pub/widgets/list` 의 PubHeader
  * - 보이기/숨기기: `export const meta = { header: true | false }` (PageChrome)
  */
 import type { ReactNode } from 'react'

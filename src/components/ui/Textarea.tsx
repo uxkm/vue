@@ -1,3 +1,5 @@
+'use client'
+
 /**
  * 여러 줄 입력.
  * size · resize · showCount · clearable · fit 상태를 공통 클래스로 표현한다.

@@ -1,7 +1,5 @@
-'use client'
-
 import '@/styles/demo.scss'
-import { PageChrome } from '@/comp'
+import { PageChrome } from '@/comp/widget/PageChrome'
 
 /**
  * /guide · /guide/:name 공통.

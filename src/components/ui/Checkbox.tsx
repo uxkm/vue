@@ -1,3 +1,5 @@
+'use client'
+
 /**
  * 체크박스.
  * label · button · indeterminate · labelEnd를 공통 클래스로 표현한다.

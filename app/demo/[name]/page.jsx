@@ -1,12 +1,21 @@
+import { routeMetadata } from '@/lib/routeMetadata'
 import { demoStaticParams } from '@/lib/staticParams'
-import DemoPageClient from './page.client'
+import { RegistryPage } from '@/lib/RegistryPage'
+import { demoLoaders, demoMeta } from '@/generated/registry-demo'
 
-/** 빌드할 데모 화면 주소 목록 */
+// 정적 export에 등록되지 않은 경로는 개발 환경에서도 404로 처리한다.
+export const dynamicParams = false
+
 export function generateStaticParams () {
   return demoStaticParams()
 }
 
-/** 데모 화면 서버 진입. 이름에 맞는 데모를 클라이언트가 불러온다 */
-export default function DemoPage () {
-  return <DemoPageClient />
+export default async function Page ({ params }) {
+  const { name } = await params
+  return <RegistryPage loaders={demoLoaders} metaMap={demoMeta} routeKey={name} />
+}
+
+export async function generateMetadata ({ params }) {
+  const { name } = await params
+  return routeMetadata(`/demo/${name}`)
 }

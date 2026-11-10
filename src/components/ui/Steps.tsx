@@ -1,8 +1,9 @@
+'use client'
+
 /**
  * 단계 표시.
  * current 기준으로 진행 단계(title·desc)를 나열한다.
  */
-'use client'
 
 import { useState, type HTMLAttributes, type ReactNode } from 'react'
 import { cx } from '@/utils/cx'

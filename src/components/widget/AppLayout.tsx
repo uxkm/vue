@@ -1,10 +1,14 @@
 'use client'
 
+import { useHydrated } from '@/hooks/useHydrated'
+
+import { useLatestRef } from '@/hooks/useLatestRef'
+
 /**
  * 앱 공통 레이아웃 셸.
  * 헤더·본문·푸터 배치, 슬롯 병합, 스크롤 시 헤더 숨김, GlobalTranslator 연결.
  */
-import { useEffect, useLayoutEffect, useRef, useState, type HTMLAttributes, type ReactNode } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, type HTMLAttributes, type ReactNode } from 'react'
 import { cx } from '@/utils/cx'
 import { hasNodes } from '@/utils/react'
 import { useAppStore } from '@/lib/store'
@@ -69,10 +73,7 @@ function AppLayoutInner ({
    * 기본 헤더/푸터는 마운트 후에만 — SSR·첫 페인트에서 기본 헤더가 먼저 뜨는 깜빡임 방지.
    * (페이지의 Header/Footer 슬롯은 useLayoutEffect 로 그 전에 등록됨)
    */
-  const [defaultsReady, setDefaultsReady] = useState(false)
-  useEffect(() => {
-    setDefaultsReady(true)
-  }, [])
+  const defaultsReady = useHydrated()
 
   /** 그 슬롯이 숨김 표시인지 */
   const isSlotHidden = (name: string) => isLayoutSlotHidden(pageSlots[name])
@@ -146,11 +147,10 @@ function AppLayoutInner ({
 
   const hasHeader = headerNode != null
   const headerHiddenRef = useRef(false)
-  const hideNavOnScrollRef = useRef(resolvedHideNavOnScroll)
-  hideNavOnScrollRef.current = resolvedHideNavOnScroll
+  const hideNavOnScrollRef = useLatestRef(resolvedHideNavOnScroll)
 
   /** 헤더 높이를 CSS 변수로 남긴다. 숨김이면 메뉴 높이를 뺀다 */
-  const measureHeader = (headerEl: HTMLElement, hidden: boolean) => {
+  const measureHeader = useCallback((headerEl: HTMLElement, hidden: boolean) => {
     const topEl = headerEl.querySelector('.app-header__top') as HTMLElement | null
     const navBar = headerEl.querySelector('.app-header__nav-bar') as HTMLElement | null
     const topH = topEl?.offsetHeight ?? 0
@@ -166,7 +166,7 @@ function AppLayoutInner ({
     if (hidden && navBar) return Math.max(0, navBar.offsetHeight)
     if (hidden) return 0
     return Math.max(0, headerEl.offsetHeight)
-  }
+  }, [hideNavOnScrollRef])
 
   // 헤더 높이를 --app-header-height 로 노출 → 페이지 sticky 가 헤더 아래에 붙도록
   useLayoutEffect(() => {
@@ -208,7 +208,7 @@ function AppLayoutInner ({
     if (topEl) ro.observe(topEl)
     if (navBar) ro.observe(navBar)
     return () => ro.disconnect()
-  }, [hasHeader, resolvedLayout, resolvedHideNavOnScroll])
+  }, [hasHeader, resolvedLayout, resolvedHideNavOnScroll, measureHeader])
 
   // 아래로 스크롤 → 상단(또는 전체) 숨김, 위로 스크롤 → 복귀
   useEffect(() => {
@@ -278,7 +278,7 @@ function AppLayoutInner ({
       window.removeEventListener('scroll', onScroll)
       applyHidden(false)
     }
-  }, [hasHeader, resolvedLayout, resolvedHideNavOnScroll])
+  }, [hasHeader, resolvedLayout, resolvedHideNavOnScroll, measureHeader])
 
   return (
     <div

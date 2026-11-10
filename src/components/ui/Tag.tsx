@@ -1,8 +1,9 @@
+'use client'
+
 /**
  * 태그 라벨.
  * 색·filled/outline 등으로 짧은 분류 표시. TagGroup으로 묶을 수 있다.
  */
-'use client'
 
 import {
   createElement,

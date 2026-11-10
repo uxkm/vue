@@ -1,8 +1,9 @@
+'use client'
+
 /**
  * 스낵바(짧은 토스트형 알림).
  * 하단에 잠깐 뜨는 메시지. 색·아이콘·닫기 지원.
  */
-'use client'
 
 import { useState, type HTMLAttributes, type ReactNode } from 'react'
 import { cx } from '@/utils/cx'

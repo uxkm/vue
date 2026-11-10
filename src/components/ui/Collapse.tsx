@@ -1,8 +1,9 @@
+'use client'
+
 /**
  * 접기 패널 그룹.
  * items 배열 · CollapseItem/CollapsePanel 조합 · 여러 칸 동시 열림을 지원한다.
  */
-'use client'
 
 import {
   Children,
@@ -223,21 +224,13 @@ function CollapseBodyShell ({
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const [mounted, setMounted] = useState(open)
-  const frozen = useRef<ReactNode>(children)
-
-  if (open || hasNodes(children)) {
-    frozen.current = children
+  const [cached, setCached] = useState({ children })
+  if ((open || hasNodes(children)) && cached.children !== children) {
+    setCached({ children })
   }
+  if ((open && !mounted) || (!slide && mounted !== open)) setMounted(open)
 
-  const body = slide ? frozen.current : children
-
-  useLayoutEffect(() => {
-    if (!slide) {
-      setMounted(open)
-      return
-    }
-    if (open) setMounted(true)
-  }, [open, slide])
+  const body = slide ? cached.children : children
 
   useLayoutEffect(() => {
     const el = ref.current
@@ -254,7 +247,10 @@ function CollapseBodyShell ({
     if (prefersReducedMotion()) {
       el.hidden = !open
       el.style.height = open ? 'auto' : ''
-      if (!open) setMounted(false)
+      if (!open) {
+        const frame = requestAnimationFrame(() => setMounted(false))
+        return () => cancelAnimationFrame(frame)
+      }
       return
     }
 

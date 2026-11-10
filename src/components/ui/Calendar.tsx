@@ -1,8 +1,9 @@
+'use client'
+
 /**
  * 달력.
  * Calendar · Month · Header · Weekdays · Wheel 등으로 월·주·일정·휠을 조합한다.
  */
-'use client'
 
 import {
   useEffect,

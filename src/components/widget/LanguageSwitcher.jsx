@@ -30,7 +30,8 @@ export function LanguageSwitcher ({
     locales,
     localeBusy,
     localeProgress,
-    localeError
+    localeError,
+    retryTranslation
   } = useLocale()
   /** 드롭다운 열림 */
   const [open, setOpen] = useState(false)
@@ -46,7 +47,7 @@ export function LanguageSwitcher ({
   /** 언어 선택. 번역 중이거나 동일 언어면 무시 */
   const onSelect = (code) => {
     setOpen(false)
-    if (localeBusy || code === locale) return
+    if ((localeBusy && code !== 'ko') || code === locale) return
     void setLocale(code).catch(() => {})
   }
 
@@ -62,6 +63,7 @@ export function LanguageSwitcher ({
         className
       )}
       data-no-translate="true"
+      lang="ko"
     >
       <Button
         id={triggerId}
@@ -72,8 +74,7 @@ export function LanguageSwitcher ({
         open={open}
         haspopup="menu"
         expanded={open}
-        disabled={localeBusy}
-        ariaLabel={showProgress ? `언어 ${progressText}` : '언어'}
+        ariaLabel={showProgress ? `${current.label} 언어 선택 ${progressText}` : `${current.label} 언어 선택`}
         aria-controls={menuId}
         onClick={() => setOpen((prev) => !prev)}
       >
@@ -100,7 +101,7 @@ export function LanguageSwitcher ({
               role="menuitemradio"
               aria-checked={locale === item.code}
               className={cx('menu_link', locale === item.code && 'is-active')}
-              disabled={localeBusy}
+              disabled={localeBusy && item.code !== 'ko'}
               onClick={() => onSelect(item.code)}
             >
               {item.label}
@@ -109,9 +110,14 @@ export function LanguageSwitcher ({
         </div>
       ) : null}
       {localeError ? (
-        <span className="lang-switcher__status lang-switcher__status--error" role="alert">
-          번역 실패
-        </span>
+        <div className="lang-switcher__status lang-switcher__status--error">
+          <span role="alert">{localeError}</span>
+          {locale !== 'ko' ? (
+            <button type="button" onClick={retryTranslation} disabled={localeBusy}>
+              다시 시도
+            </button>
+          ) : null}
+        </div>
       ) : null}
     </div>
   )

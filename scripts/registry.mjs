@@ -1,5 +1,5 @@
 /**
- * pages 폴더를 스캔해 Next 동적 import 레지스트리를 생성한다.
+ * screens 폴더를 스캔해 Next 동적 import 레지스트리를 생성한다.
  * - b2b/web/mobile: 메뉴·화면 파일 자동 인식
  * - pub/guide · pub/demo: 페이지 파일 자동 인식 (수동 맵 없음)
  * - 사이드 메뉴는 public/data/pub/guide-menu.json 을 런타임 fetch (생성물 없음)
@@ -15,7 +15,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 /** 프로젝트 루트 */
 const root = path.join(__dirname, '..')
 /** 화면 소스 루트 */
-const pagesRoot = path.join(root, 'src/pages')
+const screensRoot = path.join(root, 'src/screens')
 /** 생성물 출력 폴더. 화면 폴더와 분리 */
 const generatedRoot = path.join(root, 'src/generated')
 /** 동적 import 레지스트리 출력 */
@@ -25,7 +25,7 @@ const idsFile = path.join(generatedRoot, 'registry-ids.js')
 
 /** web 또는 mobile 아래 메뉴 폴더 이름 */
 function listMenus (device) {
-  const dir = path.join(pagesRoot, device)
+  const dir = path.join(screensRoot, device)
   if (!fs.existsSync(dir)) return []
   return fs.readdirSync(dir, { withFileTypes: true })
     .filter((d) => d.isDirectory())
@@ -66,7 +66,7 @@ function guideFileToRouteId (fileName, { demo = false } = {}) {
 
 /** 메뉴의 화면 파일 (index 제외). 이름·숫자 jsx 모두 */
 function listScreens (device, menuId) {
-  const dir = path.join(pagesRoot, device, menuId)
+  const dir = path.join(screensRoot, device, menuId)
   if (!fs.existsSync(dir)) return []
   return fs.readdirSync(dir)
     .filter((name) => name.endsWith('.jsx') && name !== 'index.jsx')
@@ -133,19 +133,19 @@ function buildDevice (device) {
   const menuIds = []
 
   menus.forEach((menuId) => {
-    const indexPath = path.join(pagesRoot, device, menuId, 'index.jsx')
+    const indexPath = path.join(screensRoot, device, menuId, 'index.jsx')
     if (fs.existsSync(indexPath)) {
       menuIds.push(menuId)
       indexLines.push(
-        `  '${menuId}': () => import('@/pages/${device}/${menuId}/index.jsx')`
+        `  '${menuId}': () => import('@/screens/${device}/${menuId}/index.jsx')`
       )
       const indexMeta = metaLine(menuId, indexPath)
       if (indexMeta) indexMetaLines.push(indexMeta)
     }
     listScreens(device, menuId).forEach(({ file, slug }) => {
-      const screenPath = path.join(pagesRoot, device, menuId, file)
+      const screenPath = path.join(screensRoot, device, menuId, file)
       screenLines.push(
-        `  '${menuId}/${slug}': () => import('@/pages/${device}/${menuId}/${file}')`
+        `  '${menuId}/${slug}': () => import('@/screens/${device}/${menuId}/${file}')`
       )
       const screenMeta = metaLine(`${menuId}/${slug}`, screenPath)
       if (screenMeta) screenMetaLines.push(screenMeta)
@@ -163,14 +163,14 @@ const mobile = buildDevice('mobile')
 const b2b = buildDevice('b2b')
 
 /**
- * main 본문은 main/index.jsx 가 아니라 pages/{device}/IndexPage.jsx.
- * (index.jsx 는 App Router 와 충돌하므로 IndexPage.jsx 사용)
+ * main 본문은 main/index.jsx 가 아니라 screens/{device}/IndexPage.jsx.
+ * (기기 루트 화면은 IndexPage.jsx로 구분)
  * main/ 폴더에는 skeleton 등 호출부만 둔다. (/b2b · /web · /mobile)
  */
 function patchRootIndex (deviceBundle, device) {
-  const rootIndex = path.join(pagesRoot, device, 'IndexPage.jsx')
+  const rootIndex = path.join(screensRoot, device, 'IndexPage.jsx')
   if (!fs.existsSync(rootIndex)) return
-  const line = `  'main': () => import('@/pages/${device}/IndexPage.jsx')`
+  const line = `  'main': () => import('@/screens/${device}/IndexPage.jsx')`
   const idx = deviceBundle.indexLines.findIndex((l) => l.includes("'main':"))
   if (idx >= 0) {
     deviceBundle.indexLines[idx] = line
@@ -195,7 +195,7 @@ patchRootIndex(mobile, 'mobile')
  * - Index 제외
  */
 function buildGuidePages () {
-  const dir = path.join(pagesRoot, 'pub', 'guide')
+  const dir = path.join(screensRoot, 'pub', 'guide')
   const pages = {}
   if (!fs.existsSync(dir)) return pages
 
@@ -211,7 +211,7 @@ function buildGuidePages () {
         readSlugProp(filePath) ||
         guideFileToRouteId(name)
       pages[routeId] = {
-        importPath: `@/pages/pub/guide/${name}`,
+        importPath: `@/screens/pub/guide/${name}`,
         filePath,
         label: readExportString(filePath, 'guideLabel') || titleFromId(routeId)
       }
@@ -222,7 +222,7 @@ function buildGuidePages () {
 
 /** pub/demo 페이지 맵 */
 function buildDemoPages () {
-  const dir = path.join(pagesRoot, 'pub', 'demo')
+  const dir = path.join(screensRoot, 'pub', 'demo')
   const pages = {}
   if (!fs.existsSync(dir)) return pages
 
@@ -235,7 +235,7 @@ function buildDemoPages () {
         readSlugProp(filePath) ||
         guideFileToRouteId(name, { demo: true })
       pages[routeId] = {
-        importPath: `@/pages/pub/demo/${name}`,
+        importPath: `@/screens/pub/demo/${name}`,
         filePath,
         label: readExportString(filePath, 'guideLabel') || titleFromId(routeId)
       }
@@ -281,77 +281,70 @@ const demoMetaLines = Object.entries(demoPages)
 const componentNames = Object.keys(componentPages).sort()
 const demoNames = Object.keys(demoPages).sort()
 
-/** registry.js 생성물 본문 — 로더 + meta export */
-const content = `/* eslint-disable */
-/** Auto-generated by scripts/registry.mjs — do not edit */
-export const webMenuIds = ${JSON.stringify(web.menuIds, null, 2)}
-export const mobileMenuIds = ${JSON.stringify(mobile.menuIds, null, 2)}
-export const b2bMenuIds = ${JSON.stringify(b2b.menuIds, null, 2)}
-
-export const webIndexLoaders = {
-${web.indexLines.join(',\n')}
+/** 라우트별 의존성을 분리해 일반 화면이 데모 라이브러리까지 참조하지 않게 한다. */
+const banner = '/* eslint-disable */\n/** Auto-generated by scripts/registry.mjs — do not edit */\n'
+const bundles = { web, mobile, b2b }
+const registryFiles = {}
+for (const [device, bundle] of Object.entries(bundles)) {
+  registryFiles[device] = banner + `
+export const ${device}IndexLoaders = {
+${bundle.indexLines.join(',\n')}
 }
-
-export const webScreenLoaders = {
-${web.screenLines.join(',\n')}
+export const ${device}ScreenLoaders = {
+${bundle.screenLines.join(',\n')}
 }
-
-export const mobileIndexLoaders = {
-${mobile.indexLines.join(',\n')}
+export const ${device}IndexMeta = {
+${bundle.indexMetaLines.join(',\n')}
 }
-
-export const mobileScreenLoaders = {
-${mobile.screenLines.join(',\n')}
-}
-
-export const b2bIndexLoaders = {
-${b2b.indexLines.join(',\n')}
-}
-
-export const b2bScreenLoaders = {
-${b2b.screenLines.join(',\n')}
-}
-
-export const componentLoaders = {
-${componentLines.join(',\n')}
-}
-
-export const demoLoaders = {
-${demoLines.join(',\n')}
-}
-
-export const webIndexMeta = {
-${web.indexMetaLines.join(',\n')}
-}
-
-export const webScreenMeta = {
-${web.screenMetaLines.join(',\n')}
-}
-
-export const mobileIndexMeta = {
-${mobile.indexMetaLines.join(',\n')}
-}
-
-export const mobileScreenMeta = {
-${mobile.screenMetaLines.join(',\n')}
-}
-
-export const b2bIndexMeta = {
-${b2b.indexMetaLines.join(',\n')}
-}
-
-export const b2bScreenMeta = {
-${b2b.screenMetaLines.join(',\n')}
-}
-
-export const componentMeta = {
-${componentMetaLines.join(',\n')}
-}
-
-export const demoMeta = {
-${demoMetaLines.join(',\n')}
+export const ${device}ScreenMeta = {
+${bundle.screenMetaLines.join(',\n')}
 }
 `
+}
+for (const [group, lines, meta] of [
+  ['component', componentLines, componentMetaLines],
+  ['demo', demoLines, demoMetaLines]
+]) {
+  registryFiles[group] = banner + `
+export const ${group}Loaders = {
+${lines.join(',\n')}
+}
+export const ${group}Meta = {
+${meta.join(',\n')}
+}
+`
+}
+const content = banner + Object.keys(registryFiles)
+  .map((group) => `export * from './registry-${group}'`)
+  .join('\n') + '\n'
+
+/** 정적 제목 추출. 명시한 pageTitle export가 있으면 우선 사용한다. */
+function readPageTitle (filePath) {
+  const source = fs.readFileSync(filePath, 'utf8')
+  return readExportString(filePath, 'pageTitle') ||
+    source.match(/<(?:Page|GuideLayout|DemoPageShell)\b[^>]*?\btitle\s*=\s*["']([^"']+)["']/)?.[1]
+}
+
+const routeTitles = {}
+for (const [device, bundle] of Object.entries(bundles)) {
+  for (const line of [...bundle.indexLines, ...bundle.screenLines]) {
+    const match = line.match(/'([^']+)':.*import\('@\/screens\/([^']+)'\)/)
+    if (!match) continue
+    const title = readPageTitle(path.join(screensRoot, match[2]))
+    if (title) {
+      routeTitles[`/${device}/${match[1]}`] = title
+      if (match[1] === 'main') routeTitles[`/${device}`] = title
+    }
+  }
+}
+for (const [group, pages] of [['guide', componentPages], ['demo', demoPages]]) {
+  for (const [id, page] of Object.entries(pages)) {
+    const title = readPageTitle(page.filePath) || page.label
+    routeTitles[`/${group}/${id}`] = title + ' - 퍼블리싱가이드'
+  }
+}
+routeTitles['/guide'] = '소개 - 퍼블리싱가이드'
+routeTitles['/pub'] = '퍼블리시 목록'
 
 /** web 스크린 키 목록 (menuId/slug) — ids 전용 파일용 */
 const webScreenKeys = web.screenLines.map((line) => {
@@ -380,9 +373,13 @@ export const mobileScreenKeys = ${JSON.stringify(mobileScreenKeys, null, 2)}
 export const b2bScreenKeys = ${JSON.stringify(b2bScreenKeys, null, 2)}
 export const componentNames = ${JSON.stringify(componentNames, null, 2)}
 export const demoNames = ${JSON.stringify(demoNames, null, 2)}
+export const routeTitles = ${JSON.stringify(routeTitles, null, 2)}
 `
 
 fs.mkdirSync(generatedRoot, { recursive: true })
+for (const [group, source] of Object.entries(registryFiles)) {
+  fs.writeFileSync(path.join(generatedRoot, `registry-${group}.js`), source)
+}
 fs.writeFileSync(outFile, content)
 fs.writeFileSync(idsFile, idsContent)
 console.log('wrote', path.relative(root, outFile))

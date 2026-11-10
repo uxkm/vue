@@ -12,7 +12,14 @@ export const useAppStore = create((set) => ({
    * null 이면 대기(표시 안 함).
    */
   localeProgress: null,
-  setLocaleProgress: (localeProgress) => set({ localeProgress })
+  setLocaleProgress: (localeProgress) => set({ localeProgress }),
+  translationError: '',
+  setTranslationError: (translationError) => set({ translationError }),
+  translationAttempt: 0,
+  retryTranslation: () => set((state) => ({
+    translationAttempt: state.translationAttempt + 1,
+    translationError: ''
+  }))
 }))
 
 export default useAppStore

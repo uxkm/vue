@@ -1,3 +1,5 @@
+'use client'
+
 /**
  * 슬라이더(범위 입력).
  * label · showValue · stepper · size · ripple을 공통 클래스로 표현한다.

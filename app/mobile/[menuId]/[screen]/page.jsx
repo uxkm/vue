@@ -1,12 +1,21 @@
+import { routeMetadata } from '@/lib/routeMetadata'
 import { mobileScreenStaticParams } from '@/lib/staticParams'
-import MobileScreenPageClient from './page.client'
+import { RegistryPage } from '@/lib/RegistryPage'
+import { mobileScreenLoaders, mobileScreenMeta } from '@/generated/registry-mobile'
 
-/** 빌드할 모바일 하위 화면 주소 목록 */
+// 정적 export에 등록되지 않은 경로는 개발 환경에서도 404로 처리한다.
+export const dynamicParams = false
+
 export function generateStaticParams () {
   return mobileScreenStaticParams()
 }
 
-/** 모바일 하위 화면 서버 진입. 실제 화면은 클라이언트 RegistryPage 가 고른다 */
-export default function MobileScreenPage () {
-  return <MobileScreenPageClient />
+export default async function Page ({ params }) {
+  const { menuId, screen } = await params
+  return <RegistryPage loaders={mobileScreenLoaders} metaMap={mobileScreenMeta} routeKey={`${menuId}/${screen}`} />
+}
+
+export async function generateMetadata ({ params }) {
+  const { menuId, screen } = await params
+  return routeMetadata(`/mobile/${menuId}/${screen}`)
 }
